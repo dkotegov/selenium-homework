@@ -68,13 +68,57 @@ class UserBlock(Component):
             lambda d: d.find_element_by_xpath(self.USERNAME).text
         )
 
+class GroupPage(Page):
 
-class ExampleTest(#seismograph.Case):
+    PATH = "/group/53389738115166"
+    CREATE_POST = "//div[@class='input_placeholder']"
+
+    @property
+    def creating_post(self):
+        self.driver.find_element_by_xpath(self.CREATE_POST).click()
+        return NewPost(self.driver)
+    @property
+    def get_last_post(self):
+        return LastPost(self.driver)
+
+
+class NewPost(Component):
+    TEXT_POST = "//div[@id='posting_form_text_field']"
+    SUBMIT = "//input[@value='Поделиться'][@class='button-pro']"
+
+    def set_text(self, text):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.TEXT_POST)
+        )
+        self.driver.find_element_by_xpath(self.TEXT_POST).click()
+        self.driver.find_element_by_xpath(self.TEXT_POST).send_keys(text)
+
+    def submit(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.SUBMIT)
+        )
+        self.driver.find_element_by_xpath(self.SUBMIT).click()
+
+
+class LastPost(Component):
+    LAST_POST = "//div[@class='media-text_cnt']//div[@class='media-text_cnt_tx textWrap']"
+
+    def is_last_post_new_post(self, text):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.LAST_POST).text == text
+        )
+        return True
+
+    # def delete(self):
+
+
+class CreationPostTest(#seismograph.Case):
     unittest.TestCase):
-
     USERLOGIN = 'technopark30'
     USERNAME = u'Евдакия Фёдорова'
     PASSWORD = os.environ.get('PASSWORD', 'testQA1')
+    # new_post = NewPost
+    group_page = GroupPage
 
     def setUp(self):
         browser = os.environ.get('BROWSER', 'FIREFOX')
@@ -83,10 +127,6 @@ class ExampleTest(#seismograph.Case):
             desired_capabilities=getattr(DesiredCapabilities, browser).copy()
         )
 
-    def tearDown(self):
-        self.driver.quit()
-
-    def test(self):
         auth_page = AuthPage(self.driver)
         auth_page.open()
         auth_form = auth_page.form
@@ -97,4 +137,26 @@ class ExampleTest(#seismograph.Case):
 
         user_name = auth_page.user_block.get_username()
         self.assertEqual(user_name, self.USERNAME)
+
+        self.group_page = GroupPage(self.driver)
+        self.group_page.open()
+        self.new_post = self.group_page.creating_post
+
+
+    def tearDown(self):
+        self.driver.quit()
+
+    def test(self):
+        text = "simple post with simple text666"
+
+        new_post = self.group_page.creating_post
+        new_post.set_text(text)
+        new_post.submit()
+        last_post = self.group_page.get_last_post
+        self.assertTrue(last_post.is_last_post_new_post(text))
+
+
+
+
+
 
