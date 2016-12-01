@@ -22,6 +22,7 @@ class Page(object):
         self.driver.get(url)
         self.driver.maximize_window()
 
+
 class AuthPage(Page):
     PATH = ''
 
@@ -32,6 +33,7 @@ class AuthPage(Page):
     @property
     def user_block(self):
         return UserBlock(self.driver)
+
 
 class Component(object):
     def __init__(self, driver):
@@ -68,6 +70,7 @@ class UserBlock(Component):
             lambda d: d.find_element_by_xpath(self.USERNAME).text
         )
 
+
 class GroupPage(Page):
 
     PATH = "/group/53389738115166"
@@ -77,6 +80,7 @@ class GroupPage(Page):
     def creating_post(self):
         self.driver.find_element_by_xpath(self.CREATE_POST).click()
         return NewPost(self.driver)
+
     @property
     def get_last_post(self):
         return LastPost(self.driver)
@@ -85,12 +89,12 @@ class GroupPage(Page):
 class NewPost(Component):
     TEXT_POST = "//div[@id='posting_form_text_field']"
     SUBMIT = "//input[@value='Поделиться'][@class='button-pro']"
+    VISIBLE_BLOCK = "//div[@class='posting-form']/div[@class='posting-form_overlay invisible']"
 
     def set_text(self, text):
         WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.TEXT_POST)
+            lambda d: d.find_element_by_xpath(self.VISIBLE_BLOCK)
         )
-        self.driver.find_element_by_xpath(self.TEXT_POST).click()
         self.driver.find_element_by_xpath(self.TEXT_POST).send_keys(text)
 
     def submit(self):
@@ -113,6 +117,7 @@ class LastPost(Component):
 
 
 class CreationPostTest(#seismograph.Case):
+
     unittest.TestCase):
     USERLOGIN = 'technopark30'
     USERNAME = u'Евдакия Фёдорова'
@@ -142,11 +147,10 @@ class CreationPostTest(#seismograph.Case):
         self.group_page.open()
         self.new_post = self.group_page.creating_post
 
-
     def tearDown(self):
         self.driver.quit()
 
-    def test(self):
+    def test_simple_post(self):
         text = "simple post with simple text666"
 
         new_post = self.group_page.creating_post
