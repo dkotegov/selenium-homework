@@ -27,6 +27,9 @@ class CreateChannelCase(BaseCase):
 
 
 class ChangeChannelCase(BaseCase):
+    VIDEO_URL_STUB = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+    VIDEO_NAME_STUB = 'Rick Astley - Never Gonna Give You Up'
+
     def setUp(self):
         super(ChangeChannelCase, self).setUp()
         self.channel_name = '{}_{}'.format(time(), id(self.driver))  # TODO Доработать
@@ -39,6 +42,16 @@ class ChangeChannelCase(BaseCase):
         self.channel_page = self.channel_page.edit_channel(self.new_name)
         self.assertEqual(self.channel_page.channel_name(), self.new_name)
 
+    def test_add_video(self):
+        self.channel_page.add_video_by_url(self.VIDEO_URL_STUB)
+        self.assertIn(self.VIDEO_NAME_STUB, self.driver.page_source)
+        self.channel_page.delete_video()
+        self.channel_page.open()
+        self.assertNotIn(self.VIDEO_NAME_STUB, self.driver.page_source)
+
+
+
     def tearDown(self):
         self.channel_page.delete_channel()
         super(ChangeChannelCase, self).tearDown()
+
