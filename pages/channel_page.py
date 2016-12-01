@@ -5,6 +5,8 @@ from selenium.webdriver.common.keys import Keys
 
 import utils
 
+CLEAR_FIELD =Keys.BACKSPACE * 100
+
 class ChannelPage(Page):
     DELETE_BUTTON_CLASS = 'vl_ic_delete'
     DELETE_VIDEO_SUBMIT_XPATH = '//input[@value="Удалить"]'
@@ -14,6 +16,7 @@ class ChannelPage(Page):
     CONFIRM_DELETE_XPATH ='//input[@value="Удалить"]'
     VIDEO_XPATH_TEMPLATE = '//div[@class="vid-card js-sortable"]/child::a[@title="{}"]/descedant::span[@class="tico_img vl_ic_delete"]' #TODO Исправить
     DELETE_FIRST_VIDEO_XPATH ='//a[@class="vid-card_ac_i ic vl_ic_delete"]'
+    EDIT_FIRST_VIDEO_XPATH = '//a[@class="vid-card_ac_i ic vl_ic_edit"]'
     DELETE_FIRST_VIDEO_JS = '''$x('{}')[0].click()'''.format(DELETE_FIRST_VIDEO_XPATH)
 
     def __init__(self, driver, path):
@@ -61,6 +64,16 @@ class ChannelPage(Page):
         self.driver.execute_script('arguments[0].click();', delete_button)
         utils.wait_xpath(self.driver, self.DELETE_VIDEO_SUBMIT_XPATH).click()
 
+    def click_edit_video(self):
+        edit_button = utils.wait_xpath(self.driver, self.EDIT_FIRST_VIDEO_XPATH)
+        self.driver.execute_script('arguments[0].click();', edit_button)
+        return EditVideoDialog(self.driver)
+
+    def edit_video(self, title):
+        edit_video_dialog = self.click_edit_video()
+        edit_video_dialog.set_title(title)
+        edit_video_dialog.submit()
+
     def wait_change(self, old_name):
         utils.wait(self.driver, lambda d: self.channel_name() != old_name)
 
@@ -97,3 +110,21 @@ class AddVideoDialog(Component):
         path = urlsplit(self.driver.current_url).path
         page = ChannelPage(self.driver, path)
         return page
+
+class EditVideoDialog(Component):
+    EDIT_SUBMIT_XPATH = '//input[@value="Сохранить"]'
+    MOVIE_TITLE_NAME = 'st.vv_movieTitle'
+    MOVIE_DESCRIPTION_NAME = 'st.vv_movieDescription'
+    TAG_INPUT_CLASS = 'tag_it'
+
+    def set_title(self, title):
+        title_input = utils.wait_name(self.driver, self.MOVIE_TITLE_NAME)
+        title_input.send_keys(CLEAR_FIELD)
+        title_input.send_keys(title)
+
+    def submit(self):
+        utils.wait_xpath(self.driver, self.EDIT_SUBMIT_XPATH).click()
+        path = urlsplit(self.driver.current_url).path
+        page = ChannelPage(self.driver, path)
+        return page
+
