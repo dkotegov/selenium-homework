@@ -2,22 +2,24 @@
 from .base import Page, Component
 from urlparse import urlsplit
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 import utils
 
-CLEAR_FIELD =Keys.BACKSPACE * 100
+
+# CLEAR_FIELD =Keys.BACKSPACE * 100
 
 class ChannelPage(Page):
     DELETE_BUTTON_CLASS = 'vl_ic_delete'
     DELETE_VIDEO_SUBMIT_XPATH = '//input[@value="Удалить"]'
     CHANNEL_NAME_CLASS = 'mml_ucard_n_g'
     EDIT_BUTTON_CLASS = 'vl_ic_edit'
-    ADD_VIDEO_CLASS ='vl_ic_add-video'
-    CONFIRM_DELETE_XPATH ='//input[@value="Удалить"]'
-    VIDEO_XPATH_TEMPLATE = '//div[@class="vid-card js-sortable"]/child::a[@title="{}"]/descedant::span[@class="tico_img vl_ic_delete"]' #TODO Исправить
-    DELETE_FIRST_VIDEO_XPATH ='//a[@class="vid-card_ac_i ic vl_ic_delete"]'
+    ADD_VIDEO_CLASS = 'vl_ic_add-video'
+    CONFIRM_DELETE_XPATH = '//input[@value="Удалить"]'
+    VIDEO_XPATH_TEMPLATE = '//div[@class="vid-card js-sortable"]/child::a[@title="{}"]/descedant::span[@class="tico_img vl_ic_delete"]'  # TODO Исправить
+    DELETE_FIRST_VIDEO_XPATH = '//a[@class="vid-card_ac_i ic vl_ic_delete"]'
     EDIT_FIRST_VIDEO_XPATH = '//a[@class="vid-card_ac_i ic vl_ic_edit"]'
-    DELETE_FIRST_VIDEO_JS = '''$x('{}')[0].click()'''.format(DELETE_FIRST_VIDEO_XPATH)
 
     def __init__(self, driver, path):
         super(ChannelPage, self).__init__(driver)
@@ -25,7 +27,7 @@ class ChannelPage(Page):
 
     def delete_channel(self):
         utils.wait_class(self.driver, self.DELETE_BUTTON_CLASS).click()
-        confirm_delete =  utils.wait_xpath(self.driver,self.CONFIRM_DELETE_XPATH)
+        confirm_delete = utils.wait_xpath(self.driver, self.CONFIRM_DELETE_XPATH)
         confirm_delete.click()
         utils.wait_change_url(self.driver)
 
@@ -63,6 +65,8 @@ class ChannelPage(Page):
         delete_button = utils.wait_xpath(self.driver, self.DELETE_FIRST_VIDEO_XPATH)
         self.driver.execute_script('arguments[0].click();', delete_button)
         utils.wait_xpath(self.driver, self.DELETE_VIDEO_SUBMIT_XPATH).click()
+        self.wait_clickable()
+        return self
 
     def click_edit_video(self):
         edit_button = utils.wait_xpath(self.driver, self.EDIT_FIRST_VIDEO_XPATH)
@@ -72,10 +76,31 @@ class ChannelPage(Page):
     def edit_video(self, title):
         edit_video_dialog = self.click_edit_video()
         edit_video_dialog.set_title(title)
-        edit_video_dialog.submit()
+        page = edit_video_dialog.submit()
+        self.wait_clickable()
+        return page
+
+    def edit_video_description(self,description):
+        edit_video_dialog = self.click_edit_video()
+        edit_video_dialog.set_description(description)
+        page = edit_video_dialog.submit()
+        self.wait_clickable()
+        return page
+
+    def edit_tags(self, tags):
+        edit_video_dialog = self.click_edit_video()
+        edit_video_dialog.set_tags(tags)
+        page = edit_video_dialog.submit()
+        self.wait_clickable()
+        return page
 
     def wait_change(self, old_name):
         utils.wait(self.driver, lambda d: self.channel_name() != old_name)
+
+    def wait_clickable(self):
+        # condition = (By.CLASS_NAME, self.EDIT_BUTTON_CLASS)
+        # utils.wait(self.driver, EC.element_to_be_selected(condition) )
+        self.open()  # TODO Сделать по-нормальному
 
 
 class ChangeChannelDialog(Component):
@@ -84,9 +109,8 @@ class ChangeChannelDialog(Component):
 
     def set_channel_name(self, name):
         name_elem = utils.wait_xpath(self.driver, self.CHANNEL_NAME_XPATH)
-        #name_elem.clear()
-        name_elem.send_keys(Keys.BACKSPACE * 100)#TODO найти решение получше
-        name_elem.send_keys(name)
+        # name_elem.clear()
+        utils.replace_text(name_elem, name)
 
     def submit(self):
         utils.wait_xpath(self.driver, self.CHANNEL_SUBMIT_XPATH).click()
@@ -94,9 +118,10 @@ class ChangeChannelDialog(Component):
         page = ChannelPage(self.driver, path)
         return page
 
+
 class AddVideoDialog(Component):
     FROM_INTERNET_XPATH = '//span[@data-target="video_uploader_link"]'
-    VIDEO_URL_XPATH ='//input[@name="st.vv_ugLink"]'
+    VIDEO_URL_XPATH = '//input[@name="st.vv_ugLink"]'
     ADD_VIDEO_XPATH = '//div[@class="form-actions video_uploader_actions"]/child::button[text()="Добавить"]'
 
     def choose_add_from_internet(self):
@@ -111,6 +136,7 @@ class AddVideoDialog(Component):
         page = ChannelPage(self.driver, path)
         return page
 
+
 class EditVideoDialog(Component):
     EDIT_SUBMIT_XPATH = '//input[@value="Сохранить"]'
     MOVIE_TITLE_NAME = 'st.vv_movieTitle'
@@ -119,12 +145,18 @@ class EditVideoDialog(Component):
 
     def set_title(self, title):
         title_input = utils.wait_name(self.driver, self.MOVIE_TITLE_NAME)
-        title_input.send_keys(CLEAR_FIELD)
-        title_input.send_keys(title)
+        utils.replace_text(title_input, title)
+
+    def set_tags(self, tags):
+        tags_input = utils.wait_class(self.driver, self.TAG_INPUT_CLASS)
+        utils.replace_text(tags_input, tags)
+
+    def set_description(self, description):
+        description_input = utils.wait_name(self.driver, self.MOVIE_DESCRIPTION_NAME)
+        utils.replace_text(description_input, description)
 
     def submit(self):
         utils.wait_xpath(self.driver, self.EDIT_SUBMIT_XPATH).click()
         path = urlsplit(self.driver.current_url).path
         page = ChannelPage(self.driver, path)
         return page
-

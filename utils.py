@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.keys import Keys
+
 
 DEFAULT_TIMEOUT = 30
 DEFAULT_SLEEP_TIME = 0.1
+CLEAR_FIELD =Keys.BACKSPACE * 100
+
 
 def wait(driver, condition, timeout = DEFAULT_TIMEOUT, sleeptime = DEFAULT_SLEEP_TIME):
     return WebDriverWait(driver, timeout, sleeptime).until(condition)
@@ -20,4 +25,8 @@ def wait_class(driver, cls, timeout = DEFAULT_TIMEOUT, sleeptime = DEFAULT_SLEEP
 
 def wait_change_url(driver, timeout = DEFAULT_TIMEOUT, sleeptime = DEFAULT_SLEEP_TIME):
     current_url = driver.current_url
-    return wait(driver, lambda d: d.current_url != current_url)
+    return wait(driver, lambda d: d.current_url != current_url, timeout, sleeptime)
+
+def replace_text(web_element, new_text):
+    web_element.send_keys(CLEAR_FIELD) #TODO Найти способ лучше
+    web_element.send_keys(new_text)

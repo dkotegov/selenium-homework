@@ -4,6 +4,7 @@ import utils
 from urlparse import urlsplit
 from channel_page import ChannelPage
 
+
 class MyVideosPage(Page):
     PATH = 'video/myVideo'
     MAIN_CREATE_CHANNEL_ID = 'vv_btn_create_channel_main'
