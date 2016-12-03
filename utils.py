@@ -14,6 +14,9 @@ def wait(driver, condition, timeout = DEFAULT_TIMEOUT, sleeptime = DEFAULT_SLEEP
 def wait_xpath(driver, xpath, timeout = DEFAULT_TIMEOUT, sleeptime = DEFAULT_SLEEP_TIME):
     return wait(driver, lambda d: d.find_element_by_xpath(xpath), timeout, sleeptime)
 
+def wait_many_xpath(driver, xpath, timeout = DEFAULT_TIMEOUT, sleeptime = DEFAULT_SLEEP_TIME):
+    return wait(driver, lambda d: d.find_elements_by_xpath(xpath), timeout, sleeptime)
+
 def wait_id(driver, id, timeout = DEFAULT_TIMEOUT, sleeptime = DEFAULT_SLEEP_TIME):
     return wait(driver, lambda d: d.find_element_by_id(id), timeout, sleeptime)
 
