@@ -5,10 +5,12 @@ import os
 import unittest
 # import seismograph
 import urlparse
+import time
 
 from selenium.webdriver import DesiredCapabilities, Remote
 from selenium.webdriver.support.ui import WebDriverWait
-
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.action_chains import ActionChains
 
 class Page(object):
     BASE_URL = 'https://ok.ru/'
@@ -85,6 +87,9 @@ class GroupPage(Page):
     def get_last_post(self):
         return LastPost(self.driver)
 
+    def refresh_page(self):
+        self.driver.refresh()
+
 
 class NewPost(Component):
     TEXT_POST = "//div[@id='posting_form_text_field']"
@@ -105,15 +110,46 @@ class NewPost(Component):
 
 
 class LastPost(Component):
-    LAST_POST = "//div[@class='media-text_cnt']//div[@class='media-text_cnt_tx textWrap']"
+    LAST_POST = "//div[@class='groups_post-w __search-enabled'][1]//div[@class='media-text_cnt']//" \
+                "div[@class='media-text_cnt_tx textWrap']"
+    LAST_POST_A = "//div[@class='groups_post-w __search-enabled'][1]//div[@class='media-text_cnt']/" \
+                  "div[@class='media-text_cnt_tx textWrap']/a[@class='media-text_a']"
+    FALLING_MENU = "//div[@class='mlr_top_ac']/div[@class='ic12 ic12_arrow-down lp']"
+    DELETE_POST = "//span[@class='tico']/i[@class='tico_img ic ic_delete']"
+
+    ICO_X = "//div[@class='media-layer_close']/div[@class='ic media-layer_close_ico']"
+    TEXT_POST_DELETED = "//span[@class='delete-stub_info']"
 
     def is_last_post_new_post(self, text):
         WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.LAST_POST).text == text
+            lambda d: d.find_element_by_xpath(self.LAST_POST)
         )
-        return True
+        if self.driver.find_element_by_xpath(self.LAST_POST).text == text:
+            return True
+        else:
+            return False
 
-    # def delete(self):
+    def delete(self):
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.LAST_POST_A)
+        )
+        self.driver.find_element_by_xpath(self.LAST_POST).click()
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.FALLING_MENU)
+        )
+        self.driver.find_element_by_xpath(self.FALLING_MENU).click()
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.DELETE_POST)
+        )
+        self.driver.find_element_by_xpath(self.DELETE_POST).click()
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.TEXT_POST_DELETED)
+        )
+        self.driver.find_element_by_xpath(self.ICO_X).click()
 
 
 class CreationPostTest(#seismograph.Case):
@@ -151,13 +187,17 @@ class CreationPostTest(#seismograph.Case):
         self.driver.quit()
 
     def test_simple_post(self):
-        text = "simple post with simple text666"
+        text = "simple post with simple text"
 
         new_post = self.group_page.creating_post
         new_post.set_text(text)
         new_post.submit()
         last_post = self.group_page.get_last_post
         self.assertTrue(last_post.is_last_post_new_post(text))
+        self.group_page.refresh_page()
+        last_post.delete()
+        self.group_page.refresh_page()
+        self.assertFalse(last_post.is_last_post_new_post(text))
 
 
 
