@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from urlparse import urlsplit
 
+from selenium.common.exceptions import TimeoutException
+
 import utils
 from video_page import VideoPage
 from .base import Page, Component
@@ -17,14 +19,16 @@ class ChannelPage(Page):
     CONFIRM_DELETE_XPATH = '//input[@value="Удалить"]'
     VIDEOS_LINKS_XPATH = '//div[@class="vid-card js-sortable"]/child::a'  # TODO Исправить
     DELETE_FIRST_VIDEO_XPATH = '//a[@class="vid-card_ac_i ic vl_ic_delete"]'
-    #TODO Упростить
+    # TODO Упростить
     CHANGE_VIDEO_XPATH_TEMPLATE = '//div[@class="vid-card js-sortable"]/child::a[@title="{}"]/following-sibling::' \
                                   'div[@class="vid-card_ac"]/descendant::a[@class="vid-card_ac_i ic vl_ic_{}"]'
-    DELETE_VIDEO_XPATH_TEMPLATE = CHANGE_VIDEO_XPATH_TEMPLATE.format('{}','delete')
-    EDIT_VIDEO_XPATH_TEMPLATE = CHANGE_VIDEO_XPATH_TEMPLATE.format('{}','edit')
+    DELETE_VIDEO_XPATH_TEMPLATE = CHANGE_VIDEO_XPATH_TEMPLATE.format('{}', 'delete')
+    EDIT_VIDEO_XPATH_TEMPLATE = CHANGE_VIDEO_XPATH_TEMPLATE.format('{}', 'edit')
     EDIT_FIRST_VIDEO_XPATH = '//a[@class="vid-card_ac_i ic vl_ic_edit"]'
     VIDEO_LINK_CLASS = 'vid-card_img__link'
     VIDEO_LINK_XPATH = '//a[@title="{}"]'
+    SUBSCRIBE_XPATH = '//a[starts-with(@id,"vv_btn_album_subscribe")]'
+    UNSUBSCRIBE_XPATH = '//a[starts-with(@id,"vv_btn_album_unsubscribe")]'
 
     def __init__(self, driver, path):
         super(ChannelPage, self).__init__(driver)
@@ -81,7 +85,7 @@ class ChannelPage(Page):
         self.driver.execute_script('arguments[0].click();', edit_button)
         return EditVideoDialog(self.driver)
 
-    def edit_video(self,name ,title=None, description=None, tags=None):
+    def edit_video(self, name, title=None, description=None, tags=None):
         edit_video_dialog = self.click_edit_video(name)
         if title is not None:
             edit_video_dialog.set_title(title)
@@ -97,7 +101,16 @@ class ChannelPage(Page):
         utils.wait(self.driver, lambda d: self.channel_name() != old_name)
 
     def get_videos_elements(self):
-        return utils.wait_many_xpath(self.driver, self.VIDEOS_LINKS_XPATH)
+        try:
+            return utils.wait_many_xpath(self.driver, self.VIDEOS_LINKS_XPATH, timeout=5)
+        except TimeoutException:
+            return []
+
+    def subscribe(self):
+        utils.wait_xpath(self.driver, self.SUBSCRIBE_XPATH).click()
+
+    def unsubscribe(self):
+        utils.wait_xpath(self.driver, self.UNSUBSCRIBE_XPATH).click()
 
     def get_videos_titles(self):
         return [v.get_attribute('title') for v in self.get_videos_elements()]

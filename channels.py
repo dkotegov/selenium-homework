@@ -2,6 +2,7 @@
 from base_case import BaseCase
 
 from pages.channel_page import ChannelPage
+from pages.video_page import VideoPage
 from pages.myvideos_page import MyVideosPage
 
 
@@ -39,7 +40,8 @@ class ChangeChannelCase(BaseCase):
 
     TEST_ADD_VIDEO_LINK = '/video/c1533672'
 
-    TEST_RENAME_VIDEO_LINK = ''
+    TEST_RENAME_VIDEO_LINK = 'video/c1533928'
+    VIDEO_TO_RENAME = 'video/202886615528'
     NEW_VIDEO_NAME = NEW_VIDEO_NAME_STUB
 
 
@@ -54,22 +56,44 @@ class ChangeChannelCase(BaseCase):
     #     finally:
     #         channel_page.edit_channel(self.CHANNEL_NAME)
 
-    def test_add_video(self):
-        channel_page = ChannelPage(self.driver, self.TEST_ADD_VIDEO_LINK)
-        channel_page.open()
-        channel_page.add_video_by_url(self.VIDEO_URL_STUB)
-        self.assertIn(self.VIDEO_NAME_STUB, channel_page.get_videos_titles())
-        channel_page.delete_video_by_name(self.VIDEO_NAME_STUB)
-        # self.assertNotIn(self.VIDEO_NAME_STUB, channel_page.get_videos_titles())
+    # def test_add_video(self):
+    #     channel_page = ChannelPage(self.driver, self.TEST_ADD_VIDEO_LINK)
+    #     channel_page.open()
+    #     channel_page.add_video_by_url(self.VIDEO_URL_STUB)
+    #     self.assertIn(self.VIDEO_NAME_STUB, channel_page.get_videos_titles())
+    #     channel_page.delete_video_by_name(self.VIDEO_NAME_STUB)
+    #     self.assertNotIn(self.VIDEO_NAME_STUB, channel_page.get_videos_titles())
 
+
+    # def test_change_video_name(self):
+    #     channel_page = ChannelPage(self.driver, self.TEST_RENAME_VIDEO_LINK)
+    #     try:
+    #         channel_page.open()
+    #         channel_page.edit_video(self.VIDEO_NAME_STUB, title = self.NEW_VIDEO_NAME_STUB)
+    #         video_page  = VideoPage(self.driver, self.VIDEO_TO_RENAME)
+    #         video_page.open()
+    #         self.assertEquals(self.NEW_VIDEO_NAME_STUB, video_page.title)
+    #         channel_page.open()
+    #     finally:
+    #         channel_page.edit_video(self.NEW_VIDEO_NAME_STUB,title=self.VIDEO_NAME_STUB)
 
     def test_change_video_name(self):
-        channel_page = ChannelPage(self.driver, self.TEST_RENAME_VIDEO_LINK)
+        OLD_DESCRIPTION = 'OLD_DESCRIPTION'
+        NEW_DESCRIPTION = 'NEW_DESCRIPTION'
+        CHANNEL_LINK = 'video/c1534440'
+        VIDEO_LINK = 'video/202962440680'
+        channel_page = ChannelPage(self.driver, CHANNEL_LINK)
         try:
             channel_page.open()
-            channel_page.edit_video(self.VIDEO_NAME_STUB, title = self.NEW_VIDEO_NAME_STUB)
-            self.assertIn(self.NEW_VIDEO_NAME_STUB,  channel_page.get_videos_titles())#TODO
-            channel_page.edit_video(self.NEW_VIDEO_NAME_STUB,title=self.VIDEO_NAME_STUB)
+            channel_page.edit_video( self.VIDEO_NAME_STUB, description = NEW_DESCRIPTION)
+            video_page  = VideoPage(self.driver, VIDEO_LINK)
+            video_page.open()
+            self.assertEquals(NEW_DESCRIPTION, video_page.description)#TODO
+            channel_page.open()
         finally:
-            channel_page.delete_video_by_name(self.VIDEO_NAME_STUB)
+            channel_page.edit_video(self.VIDEO_NAME_STUB,description=OLD_DESCRIPTION)
+
+class SubscriptionsCase(BaseCase):
+    CHANNEL_LINK =  'video/c1100320'
+    VIDEO_LINK = 'video/203665445152'
 
