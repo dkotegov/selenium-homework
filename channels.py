@@ -77,23 +77,33 @@ class ChangeChannelCase(BaseCase):
     #     finally:
     #         channel_page.edit_video(self.NEW_VIDEO_NAME_STUB,title=self.VIDEO_NAME_STUB)
 
-    def test_change_video_name(self):
-        OLD_DESCRIPTION = 'OLD_DESCRIPTION'
-        NEW_DESCRIPTION = 'NEW_DESCRIPTION'
-        CHANNEL_LINK = 'video/c1534440'
-        VIDEO_LINK = 'video/202962440680'
-        channel_page = ChannelPage(self.driver, CHANNEL_LINK)
-        try:
-            channel_page.open()
-            channel_page.edit_video( self.VIDEO_NAME_STUB, description = NEW_DESCRIPTION)
-            video_page  = VideoPage(self.driver, VIDEO_LINK)
-            video_page.open()
-            self.assertEquals(NEW_DESCRIPTION, video_page.description)#TODO
-            channel_page.open()
-        finally:
-            channel_page.edit_video(self.VIDEO_NAME_STUB,description=OLD_DESCRIPTION)
+    # def test_change_video_name(self):
+    #     OLD_DESCRIPTION = 'OLD_DESCRIPTION'
+    #     NEW_DESCRIPTION = 'NEW_DESCRIPTION'
+    #     CHANNEL_LINK = 'video/c1534440'
+    #     VIDEO_LINK = 'video/202962440680'
+    #     channel_page = ChannelPage(self.driver, CHANNEL_LINK)
+    #     try:
+    #         channel_page.open()
+    #         channel_page.edit_video( self.VIDEO_NAME_STUB, description = NEW_DESCRIPTION)
+    #         video_page  = VideoPage(self.driver, VIDEO_LINK)
+    #         video_page.open()
+    #         self.assertEquals(NEW_DESCRIPTION, video_page.description)#TODO
+    #         channel_page.open()
+    #     finally:
+    #         channel_page.edit_video(self.VIDEO_NAME_STUB,description=OLD_DESCRIPTION)
 
 class SubscriptionsCase(BaseCase):
     CHANNEL_LINK =  'video/c1100320'
     VIDEO_LINK = 'video/203665445152'
+
+    def test_subscribe_from_channel_page(self):
+        channel_page = ChannelPage(self.driver, self.CHANNEL_LINK)
+        channel_page.open()
+        channel_page.subscribe()
+        self.assertTrue(channel_page.is_subscribe() )
+        channel_page.unsubscribe()
+        #self.assertFalse(channel_page.is_subscribe() )#TODO
+
+
 

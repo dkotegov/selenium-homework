@@ -29,6 +29,8 @@ class ChannelPage(Page):
     VIDEO_LINK_XPATH = '//a[@title="{}"]'
     SUBSCRIBE_XPATH = '//a[starts-with(@id,"vv_btn_album_subscribe")]'
     UNSUBSCRIBE_XPATH = '//a[starts-with(@id,"vv_btn_album_unsubscribe")]'
+    IS_SUBSCRIBE_XPATH = '//a[starts-with(@id,"vv_btn_album_subscribe") and @class="vl_btn invisible"]'
+    NOT_SUBSCRIBE_XPATH = '//a[starts-with(@id,"vv_btn_album_unsubscribe") and @class="vl_btn __unsubscribe invisible"]'
 
     def __init__(self, driver, path):
         super(ChannelPage, self).__init__(driver)
@@ -111,6 +113,12 @@ class ChannelPage(Page):
 
     def unsubscribe(self):
         utils.wait_xpath(self.driver, self.UNSUBSCRIBE_XPATH).click()
+
+    def is_subscribe(self):
+        return len(utils.wait_many_xpath(self.driver, self.IS_SUBSCRIBE_XPATH, 1) ) > 0
+
+    def is_not_subscribe(self):
+        return len(utils.wait_many_xpath(self.driver, self.NOT_SUBSCRIBE_XPATH) ) > 0
 
     def get_videos_titles(self):
         return [v.get_attribute('title') for v in self.get_videos_elements()]
