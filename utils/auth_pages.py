@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 from seismograph.ext import selenium
+import time
 
 
 class AuthPage(selenium.Page):
@@ -21,7 +23,8 @@ class AuthPage(selenium.Page):
     submit_button = selenium.PageElement(
         selenium.query(
             selenium.query.INPUT,
-            value='Log in',
+            value=u'Войти',
+            _class='button-pro form-actions_yes'
         )
     )
 
@@ -29,3 +32,4 @@ class AuthPage(selenium.Page):
         self.email_field.set(login)
         self.password_field.set(password)
         self.submit_button.click()
+        time.sleep(5)

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import seismograph
-from seismograph.ext import selenium
 
 from tests import test_auth
+from tests import five_plus
 
 suites = [
-    test_auth.suite
+    #test_auth.suite,
+    five_plus.suite
 ]
 
 if __name__ == '__main__':
