@@ -39,7 +39,7 @@ class AuthPage(Page):
 
 
 class TopMenu(Component):
-    USERNAME = '//h1[@class="mctc_name_tx bl"]'
+    USERNAME = '//h1[@class="mctc_name_tx"]'
 
     def get_username(self):
         return WebDriverWait(self.driver, 30, 0.1).until(

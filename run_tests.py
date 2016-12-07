@@ -2,7 +2,6 @@
 
 import sys, getopt
 import unittest
-from selenium import webdriver
 from tests.group_messages_test import GroupMessagesTest
 
 if __name__ == '__main__':
