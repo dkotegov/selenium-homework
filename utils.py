@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.keys import Keys
 
 
 DEFAULT_TIMEOUT = 30

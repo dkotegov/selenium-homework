@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
 from urlparse import urlsplit
 
-from selenium.common.exceptions import TimeoutException
-
 import utils
 from video_page import VideoPage
 from .base import Page, Component
-
+from selenium.webdriver.common.by import By
 
 
 class ChannelPage(Page):
     DELETE_BUTTON_CLASS = 'vl_ic_delete'
     DELETE_VIDEO_SUBMIT_XPATH = '//input[@value="Удалить"]'
-    CHANNEL_NAME_CLASS = 'mml_ucard_n_g'
+    CHANNEL_NAME_XPATH = '//div[@class="mml_ucard_n_g"]'
     EDIT_BUTTON_CLASS = 'vl_ic_edit'
     ADD_VIDEO_CLASS = 'vl_ic_add-video'
     CONFIRM_DELETE_XPATH = '//input[@value="Удалить"]'
@@ -42,7 +40,7 @@ class ChannelPage(Page):
         utils.wait_change_url(self.driver)
 
     def channel_name(self):
-        name_elem = utils.wait_name(self.driver, self.CHANNEL_NAME_CLASS)
+        name_elem = utils.wait_xpath(self.driver, self.CHANNEL_NAME_XPATH)
         return name_elem.text
 
     def click_edit(self):
@@ -57,14 +55,15 @@ class ChannelPage(Page):
         add_video_dialog = self.click_add_video()
         add_video_dialog.choose_add_from_internet()
         add_video_dialog.set_url(url)
-        return add_video_dialog.submit()
+        page = add_video_dialog.submit()
+        page.open()
+        return page
 
     def edit_channel(self, new_name):
-        old_name = self.channel_name()
         change_channel_dialog = self.click_edit()
         change_channel_dialog.set_channel_name(new_name)
         page = change_channel_dialog.submit()
-        self.wait_change(old_name)
+        page.open()
         return page
 
     def delete_video_by_name(self, name):  # TODO
@@ -86,31 +85,38 @@ class ChannelPage(Page):
         self.driver.execute_script('arguments[0].click();', edit_button)
         return EditVideoDialog(self.driver)
 
-    def edit_video(self, name, title=None, description=None, tags=None):
+    def edit_video(self, name, title=None, description=None, new_tags=None, remove_tags=None):
         edit_video_dialog = self.click_edit_video(name)
         if title is not None:
             edit_video_dialog.set_title(title)
         if description is not None:
             edit_video_dialog.set_description(description)
-        if tags is not None:
-            edit_video_dialog.set_tags(tags)
+        if new_tags is not None:
+            edit_video_dialog.add_tag(new_tags)
+        if remove_tags is not None:
+            edit_video_dialog.delete_tag(remove_tags)
         page = edit_video_dialog.submit()
-        self.wait_clickable()
+        self.open()
         return page
 
-    def move_video(self, name ,new_channel):
+    def move_video(self, name, new_channel):
         edit_video_dialog = self.click_edit_video(name)
         edit_video_dialog.move(new_channel)
         page = edit_video_dialog.submit()
         page.open()
         return page
 
+    def get_video_tags(self, video_name):
+        edit_video_dialog = self.click_edit_video(video_name)
+        result = [tag.text for tag in edit_video_dialog.tag_list]
+        edit_video_dialog.submit()
+        return result
+
     def wait_change(self, old_name):
         utils.wait(self.driver, lambda d: self.channel_name() != old_name)
 
     def get_videos_elements(self):
         return self.driver.find_elements_by_xpath(self.VIDEOS_LINKS_XPATH)
-
 
     def subscribe(self):
         utils.wait_xpath(self.driver, self.SUBSCRIBE_XPATH).click()
@@ -119,10 +125,10 @@ class ChannelPage(Page):
         utils.wait_xpath(self.driver, self.UNSUBSCRIBE_XPATH).click()
 
     def is_subscribe(self):
-        return len(utils.wait_many_xpath(self.driver, self.IS_SUBSCRIBE_XPATH) ) > 0
+        return len(utils.wait_many_xpath(self.driver, self.IS_SUBSCRIBE_XPATH)) > 0
 
     def is_not_subscribe(self):
-        return len(utils.wait_many_xpath(self.driver, self.NOT_SUBSCRIBE_XPATH) ) > 0
+        return len(utils.wait_many_xpath(self.driver, self.NOT_SUBSCRIBE_XPATH)) > 0
 
     def get_videos_titles(self):
         return [v.get_attribute('title') for v in self.get_videos_elements()]
@@ -189,14 +195,28 @@ class EditVideoDialog(Component):
     MOVIE_DESCRIPTION_NAME = 'st.vv_movieDescription'
     CHANNEL_ID_NAME = 'st.vv_albumId'
     TAG_INPUT_CLASS = 'tag_it'
-
+    TAG_XPATH = '//div[contains(@class, "tag")]/span'
+    TAG_DELETE_XPATH = '//div[contains(@class, "tag")]/span[text()="{}"]/following-sibling::' \
+                       '*/descendant::i[contains(@class,"tag_del")]'
     def set_title(self, title):
         title_input = utils.wait_name(self.driver, self.MOVIE_TITLE_NAME)
         utils.replace_text(title_input, title)
 
-    def set_tags(self, tags):
+    def add_tag(self, tag):
         tags_input = utils.wait_class(self.driver, self.TAG_INPUT_CLASS)
-        utils.replace_text(tags_input, tags)
+        tags_input.send_keys(tag)
+
+
+    def delete_tag(self, tag):
+        utils.wait_class(self.driver, self.TAG_INPUT_CLASS)
+        delete_elem = utils.wait_xpath(self.driver, self.TAG_DELETE_XPATH.format(tag))
+        delete_elem.click()
+        #self.driver.execute_script('arguments[0].click();', delete_elem)
+
+    @property
+    def tag_list(self):
+        utils.wait_class(self.driver, self.TAG_INPUT_CLASS)
+        return self.driver.find_elements_by_xpath(self.TAG_XPATH)
 
     def set_description(self, description):
         description_input = utils.wait_name(self.driver, self.MOVIE_DESCRIPTION_NAME)

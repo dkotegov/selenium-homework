@@ -6,26 +6,26 @@ from pages.video_page import VideoPage
 from pages.myvideos_page import MyVideosPage
 
 
-# class CreateChannelCase(BaseCase):
-#     TEST_CHANNEL1 = 'TEST_CHANNEL1'
-#     TEST_CHANNEL2 = 'TEST_CHANNEL2'
-#
-#     def setUp(self):
-#         super(CreateChannelCase, self ).setUp()
-#         self.video_page = MyVideosPage(self.driver)
-#         self.video_page.open()
-#
-#     def test_create(self):
-#         channel_page = self.video_page.create_channel(self.TEST_CHANNEL1)
-#         self.assertIn(self.TEST_CHANNEL1, self.driver.page_source)
-#         channel_page.delete_channel()
-#         self.assertNotIn(self.TEST_CHANNEL1, self.driver.page_source)
-#
-#     def test_create_from_left_menu(self):
-#         channel_page = self.video_page.create_channel_left_menu(self.TEST_CHANNEL2)
-#         self.assertIn(self.TEST_CHANNEL2, self.driver.page_source)
-#         channel_page.delete_channel()
-#         self.assertNotIn(self.TEST_CHANNEL2, self.driver.page_source)
+class CreateChannelCase(BaseCase):
+    TEST_CHANNEL1 = 'TEST_CHANNEL1'
+    TEST_CHANNEL2 = 'TEST_CHANNEL2'
+
+    def setUp(self):
+        super(CreateChannelCase, self ).setUp()
+        self.video_page = MyVideosPage(self.driver)
+        self.video_page.open()
+
+    def test_create(self):
+        channel_page = self.video_page.create_channel(self.TEST_CHANNEL1)
+        self.assertIn(self.TEST_CHANNEL1, self.driver.page_source)
+        channel_page.delete_channel()
+        self.assertNotIn(self.TEST_CHANNEL1, self.driver.page_source)
+
+    def test_create_from_left_menu(self):
+        channel_page = self.video_page.create_channel_left_menu(self.TEST_CHANNEL2)
+        self.assertIn(self.TEST_CHANNEL2, self.driver.page_source)
+        channel_page.delete_channel()
+        self.assertNotIn(self.TEST_CHANNEL2, self.driver.page_source)
 
 
 class ChangeChannelCase(BaseCase):
@@ -77,6 +77,16 @@ class ChangeChannelCase(BaseCase):
         channel_page.delete_video_by_name(self.VIDEO_NAME_STUB)
         self.assertNotIn(self.VIDEO_NAME_STUB, channel_page.get_videos_titles())
 
+    def test_add_tags(self):#TODO исправить
+        CHANNEL_LINK = 'video/c1534184'
+        NEW_TAG = 'TAGTAGTAG'
+        VIDEO_NAME = 'VIDEO_TO_TEST_TAGS'
+        channel_page = ChannelPage(self.driver, CHANNEL_LINK)
+        channel_page.open()
+        channel_page.edit_video(VIDEO_NAME, new_tags=NEW_TAG)
+        self.assertIn(NEW_TAG, channel_page.get_video_tags(VIDEO_NAME))
+        channel_page.edit_video(VIDEO_NAME, remove_tags=NEW_TAG)
+        self.assertNotIn(NEW_TAG, channel_page.get_video_tags(VIDEO_NAME))
 
     def test_change_video_name(self):
         channel_page = ChannelPage(self.driver, self.TEST_RENAME_VIDEO_LINK)
@@ -90,11 +100,11 @@ class ChangeChannelCase(BaseCase):
         finally:
             channel_page.edit_video(self.NEW_VIDEO_NAME_STUB,title=self.VIDEO_NAME_STUB)
 
-    def test_change_video_name(self):
+    def test_change_video_description(self):
         OLD_DESCRIPTION = 'OLD_DESCRIPTION'
         NEW_DESCRIPTION = 'NEW_DESCRIPTION'
         CHANNEL_LINK = 'video/c1534440'
-        VIDEO_LINK = 'video/202962440680'
+        VIDEO_LINK = 'video/205047337448'
         channel_page = ChannelPage(self.driver, CHANNEL_LINK)
         try:
             channel_page.open()
