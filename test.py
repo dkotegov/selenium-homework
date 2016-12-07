@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import seismograph
 
-from tests import test_auth
 from tests import five_plus
+from tests import no_ad
+from tests import test_auth
 
 suites = [
-    #test_auth.suite,
-    five_plus.suite
+    #five_plus.suite,
+    #no_ad.suite,
+    test_auth.suite
 ]
 
 if __name__ == '__main__':

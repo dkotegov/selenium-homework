@@ -39,10 +39,9 @@ class ProfilePage(selenium.Page):
     def is_five_plus_visible(self):
         return self.five_plus_button.exist
 
-    def open_five_plus_payment(self):
+    def open_five_plus_payment_from_photo(self):
         self.five_plus_button.click()
 
     def is_five_plus_payment_open(self):
         self.five_plus_iframe.wait(timeout=3)
         return self.five_plus_iframe.exist
-
