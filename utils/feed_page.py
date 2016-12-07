@@ -1,9 +1,24 @@
 from seismograph.ext import selenium
+from utils.xpath_query import XPathQueryObject
+
 import time
 
 
 class FeedPage(selenium.Page):
     __url_path__ = '/feed'
+
+    avatar = selenium.PageElement(
+        selenium.query(
+            selenium.query.ANY,
+            id='viewImageLinkId'
+        )
+    )
+
+    buy_link = selenium.PageElement(
+        XPathQueryObject(
+            '//a/span[contains(text(), "Buy OKs")]'
+        )
+    )
 
     five_plus_iframe = selenium.PageElement(
         selenium.query(

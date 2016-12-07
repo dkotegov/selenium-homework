@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 from seismograph.ext import selenium
-import time
+from utils.feed_page import FeedPage
 
 
 class AuthPage(selenium.Page):
@@ -32,4 +33,9 @@ class AuthPage(selenium.Page):
         self.email_field.set(login)
         self.password_field.set(password)
         self.submit_button.click()
-        time.sleep(5)
+        self.wait_for_auth()
+
+    def wait_for_auth(self):
+        profile_page = FeedPage(self.browser)
+        profile_page.avatar.wait()
+

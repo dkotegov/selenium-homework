@@ -2,12 +2,11 @@
 import seismograph
 
 from tests import five_plus
-from tests import no_ad
 from tests import test_auth
 
+
 suites = [
-    #five_plus.suite,
-    #no_ad.suite,
+    five_plus.suite,
     test_auth.suite
 ]
 

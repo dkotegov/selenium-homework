@@ -1,7 +1,6 @@
-import os
-
+# coding=utf-8
+import time
 from seismograph.ext import selenium
-from seismograph.utils.common import waiting_for
 
 from utils.auth_manager import AuthManager
 from utils.auth_pages import AuthPage
@@ -15,3 +14,4 @@ def test_auth(case, browser):
     auth_page.open()
     auth_page.auth(AuthManager.get_login(),
                    AuthManager.get_password())
+
