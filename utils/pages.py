@@ -1,7 +1,15 @@
+# coding=utf-8
+
 from seismograph.ext import selenium
 
+from utils.xpath_query import XPathQueryObject
 
-class AuthPage(selenium.Page):
+
+class Page(selenium.Page):
+    pass
+
+
+class AuthPage(Page):
     __url_path__ = '/'
 
     email_field = selenium.PageElement(
@@ -29,3 +37,25 @@ class AuthPage(selenium.Page):
         self.email_field.set(login)
         self.password_field.set(password)
         self.submit_button.click()
+        self.wait_for_auth()
+
+    def wait_for_auth(self):
+        profile_page = ProfilePage(self.browser)
+        profile_page.avatar.wait()
+
+
+class ProfilePage(Page):
+    __url_path__ = '/'
+
+    avatar = selenium.PageElement(
+        selenium.query(
+            selenium.query.ANY,
+            id='viewImageLinkId'
+        )
+    )
+
+    buy_link = selenium.PageElement(
+        XPathQueryObject(
+            '//a/span[contains(text(), "Buy OKs")]'
+        )
+    )

@@ -1,10 +1,9 @@
-import os
-
+# coding=utf-8
+import time
 from seismograph.ext import selenium
-from seismograph.utils.common import waiting_for
 
 from utils.auth_manager import AuthManager
-from utils.pages import AuthPage
+from utils.pages import AuthPage, ProfilePage
 
 suite = selenium.Suite(__name__)
 
@@ -16,4 +15,7 @@ def test_auth(case, browser):
     auth_page.auth(AuthManager.get_login(),
                    AuthManager.get_password())
 
+    profile_page = ProfilePage(browser)
+    profile_page.buy_link.click()
 
+    time.sleep(10)
