@@ -1,5 +1,6 @@
 from urlparse import  urljoin
 
+
 class Page(object):
     BASE_URL = 'https://ok.ru/'
     PATH = ''

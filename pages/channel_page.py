@@ -8,7 +8,6 @@ from video_page import VideoPage
 from .base import Page, Component
 
 
-# CLEAR_FIELD =Keys.BACKSPACE * 100
 
 class ChannelPage(Page):
     DELETE_BUTTON_CLASS = 'vl_ic_delete'
@@ -30,7 +29,7 @@ class ChannelPage(Page):
     SUBSCRIBE_XPATH = '//a[starts-with(@id,"vv_btn_album_subscribe")]'
     UNSUBSCRIBE_XPATH = '//a[starts-with(@id,"vv_btn_album_unsubscribe")]'
     IS_SUBSCRIBE_XPATH = '//a[starts-with(@id,"vv_btn_album_subscribe") and @class="vl_btn invisible"]'
-    NOT_SUBSCRIBE_XPATH = '//a[starts-with(@id,"vv_btn_album_unsubscribe") and @class="vl_btn __unsubscribe invisible"]'
+    NOT_SUBSCRIBE_XPATH = '//a[@class="vl_btn invisible __unsubscribe"]'
 
     def __init__(self, driver, path):
         super(ChannelPage, self).__init__(driver)
@@ -99,14 +98,19 @@ class ChannelPage(Page):
         self.wait_clickable()
         return page
 
+    def move_video(self, name ,new_channel):
+        edit_video_dialog = self.click_edit_video(name)
+        edit_video_dialog.move(new_channel)
+        page = edit_video_dialog.submit()
+        page.open()
+        return page
+
     def wait_change(self, old_name):
         utils.wait(self.driver, lambda d: self.channel_name() != old_name)
 
     def get_videos_elements(self):
-        try:
-            return utils.wait_many_xpath(self.driver, self.VIDEOS_LINKS_XPATH, timeout=5)
-        except TimeoutException:
-            return []
+        return self.driver.find_elements_by_xpath(self.VIDEOS_LINKS_XPATH)
+
 
     def subscribe(self):
         utils.wait_xpath(self.driver, self.SUBSCRIBE_XPATH).click()
@@ -115,7 +119,7 @@ class ChannelPage(Page):
         utils.wait_xpath(self.driver, self.UNSUBSCRIBE_XPATH).click()
 
     def is_subscribe(self):
-        return len(utils.wait_many_xpath(self.driver, self.IS_SUBSCRIBE_XPATH, 1) ) > 0
+        return len(utils.wait_many_xpath(self.driver, self.IS_SUBSCRIBE_XPATH) ) > 0
 
     def is_not_subscribe(self):
         return len(utils.wait_many_xpath(self.driver, self.NOT_SUBSCRIBE_XPATH) ) > 0
@@ -183,6 +187,7 @@ class EditVideoDialog(Component):
     EDIT_SUBMIT_XPATH = '//input[@value="Сохранить"]'
     MOVIE_TITLE_NAME = 'st.vv_movieTitle'
     MOVIE_DESCRIPTION_NAME = 'st.vv_movieDescription'
+    CHANNEL_ID_NAME = 'st.vv_albumId'
     TAG_INPUT_CLASS = 'tag_it'
 
     def set_title(self, title):
@@ -196,6 +201,10 @@ class EditVideoDialog(Component):
     def set_description(self, description):
         description_input = utils.wait_name(self.driver, self.MOVIE_DESCRIPTION_NAME)
         utils.replace_text(description_input, description)
+
+    def move(self, new_channel):
+        channel_input = utils.wait_name(self.driver, self.CHANNEL_ID_NAME)
+        channel_input.send_keys(new_channel)
 
     def submit(self):
         utils.wait_xpath(self.driver, self.EDIT_SUBMIT_XPATH).click()
