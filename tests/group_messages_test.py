@@ -39,7 +39,7 @@ class AuthPage(Page):
 
 
 class TopMenu(Component):
-    USERNAME = '//a[@class="username"]'
+    USERNAME = '//h1[@class="mctc_name_tx bl"]'
 
     def get_username(self):
         return WebDriverWait(self.driver, 30, 0.1).until(
@@ -84,4 +84,4 @@ class GroupMessagesTest(unittest.TestCase):
         auth_form.submit()
 
         user_name = auth_page.top_menu.get_username()
-        self.assertEqual('technopark16', user_name)
+        self.assertEqual('technopark16 technopark16', user_name)
