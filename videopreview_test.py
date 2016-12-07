@@ -10,9 +10,9 @@ class VideoPreviewTest(BaseCase):
         newvideos_page = NewVideos(self.driver)
         newvideos_page.open()
 
-        newvideos_page.open_first_video()
-        self.assertTrue('/video/' in self.driver.current_url)
+        video_link = newvideos_page.open_first_video()
+        self.assertIn(video_link, self.driver.current_url)
 
         videoplayer_page = VideoPage(self.driver, self.driver.current_url)
         videoplayer_page.close_video()
-        self.assertTrue('/video/new' in self.driver.current_url)
+        self.assertIn(newvideos_page.PATH , self.driver.current_url)
