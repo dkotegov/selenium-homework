@@ -7,7 +7,7 @@ from tests import test_auth
 
 suites = [
     five_plus.suite,
-    test_auth.suite
+    #test_auth.suite
 ]
 
 if __name__ == '__main__':
