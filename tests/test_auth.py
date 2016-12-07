@@ -1,9 +1,7 @@
 # coding=utf-8
-import time
 from seismograph.ext import selenium
-
+from pages.auth_pages import AuthPage
 from utils.auth_manager import AuthManager
-from utils.auth_pages import AuthPage
 
 suite = selenium.Suite(__name__)
 

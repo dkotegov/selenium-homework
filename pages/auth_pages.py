@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from seismograph.ext import selenium
-from utils.feed_page import FeedPage
+
+from pages.feed_page import FeedPage
 
 
 class AuthPage(selenium.Page):
