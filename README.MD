@@ -5,7 +5,6 @@
 
 Run -> Edit Configurations -> Environment variables:
 
-* PROJECT_PATH='/home/anthony/selenium-homework'
 * USERNAME=
 * PASSWORD=
 
@@ -13,3 +12,7 @@ Run -> Edit Configurations -> Environment variables:
 ```
 (env) python run_tests.py
 ```
+
+
+http://st-jira.tech-mail.ru/browse/TECH-653
+

@@ -2,7 +2,7 @@
 import os
 
 
-project_path = os.environ['PROJECT_PATH']
+project_path = os.path.dirname(__file__)
 
 
 SELENIUM_EX = {
@@ -11,7 +11,7 @@ SELENIUM_EX = {
     # 'LOGS_PATH': '/var/log/selenium-homework.log',
 
     'CHROME': {
-        'executable_path': '{0}/drivers/chromedriver'.format(project_path),
+        'executable_path': '{0}/../drivers/chromedriver'.format(project_path),
     }
 }
 
