@@ -2,10 +2,10 @@
 import seismograph
 
 import videopreview_test
-import base_case
+import channels
 
 suites = [
-    base_case.suite
+    channels.suite,
     #videopreview_test.suite,
 ]
 

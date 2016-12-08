@@ -2,7 +2,7 @@ import seismograph
 import os
 from seismograph.ext import selenium
 from pages.auth_page import AuthPage
-suite = seismograph.Suite(__name__, require=['selenium'])
+#suite = seismograph.Suite(__name__, require=['selenium'])
 import utils
 #selenium = suite.ext('selenium')
 

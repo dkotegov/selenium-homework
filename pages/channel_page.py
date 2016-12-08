@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
 from urlparse import urlsplit
 
+from seismograph.ext import selenium
+
 import utils
 from video_page import VideoPage
-from .base import Page, Component
-from selenium.webdriver.common.by import By
+from .base import Component
+
+class DeleteVideoDialog(selenium.PageItem):
+    submit_button = utils.query('INPUT', value= u'Удалить')
 
 
-class ChannelPage(Page):
+class ChannelPage(selenium.Page):
+    __url_path__ = "video/c{id}"
+
     DELETE_BUTTON_CLASS = 'vl_ic_delete'
     DELETE_VIDEO_SUBMIT_XPATH = '//input[@value="Удалить"]'
     CHANNEL_NAME_XPATH = '//div[@class="mml_ucard_n_g"]'
@@ -29,19 +35,25 @@ class ChannelPage(Page):
     IS_SUBSCRIBE_XPATH = '//a[starts-with(@id,"vv_btn_album_subscribe") and @class="vl_btn invisible"]'
     NOT_SUBSCRIBE_XPATH = '//a[@class="vl_btn invisible __unsubscribe"]'
 
-    def __init__(self, driver, path):
-        super(ChannelPage, self).__init__(driver)
-        self.PATH = path
+    delete_button = utils.query('SPAN', _class='tico_img vl_ic_delete')  # TODO
+    channel_name = utils.query('DIV', _class="mml_ucard_n_g")
+    delete_video_dialog = selenium.PageElement(DeleteVideoDialog)
+
+    # def __init__(self, driver, path):
+    #     super(ChannelPage, self).__init__(driver)
+    #     self.PATH = path
 
     def delete_channel(self):
-        utils.wait_class(self.driver, self.DELETE_BUTTON_CLASS).click()
-        confirm_delete = utils.wait_xpath(self.driver, self.CONFIRM_DELETE_XPATH)
-        confirm_delete.click()
-        utils.wait_change_url(self.driver)
+        # utils.wait_class(self.driver, self.DELETE_BUTTON_CLASS).click()
+        # confirm_delete = utils.wait_xpath(self.driver, self.CONFIRM_DELETE_XPATH)
+        # confirm_delete.click()
+        self.delete_button.click()
+        self.delete_video_dialog.submit_button.click()
+        utils.wait_change_url(self.browser)
 
-    def channel_name(self):
-        name_elem = utils.wait_xpath(self.driver, self.CHANNEL_NAME_XPATH)
-        return name_elem.text
+    # def channel_name(self):
+    #     name_elem = utils.wait_xpath(self.driver, self.CHANNEL_NAME_XPATH)
+    #     return name_elem.text
 
     def click_edit(self):
         utils.wait_class(self.driver, self.EDIT_BUTTON_CLASS).click()
@@ -155,6 +167,8 @@ class ChannelPage(Page):
         self.open()  # TODO Сделать по-нормальному
 
 
+
+
 class ChangeChannelDialog(Component):
     CHANNEL_NAME_XPATH = '//input[@name="st.vv_albumName"]'
     CHANNEL_SUBMIT_XPATH = '//input[@value="Сохранить"]'
@@ -198,6 +212,7 @@ class EditVideoDialog(Component):
     TAG_XPATH = '//div[contains(@class, "tag")]/span'
     TAG_DELETE_XPATH = '//div[contains(@class, "tag")]/span[text()="{}"]/following-sibling::' \
                        '*/descendant::i[contains(@class,"tag_del")]'
+
     def set_title(self, title):
         title_input = utils.wait_name(self.driver, self.MOVIE_TITLE_NAME)
         utils.replace_text(title_input, title)
@@ -206,12 +221,11 @@ class EditVideoDialog(Component):
         tags_input = utils.wait_class(self.driver, self.TAG_INPUT_CLASS)
         tags_input.send_keys(tag)
 
-
     def delete_tag(self, tag):
         utils.wait_class(self.driver, self.TAG_INPUT_CLASS)
         delete_elem = utils.wait_xpath(self.driver, self.TAG_DELETE_XPATH.format(tag))
         delete_elem.click()
-        #self.driver.execute_script('arguments[0].click();', delete_elem)
+        # self.driver.execute_script('arguments[0].click();', delete_elem)
 
     @property
     def tag_list(self):
