@@ -14,3 +14,6 @@ SELENIUM_EX = {
         'executable_path': '{0}/drivers/chromedriver'.format(project_path),
     }
 }
+
+
+OK_URL = 'http://ok.ru/'

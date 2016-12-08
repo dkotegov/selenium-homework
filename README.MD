@@ -3,9 +3,12 @@
 ```
 Если не умеете пользоваться "export":
 
-File -> Settings -> Build -> Console -> Python console -> Environment variables:
+Run -> Edit Configurations -> Environment variables:
 
 * PROJECT_PATH='/home/anthony/selenium-homework'
+* USERNAME=
+* PASSWORD=
+
 
 ```
 (env) python run_tests.py
