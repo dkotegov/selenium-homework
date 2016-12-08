@@ -2,12 +2,12 @@
 import seismograph
 
 from tests import five_plus
-from tests import test_auth
+from tests import smiles
 
 
 suites = [
     five_plus.suite,
-    #test_auth.suite
+    smiles.suite
 ]
 
 if __name__ == '__main__':

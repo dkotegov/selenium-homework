@@ -16,6 +16,22 @@ COST_2 = u'50'
 
 
 @suite.register
+def test_five_plus_available_from_toolbar(case, browser):
+    """Дуступна ли покупка функции пять с плюсом из меню платных функций"""
+    auth_page = AuthPage(browser)
+    auth_page.open()
+    auth_page.auth(AuthManager.get_login(),
+                   AuthManager.get_password())
+    feed_page = FeedPage(browser)
+    feed_page.open()
+    feed_page.open_toolbar_dropdown()
+    feed_page.open_payments_from_dropdown()
+    feed_page.switch_to_last_frame()
+    feed_page.click_paid_functions()
+    case.assertion.true(feed_page.is_five_plus_available_in_paid_functions())
+
+
+@suite.register
 def test_five_plus_change_cost(case, browser):
     """Меняется сумма при нажатии на нужный радио баттон в модальном окне покупки"""
     auth_page = AuthPage(browser)
@@ -29,10 +45,10 @@ def test_five_plus_change_cost(case, browser):
     feed_page.switch_to_last_frame()
     cost = feed_page.get_five_plus_cost()
     case.assertion.equal(cost, DEFAULT_COST)
-    feed_page.click_checkbox_by_index(1)
+    feed_page.click_five_plus_checkbox_by_index(1)
     cost = feed_page.get_five_plus_cost()
     case.assertion.equal(cost, COST_1)
-    feed_page.click_checkbox_by_index(2)
+    feed_page.click_five_plus_checkbox_by_index(2)
     cost = feed_page.get_five_plus_cost()
     case.assertion.equal(cost, COST_2)
 
@@ -48,7 +64,7 @@ def test_five_plus_payment_available(case, browser):
     feed_page.open()
     feed_page.open_payment_dropdown()
     feed_page.open_five_plus_payment_from_dropdown()
-    case.assertion.true(feed_page.is_five_plus_payment_open())
+    case.assertion.true(feed_page.is_payment_iframe_open())
 
 
 @suite.register
