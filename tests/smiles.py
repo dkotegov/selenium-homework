@@ -54,7 +54,7 @@ def test_smiles_change_cost(case, browser):
 
 @suite.register
 def test_smiles_payment_available(case, browser):
-    """Доступность покупки функции покупки смайликов и стикеров"""
+    """Доступность покупки функции покупки смайликов и стикеров из дропдауна платных функций"""
     auth_page = AuthPage(browser)
     auth_page.open()
     auth_page.auth(AuthManager.get_login(),

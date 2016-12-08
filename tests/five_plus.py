@@ -17,7 +17,7 @@ COST_2 = u'50'
 
 @suite.register
 def test_five_plus_available_from_toolbar(case, browser):
-    """Дуступна ли покупка функции пять с плюсом из меню платных функций"""
+    """Доступность покупки функции 5+ из меню платных функций"""
     auth_page = AuthPage(browser)
     auth_page.open()
     auth_page.auth(AuthManager.get_login(),
@@ -55,7 +55,7 @@ def test_five_plus_change_cost(case, browser):
 
 @suite.register
 def test_five_plus_payment_available(case, browser):
-    """Доступность покупки функции 5+"""
+    """Доступность покупки функции 5+ из дропдауна платных функций"""
     auth_page = AuthPage(browser)
     auth_page.open()
     auth_page.auth(AuthManager.get_login(),
