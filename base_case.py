@@ -1,29 +1,27 @@
+import seismograph
 import os
-import unittest
-
-import selenium
-#from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.webdriver import DesiredCapabilities, Remote
-
-import utils
+from seismograph.ext import selenium
 from pages.auth_page import AuthPage
+suite = seismograph.Suite(__name__, require=['selenium'])
+import utils
+#selenium = suite.ext('selenium')
 
-# firefox_capabilities = DesiredCapabilities.FIREFOX
-# firefox_capabilities['marionette'] = True
 
-class BaseCase(unittest.TestCase):
-    def setUp(self):
-        browser = os.environ.get('BROWSER', 'CHROME')
-        self.driver = Remote(
-            command_executor='http://127.0.0.1:4444/wd/hub',
-            desired_capabilities=getattr(DesiredCapabilities, browser).copy()
-        )
-        #self.driver = selenium.webdriver.Firefox(capabilities=firefox_capabilities)
-        page = AuthPage(self.driver)
-        page.open()
-        auth_form = page.form
-        auth_form.signin(os.environ['LOGIN'], os.environ['PASSWORD'])
-        utils.wait(self.driver, lambda d: not d.title.startswith(page.TITLE))
 
-    def tearDown(self):
-        self.driver.quit()
+
+class BaseCase(seismograph.Case):
+    def setup(self):
+        try:
+            self.selenium =self.ext('selenium')
+            self.selenium.start()
+            self.browser = self.selenium.browser
+            auth_page = AuthPage(self.browser)
+            auth_page.open()
+            auth_page.signin(os.environ['LOGIN'], os.environ['PASSWORD'])
+            utils.wait(self.browser, lambda d: not d.title.startswith(auth_page.TITLE))
+        except:#TODO
+            self.browser.quit()
+
+    def teardown(self):
+        self.browser.quit()
+        #self.driver.quit()
