@@ -27,16 +27,31 @@ class FeedPage(selenium.Page):
     )
 
     def getPopularContent(self):
-        return self.popular_posts.click()
+        time.sleep(1)
+        self.popular_posts.click()
+        time.sleep(1)
+        content = self.browser.find_elements_by_css_selector('div.feed')[0]
+        return content
 
-    def getAuthor(self):
-        return 1
+    def getAuthor(self,content):
+        return content.find_elements_by_css_selector('span.shortcut-wrap')[0].find_elements_by_css_selector('a.o')[0],\
+               content.find_elements_by_css_selector('span.shortcut-wrap')[0].find_elements_by_css_selector('a.o')[0].get_attribute('href')
+
 
     def getPost(self):
         return 1
 
     def makeLikeOnOwnPost(self):
-        return 1
+        like_button = self.browser.find_elements_by_css_selector('button.h-mod.widget_cnt.controls-list_lk')[0]
+        time.sleep(1)
+        return like_button.click()
+
+    def getStatusLikes(self):
+        like_button = self.browser.find_elements_by_css_selector('button.h-mod.widget_cnt.controls-list_lk')[0]
+        current_counter = int(like_button.find_elements_by_css_selector('span.widget_count')[0].text)
+        return current_counter
+
+
 
     def makeComment(self):
         return 1

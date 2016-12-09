@@ -3,9 +3,11 @@ import seismograph
 from tests import lenta_tests
 from tests import auth_tests
 from tests import post_tests
+from tests import lenta_tests
 
 suites = [
-    post_tests.suite
+    post_tests.suite,
+    # lenta_tests.suite
 ]
 
 if __name__ == '__main__':

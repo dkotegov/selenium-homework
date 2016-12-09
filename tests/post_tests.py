@@ -27,15 +27,26 @@ def test_post(case, browser):
     else:
         return False
 
-# @suite.register
-# def test_post(case, browser):
-#     auth_page = AuthPage(browser)
-#     auth_page.open()
-#     auth_page.auth('89260665086','Gfhjkmlkzjr1488')
-#
-#     profile_page = ProfilePage(browser)
-#     profile_page.open()
-#     profile_page.check_first_post()
+@suite.register
+def test_delete_own_post(case, browser):
+    text = 'Test number 1'
+    auth_page = AuthPage(browser)
+    auth_page.open()
+    auth_page.auth('89260665086','Gfhjkmlkzjr1488')
+
+    post_page = PostPage(browser)
+    post_page.open()
+    time.sleep(5)
+    post_page.create_post(text)
+
+    profile_page = ProfilePage(browser)
+    profile_page.open()
+    profile_page.check_first_post(text)
+    if profile_page.delete_my_post():
+        return True
+    else:
+        return False
+
 
 
 

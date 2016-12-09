@@ -21,5 +21,11 @@ class ProfilePage(selenium.Page):
         except:
             return False
 
-    def delete_repost(self):
-        return 1
+    def delete_my_post(self):
+        self.browser.execute_script("$('a.al.feed_close')[0].click();")
+        time.sleep(1)
+        try:
+            self.browser.find_elements_by_css_selector('div.feed-list')[0].find_elements_by_css_selector('span.delete-stub_info.tico')[0]
+            return True
+        except:
+            return False
