@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from base_case import BaseCase
-
-from pages.channel_page import ChannelPage
-from pages.video_page import VideoPage
-from pages.myvideos_page import MyVideosPage
 import seismograph
+
+from base_case import BaseCase
+from pages.channel_page import ChannelPage
+from pages.myvideos_page import MyVideosPage
+from pages.video_page import VideoPage
 
 suite = seismograph.Suite(__name__, require=['selenium'])
 
@@ -38,41 +38,40 @@ class ChangeChannelCase(BaseCase):
     NEW_VIDEO_NAME_STUB = 'NEW_VIDEO_NAME_STUB'
     NEW_DESCRIPTION_STUB = 'NEW_DESCRIPTION_STUB'
     NEW_TAGS_STUB = 'tag tag2'
-    TEST_RENAME_LINK = '/video/c1534696'
-    CHANNEL_NAME = 'TEST_RENAME'
-    NEW_CHANNEL_NAME = 'NEWNAME'
+
 
     TEST_ADD_VIDEO_LINK = '/video/c1533672'
 
-    TEST_RENAME_VIDEO_LINK = 'video/c1533928'
-    VIDEO_TO_RENAME = 'video/202886615528'
-    NEW_VIDEO_NAME = NEW_VIDEO_NAME_STUB
 
 
-    def test_move_video(self):
-        DESTINATION_ID = '1534952'
-        SOURCE_ID = '1535208'
-        DESTINATION_NAME ='DESTINATION_CHANNEL'
-        SOURCE_NAME = 'SOURCE_CHANNEL'
-        VIDEO_NAME = 'VIDEO_TO_MOVE'
-        source = ChannelPage(self.browser)
-        destination = ChannelPage(self.browser)
-        source.open(id=SOURCE_ID)
-        source.move_video(VIDEO_NAME, DESTINATION_NAME)
-        self.assertion.is_not_in(VIDEO_NAME, source.get_videos_titles())
-        destination.open(id=DESTINATION_ID)
-        self.assertion.is_in(VIDEO_NAME, destination.get_videos_titles())
-        destination.move_video(VIDEO_NAME, SOURCE_NAME)
 
-    # def test_rename_channel(self):
-    #     channel_page = ChannelPage(self.browser, self.TEST_RENAME_LINK)
+    # def test_move_video(self):
+    #     DESTINATION_ID = '1534952'
+    #     SOURCE_ID = '1535208'
+    #     DESTINATION_NAME ='DESTINATION_CHANNEL'
+    #     SOURCE_NAME = 'SOURCE_CHANNEL'
+    #     VIDEO_NAME = 'VIDEO_TO_MOVE'
+    #     source = ChannelPage(self.browser)
+    #     destination = ChannelPage(self.browser)
+    #     source.open(id=SOURCE_ID)
+    #     source.move_video(VIDEO_NAME, DESTINATION_NAME)
+    #     self.assertion.is_not_in(VIDEO_NAME, source.get_videos_titles())
+    #     destination.open(id=DESTINATION_ID)
+    #     self.assertion.is_in(VIDEO_NAME, destination.get_videos_titles())
+    #     destination.move_video(VIDEO_NAME, SOURCE_NAME)
+
+    # def test_rename_channel(self):#TODO fix
+    #     CHANNEL_ID = '1534696'
+    #     CHANNEL_NAME = 'TEST_RENAME'
+    #     NEW_CHANNEL_NAME = 'NEWNAME'
+    #     channel_page = ChannelPage(self.browser)
     #     try:
-    #         channel_page.open()
-    #         channel_page.edit_channel(self.NEW_CHANNEL_NAME)
-    #         self.assertEqual(channel_page.channel_name(), self.NEW_CHANNEL_NAME)
+    #         channel_page.open(id=CHANNEL_ID)
+    #         channel_page.edit_channel(NEW_CHANNEL_NAME)
+    #         self.assertEqual(channel_page.channel_name, NEW_CHANNEL_NAME)
     #     finally:
-    #         channel_page.edit_channel(self.CHANNEL_NAME)
-    #
+    #         channel_page.edit_channel(CHANNEL_NAME)
+
     # def test_add_video(self):
     #     channel_page = ChannelPage(self.browser, self.TEST_ADD_VIDEO_LINK)
     #     channel_page.open()
@@ -93,32 +92,33 @@ class ChangeChannelCase(BaseCase):
     #     self.assertNotIn(NEW_TAG, channel_page.get_video_tags(VIDEO_NAME))
     #
     # def test_change_video_name(self):
-    #     channel_page = ChannelPage(self.browser, self.TEST_RENAME_VIDEO_LINK)
-    #     try:
-    #         channel_page.open()
-    #         channel_page.edit_video(self.VIDEO_NAME_STUB, title = self.NEW_VIDEO_NAME_STUB)
-    #         video_page  = VideoPage(self.browser, self.VIDEO_TO_RENAME)
-    #         video_page.open()
-    #         self.assertEquals(self.NEW_VIDEO_NAME_STUB, video_page.title)
-    #         channel_page.open()
-    #     finally:
-    #         channel_page.edit_video(self.NEW_VIDEO_NAME_STUB,title=self.VIDEO_NAME_STUB)
-    #
-    # def test_change_video_description(self):
-    #     OLD_DESCRIPTION = 'OLD_DESCRIPTION'
-    #     NEW_DESCRIPTION = 'NEW_DESCRIPTION'
-    #     CHANNEL_LINK = 'video/c1534440'
-    #     VIDEO_LINK = 'video/205047337448'
-    #     channel_page = ChannelPage(self.browser, CHANNEL_LINK)
-    #     try:
-    #         channel_page.open()
-    #         channel_page.edit_video( self.VIDEO_NAME_STUB, description = NEW_DESCRIPTION)
-    #         video_page  = VideoPage(self.browser, VIDEO_LINK)
-    #         video_page.open()
-    #         self.assertEquals(NEW_DESCRIPTION, video_page.description)#TODO
-    #         channel_page.open()
-    #     finally:
-    #         channel_page.edit_video(self.VIDEO_NAME_STUB,description=OLD_DESCRIPTION)
+    #     CHANNEL_ID = '1533928'
+    #     VIDEO_ID = '202886615528'
+    #     NEW_VIDEO_NAME = self.NEW_VIDEO_NAME_STUB
+    #     channel_page = ChannelPage(self.browser )
+    #     channel_page.open(id=CHANNEL_ID)
+    #     channel_page.edit_video(self.VIDEO_NAME_STUB, title=self.NEW_VIDEO_NAME_STUB)
+    #     video_page = VideoPage(self.browser)
+    #     video_page.open(id=VIDEO_ID)
+    #     #utils.wait_change_url(self.browser)
+    #     video_title = video_page.title.text
+    #     self.assertion.equal(self.NEW_VIDEO_NAME_STUB, video_title)
+    #     channel_page.open(id=CHANNEL_ID)
+    #     channel_page.edit_video(self.NEW_VIDEO_NAME_STUB, title=self.VIDEO_NAME_STUB)
+
+    def test_change_video_description(self):
+        OLD_DESCRIPTION = 'OLD_DESCRIPTION'
+        NEW_DESCRIPTION = 'NEW_DESCRIPTION'
+        CHANNEL_ID = '1534440'
+        VIDEO_ID = '205047337448'
+        channel_page = ChannelPage(self.browser)
+        channel_page.open(id=CHANNEL_ID)
+        channel_page.edit_video(self.VIDEO_NAME_STUB, description=NEW_DESCRIPTION)
+        video_page = VideoPage(self.browser)
+        video_page.open(id=VIDEO_ID)
+        self.assertion.equal(NEW_DESCRIPTION, video_page.description.text)  # TODO
+        channel_page.open(id=CHANNEL_ID)
+        channel_page.edit_video(self.VIDEO_NAME_STUB, description=OLD_DESCRIPTION)
 
 class SubscriptionsCase(BaseCase):
     CHANNEL_LINK =  'video/c1100320'

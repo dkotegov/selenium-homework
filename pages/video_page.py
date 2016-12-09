@@ -1,9 +1,9 @@
 # coding=utf-8
-from seismograph.ext.selenium import PageElement as PE
-from seismograph.ext.selenium import query
+
+from seismograph.ext import selenium
 
 import utils
-from seismograph.ext import selenium
+
 
 class VideoPage(selenium.Page):
     VIDEO_TITLE_XPATH = '//div[@class="portlet_h portlet_h__nb textWrap"]'
@@ -14,9 +14,7 @@ class VideoPage(selenium.Page):
 
     __url_path__ = '/video/{id}'
 
-
-
-    title = utils.query("DIV", _class="portlet_h portlet_h_c_nb textWrap")
+    title = utils.query("DIV", _class="portlet_h portlet_h__nb textWrap")
     description = utils.query("DIV", _class="media-text_cnt textWrap js-vp-layer-description_tx")
     close_video_button = utils.query("DIV", _class="ic media-layer_close_ico")
 
@@ -24,13 +22,14 @@ class VideoPage(selenium.Page):
     #     super(VideoPage, self).__init__(driver)
     #     self.__url_path__ = '/video/{}'.format(_id)
 
-    @property
-    def description(self):
-        return utils.wait_xpath(self.driver, self.VIDEO_DESCRIPTION_XPATH).text
+    # @property
+    # def description(self):
+    #     return utils.wait_xpath(self.driver, self.VIDEO_DESCRIPTION_XPATH).text
+    #
 
-    @property
-    def title(self):
-        return utils.wait_xpath(self.driver, self.VIDEO_TITLE_XPATH).text
+    # @property
+    # def title(self):
+    #     return utils.wait_xpath(self.driver, self.VIDEO_TITLE_XPATH).text
 
     def subscribe(self):
         utils.wait_xpath(self.driver, self.SUBSCRIBE_XPATH).click()
@@ -48,3 +47,4 @@ class VideoPage(selenium.Page):
 
     def close_video(self):
         utils.wait_xpath(self.driver, self.CLOSE_VIDEO).click()
+

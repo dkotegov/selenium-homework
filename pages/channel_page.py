@@ -10,6 +10,19 @@ from .base import Component
 class DeleteVideoDialog(selenium.PageItem):
     submit_button = utils.query('INPUT', value= u'Удалить')
 
+class EditChannelDialog(Component):
+    CHANNEL_NAME_XPATH = '//input[@name="st.vv_albumName"]'
+    CHANNEL_SUBMIT_XPATH = '//input[@value="Сохранить"]'
+
+    channel_name_input = utils.query('INPUT', name='st.vv_albumName')
+    submit_button = utils.query('INPUT', value=u'Сохранить')
+
+    def set_channel_name(self, name):
+       #self.channel_name_input.set(name)
+       utils.replace_text(self.channel_name_input, name)
+       #self.channel_name_input.set(name)
+       self.submit_button.click()
+
 class EditVideoDialog(selenium.PageItem):
     EDIT_SUBMIT_XPATH = '//input[@value="Сохранить"]'
     MOVIE_TITLE_NAME = 'st.vv_movieTitle'
@@ -21,7 +34,7 @@ class EditVideoDialog(selenium.PageItem):
                        '*/descendant::i[contains(@class,"tag_del")]'
 
     title_input = utils.query('INPUT', name='st.vv_movieTitle')
-    description_input = utils.query('INPUT', name='st.vv_movieDescription')
+    description_input = utils.query('TEXTAREA', name='st.vv_movieDescription')
     tags_input = utils.query('INPUT', _class = 'tag_it')
     channel_select = utils.query('SELECT', name='st.vv_albumId')
     submit_button = utils.query('INPUT', value=u'Сохранить')
@@ -87,7 +100,9 @@ class ChannelPage(selenium.Page):
     delete_button = utils.query('SPAN', _class='tico_img vl_ic_delete')  # TODO
     edit_video_buttons = utils.query('A', _class='vid-card_ac_i ic vl_ic_edit')
     channel_name = utils.query('DIV', _class="mml_ucard_n_g")
+    edit_channel_button = utils.query('SPAN', _class="tico_img vl_ic_edit")
     delete_video_dialog = selenium.PageElement(DeleteVideoDialog)
+    edit_channel_dialog = selenium.PageElement(EditChannelDialog)
     edit_video_dialog = selenium.PageElement(EditVideoDialog)
 
     # def __init__(self, driver, path):
@@ -106,9 +121,9 @@ class ChannelPage(selenium.Page):
     #     name_elem = utils.wait_xpath(self.driver, self.CHANNEL_NAME_XPATH)
     #     return name_elem.text
 
-    def click_edit(self):
-        utils.wait_class(self.driver, self.EDIT_BUTTON_CLASS).click()
-        return ChangeChannelDialog(self.driver)
+    # def click_edit(self):
+    #     utils.wait_class(self.driver, self.EDIT_BUTTON_CLASS).click()
+    #     return ChangeChannelDialog(self.driver)
 
     def click_add_video(self):
         utils.wait_class(self.driver, self.ADD_VIDEO_CLASS).click()
@@ -123,11 +138,9 @@ class ChannelPage(selenium.Page):
         return page
 
     def edit_channel(self, new_name):
-        change_channel_dialog = self.click_edit()
-        change_channel_dialog.set_channel_name(new_name)
-        page = change_channel_dialog.submit()
-        page.open()
-        return page
+        self.edit_channel_button.click()
+        self.edit_channel_dialog.set_channel_name(new_name)
+        self.browser.refresh()
 
     def delete_video_by_name(self, name):  # TODO
         delete_button = utils.wait_xpath(self.driver, self.DELETE_VIDEO_XPATH_TEMPLATE.format(name))
@@ -149,18 +162,20 @@ class ChannelPage(selenium.Page):
         return EditVideoDialog(self.driver)
 
     def edit_video(self, name, title=None, description=None, new_tags=None, remove_tags=None):
-        #edit_video_dialog = self.click_edit_video(name)
-        self.edit_first_video_button.click()
+        edit_first = self.edit_video_buttons.first()
+        self.browser.execute_script('arguments[0].click();', edit_first._wrapped)
         if title is not None:
-            self.edit_video_dialog.title_input.set(title)
+            utils.replace_text(self.edit_video_dialog.title_input, title)
         if description is not None:
-            self.edit_video_dialog.title_input.set(description)
+            utils.replace_text(self.edit_video_dialog.description_input, description)
         # if new_tags is not None:
         #     edit_video_dialog.add_tag(new_tags)
         # if remove_tags is not None:
         #     edit_video_dialog.delete_tag(remove_tags)
         #page = edit_video_dialog.submit()
         #self.open()
+        self.edit_video_dialog.submit_button.click()
+        self.browser.refresh()
         #return page
 
     def move_video(self, name, new_channel):
@@ -192,10 +207,6 @@ class ChannelPage(selenium.Page):
     def is_subscribe(self):
         return len(utils.wait_many_xpath(self.driver, self.IS_SUBSCRIBE_XPATH)) > 0
 
-    def reload(self):
-        channel_id = self.browser.current_url.split('/')[-1]
-        self.open(id=channel_id)
-
     def is_not_subscribe(self):
         return len(utils.wait_many_xpath(self.driver, self.NOT_SUBSCRIBE_XPATH)) > 0
 
@@ -223,23 +234,6 @@ class ChannelPage(selenium.Page):
         # utils.wait(self.driver, EC.element_to_be_selected(condition) )
         self.open()  # TODO Сделать по-нормальному
 
-
-
-
-class ChangeChannelDialog(Component):
-    CHANNEL_NAME_XPATH = '//input[@name="st.vv_albumName"]'
-    CHANNEL_SUBMIT_XPATH = '//input[@value="Сохранить"]'
-
-    def set_channel_name(self, name):
-        name_elem = utils.wait_xpath(self.driver, self.CHANNEL_NAME_XPATH)
-        # name_elem.clear()
-        utils.replace_text(name_elem, name)
-
-    def submit(self):
-        utils.wait_xpath(self.driver, self.CHANNEL_SUBMIT_XPATH).click()
-        path = urlsplit(self.driver.current_url).path
-        page = ChannelPage(self.driver, path)
-        return page
 
 
 class AddVideoDialog(Component):
