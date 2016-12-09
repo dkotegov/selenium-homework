@@ -18,8 +18,11 @@ class VideoPage(Page):
     RELATED_VIDEO = '(//a[@class="vp-layer_video js-vp-layer_video"])[1]'
     NEXT_VIDEO = '//div[@class="html5-vpl_next"]'
     VIDEO_PLAY_TIME = '//div[@class="html5-vpl_time"]'
+    VIDEO_TIME_REMAINED = '//div[@class="html5-vpl_time __remained"]'
     VIDEO_WINDOW = '//div[@class="vp_video"]'
     VIDEO_COVER = '//div[@class="vid-card_cnt_w invisible"]'
+    PROGRESS_BAR = '//div[@class="html5-vpl_progress-bar"]'
+    # AD_SKIP = 'div[@class="html5-vpl_adv al-hide"]'
 
     def __init__(self, driver, path):
         super(VideoPage, self).__init__(driver)
@@ -57,6 +60,11 @@ class VideoPage(Page):
     def pause_video(self):
         utils.wait_xpath(self.driver, self.PAUSE_VIDEO, 5).click()
 
+    def rewind_video(self, percent):
+        progress_bar = utils.wait_xpath(self.driver, self.PROGRESS_BAR)
+        action_chains = ActionChains(self.driver)
+        action_chains.move_to_element(progress_bar).move_by_offset(percent, 0).click().perform()
+
     def stop_video(self):
         action_chains = ActionChains(self.driver)
         action_chains.context_click(utils.wait_xpath(self.driver, self.VIDEO_WINDOW)).perform()
@@ -76,7 +84,10 @@ class VideoPage(Page):
         return url.split('?')[0]
 
     def get_video_play_time(self):
-        return utils.wait_xpath(self.driver, self.VIDEO_PLAY_TIME).text
+        return float(utils.wait_xpath(self.driver, self.VIDEO_PLAY_TIME).text.replace(':', '.'))
+
+    def get_video_time_remained(self):
+        return float(utils.wait_xpath(self.driver, self.VIDEO_TIME_REMAINED).text.replace(':', '.'))
 
     def is_cover_visible(self):
         try:
