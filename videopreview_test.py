@@ -58,3 +58,13 @@ class VideoPreviewTest(BaseCase):
         videoplayer_page.rewind_video(50)
         self.assertNotEqual(videoplayer_page.get_video_play_time(), begin_time)
 
+    def test_video_fullscreen(self):
+        videoplayer_page = VideoPage(self.driver, self.driver.current_url)
+        videoplayer_page.pause_video()
+        width_original = videoplayer_page.get_video_window_size()['width']
+        videoplayer_page.open_fullscreen()
+        width_fullscreen = videoplayer_page.get_video_window_size()['width']
+        self.assertGreater(width_fullscreen, width_original)
+        videoplayer_page.close_fullscreen()
+        width_current = videoplayer_page.get_video_window_size()['width']
+        self.assertEqual(width_original, width_current)

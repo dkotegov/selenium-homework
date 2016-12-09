@@ -19,9 +19,11 @@ class VideoPage(Page):
     NEXT_VIDEO = '//div[@class="html5-vpl_next"]'
     VIDEO_PLAY_TIME = '//div[@class="html5-vpl_time"]'
     VIDEO_TIME_REMAINED = '//div[@class="html5-vpl_time __remained"]'
-    VIDEO_WINDOW = '//div[@class="vp_video"]'
+    VIDEO_WINDOW = '//div[@class="html5-vpl_vid"]'
     VIDEO_COVER = '//div[@class="vid-card_cnt_w invisible"]'
     PROGRESS_BAR = '//div[@class="html5-vpl_progress-bar"]'
+    FULLSCREEN_MODE = '//div[@class="html5-vpl_fullscreen"]'
+    VIDEO = '//div[@class="html5-vpl_vid_display"]'
     # AD_SKIP = 'div[@class="html5-vpl_adv al-hide"]'
 
     def __init__(self, driver, path):
@@ -79,6 +81,12 @@ class VideoPage(Page):
         self.driver.switch_to_window(self.driver.window_handles[1])
         self.driver.get(link)
 
+    def open_fullscreen(self):
+        elem = utils.wait_xpath(self.driver, self.FULLSCREEN_MODE).click()
+
+    def close_fullscreen(self):
+        self.driver.execute_script("$(arguments[0]).click();", utils.wait_xpath(self.driver, self.FULLSCREEN_MODE))
+
     def get_url_related_video(self):
         url = utils.wait_xpath(self.driver, self.RELATED_VIDEO).get_attribute("href")
         return url.split('?')[0]
@@ -88,6 +96,9 @@ class VideoPage(Page):
 
     def get_video_time_remained(self):
         return float(utils.wait_xpath(self.driver, self.VIDEO_TIME_REMAINED).text.replace(':', '.'))
+
+    def get_video_window_size(self):
+        return utils.wait_xpath(self.driver, self.VIDEO_WINDOW).size
 
     def is_cover_visible(self):
         try:
