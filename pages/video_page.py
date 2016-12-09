@@ -1,14 +1,21 @@
 # coding=utf-8
-from base import Page, Component
 import utils
+import time
+from base import Page, Component
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 
 
 class VideoPage(Page):
     VIDEO_TITLE_XPATH = '//div[@class="portlet_h portlet_h__nb textWrap"]'
     VIDEO_DESCRIPTION_XPATH = '//div[@class="media-text_cnt textWrap js-vp-layer-description_tx"]'
-    SUBSCRIBE_XPATH ='//a[text()="Подписаться"]'
+    SUBSCRIBE_XPATH = '//a[text()="Подписаться"]'
     UNSUBSCRIBE_XPATH = '//span[@class="vp-layer_subscribe-lbl ic_quit-lg"]'
+    PLAY_VIDEO = '//div[@class="html5-vpl_panel_play"]'
+    PAUSE_VIDEO = '//div[@class="html5-vpl_panel_play __pause"]'
     CLOSE_VIDEO = '//div[@class="ic media-layer_close_ico"]'
+    RELATED_VIDEO = '(//a[@class="vp-layer_video js-vp-layer_video"])[1]'
+    VIDEO_PLAY_TIME = '//div[@class="html5-vpl_time"]'
 
     def __init__(self, driver, path):
         super(VideoPage, self).__init__(driver)
@@ -36,5 +43,25 @@ class VideoPage(Page):
     def is_not_subscribe(self):
         return len(utils.wait_many_xpath(self.driver, self.SUBSCRIBE_XPATH)) >0
 
+
+    def play_video(self):
+        utils.wait_xpath(self.driver, self.PLAY_VIDEO, 5).click()
+
+    def pause_video(self):
+        utils.wait_xpath(self.driver, self.PAUSE_VIDEO, 5).click()
+
     def close_video(self):
         utils.wait_xpath(self.driver, self.CLOSE_VIDEO).click()
+
+    def open_related_video_in_new_tab(self):
+        link = utils.wait_xpath(self.driver, self.RELATED_VIDEO).get_attribute("href")
+        self.driver.execute_script("window.open('about:blank', '_blank');")
+        self.driver.switch_to_window(self.driver.window_handles[1])
+        self.driver.get(link)
+
+    def get_url_related_video(self):
+        url = utils.wait_xpath(self.driver, self.RELATED_VIDEO).get_attribute("href")
+        return url.split('?')[0]
+
+    def get_video_play_time(self):
+        return utils.wait_xpath(self.driver, self.VIDEO_PLAY_TIME).text
