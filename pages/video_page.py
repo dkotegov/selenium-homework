@@ -16,6 +16,7 @@ class VideoPage(Page):
     STOP_VIDEO = '//div[@al-mousedown="stop()"]'
     CLOSE_VIDEO = '//div[@class="ic media-layer_close_ico"]'
     RELATED_VIDEO = '(//a[@class="vp-layer_video js-vp-layer_video"])[1]'
+    NEXT_VIDEO = '//div[@class="html5-vpl_next"]'
     VIDEO_PLAY_TIME = '//div[@class="html5-vpl_time"]'
     VIDEO_WINDOW = '//div[@class="vp_video"]'
     VIDEO_COVER = '//div[@class="vid-card_cnt_w invisible"]'
@@ -48,6 +49,10 @@ class VideoPage(Page):
 
     def play_video(self):
         utils.wait_xpath(self.driver, self.PLAY_VIDEO, 5).click()
+
+    def play_next_video(self):
+        utils.wait_xpath(self.driver, self.NEXT_VIDEO).click()
+        utils.wait_change_url(self.driver)
 
     def pause_video(self):
         utils.wait_xpath(self.driver, self.PAUSE_VIDEO, 5).click()

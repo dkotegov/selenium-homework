@@ -60,3 +60,13 @@ class VideoPreviewTest(BaseCase):
         videoplayer_page.stop_video()
         self.assertTrue(videoplayer_page.is_cover_visible())
 
+    def test_next_video(self):
+        newvideos_page = SuggestedVideos(self.driver)
+        newvideos_page.open()
+        newvideos_page.open_first_video()
+
+        videoplayer_page = VideoPage(self.driver, self.driver.current_url)
+        videoplayer_page.play_next_video()
+        nextvideo_page = VideoPage(self.driver, self.driver.current_url)
+        self.assertNotEqual(videoplayer_page.PATH, nextvideo_page.PATH)
+
