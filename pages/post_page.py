@@ -29,3 +29,6 @@ class PostPage(selenium.Page):
         self.post_button.click()
         time.sleep(3)
 
+    def delete_own_post(self):
+        return 1
+

@@ -20,3 +20,6 @@ class ProfilePage(selenium.Page):
             return True
         except:
             return False
+
+    def delete_repost(self):
+        return 1
