@@ -1,3 +1,11 @@
+В папке selenium нет geckodriver и selenium-server
+Ссылка на geckofriver: https://github.com/mozilla/geckodriver/releases
+Ссылка на selenium-server: http://selenium-release.storage.googleapis.com/index.html?path=3.0/
+
+
+Функции для тестирования всяих штук
+done - сделан
+? - невыполнимо
 1. Проверить возможность удалить запись из своей ленты
 delete_own_post
 2. Проверить появление собственной записи в собственной ленте - done
