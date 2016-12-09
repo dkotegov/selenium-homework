@@ -28,10 +28,15 @@ class AuthPage(Page):
     def form(self):
         return AuthForm(self.driver)
 
+    @property
+    def top_menu(self):
+        return TopMenu(self.driver)
+
 
 class Component(object):
     def __init__(self, driver):
         self.driver = driver
+
 
 class AuthForm(Component):
     LOGIN = '//input[@name="st.email"]'
@@ -48,3 +53,10 @@ class AuthForm(Component):
         self.driver.find_element_by_xpath(self.SUBMIT).click()
 
 
+class TopMenu(Component):
+    USERNAME = '//h1[contains(@class, "mctc_name_tx") and contains(@class, "bl")]'
+
+    def get_username(self):
+        return WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.USERNAME).text
+        )

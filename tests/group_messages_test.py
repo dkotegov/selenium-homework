@@ -16,6 +16,7 @@ class GroupMessagesPage(Page):
     def messages_menu(self):
         return MessagesMenu(self.driver)
 
+
 class MessagesMenu(Component):
     USERS_COUNT = '//span[@class="js-participants-count"]'
 
@@ -23,6 +24,7 @@ class MessagesMenu(Component):
         return WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.USERS_COUNT).text
         )
+
 
 class GroupMessagesTest(unittest.TestCase):
     USERS_COUNT = u'3 участника'
@@ -39,15 +41,18 @@ class GroupMessagesTest(unittest.TestCase):
         self.driver.quit()
 
     def test(self):
-        auth_page = AuthPage(self.driver) # Auth here
+        auth_page = AuthPage(self.driver)  # Auth here
         auth_page.open()
 
         auth_form = auth_page.form
         auth_form.set_login('technopark16')
         auth_form.set_password('testQA1')
         auth_form.submit()
+        user_name = auth_page.top_menu.get_username()
+        print user_name
+        self.assertTrue(type(user_name), str)
 
-        message_page = GroupMessagesPage(self.driver) # Go to messages
+        message_page = GroupMessagesPage(self.driver)  # Go to messages
         message_page.open()
 
         users_count = message_page.messages_menu.get_users_count()
