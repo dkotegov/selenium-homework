@@ -1,13 +1,13 @@
 from base_case import BaseCase
 import time
-from pages.newvideos_page import NewVideos
+from pages.suggestedvideos_page import SuggestedVideos
 from pages.video_page import VideoPage
 
 
 class VideoPreviewTest(BaseCase):
 
     def test_openclose(self):
-        newvideos_page = NewVideos(self.driver)
+        newvideos_page = SuggestedVideos(self.driver)
         newvideos_page.open()
 
         video_link = newvideos_page.open_first_video()
@@ -18,7 +18,7 @@ class VideoPreviewTest(BaseCase):
         self.assertIn(newvideos_page.PATH, self.driver.current_url)
 
     def test_open_in_newtab(self):
-        newvideos_page = NewVideos(self.driver)
+        newvideos_page = SuggestedVideos(self.driver)
         newvideos_page.open()
         newvideos_page.open_first_video()
 
@@ -28,7 +28,7 @@ class VideoPreviewTest(BaseCase):
         self.assertEqual(url_related_video, self.driver.current_url) #bug in ok.ru here
 
     def test_video_plays(self):
-        newvideos_page = NewVideos(self.driver)
+        newvideos_page = SuggestedVideos(self.driver)
         newvideos_page.open()
         newvideos_page.open_first_video()
 
@@ -40,7 +40,7 @@ class VideoPreviewTest(BaseCase):
         self.assertNotEqual(time1, time2)
 
     def test_video_pauses(self):
-        newvideos_page = NewVideos(self.driver)
+        newvideos_page = SuggestedVideos(self.driver)
         newvideos_page.open()
         newvideos_page.open_first_video()
 
@@ -50,4 +50,13 @@ class VideoPreviewTest(BaseCase):
         time.sleep(3)
         time2 = videoplayer_page.get_video_play_time()
         self.assertEqual(time1, time2)
+
+    def test_video_stops(self):
+        newvideos_page = SuggestedVideos(self.driver)
+        newvideos_page.open()
+        newvideos_page.open_first_video()
+
+        videoplayer_page = VideoPage(self.driver, self.driver.current_url)
+        videoplayer_page.stop_video()
+        self.assertTrue(videoplayer_page.is_cover_visible())
 

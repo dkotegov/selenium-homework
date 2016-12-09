@@ -13,9 +13,12 @@ class VideoPage(Page):
     UNSUBSCRIBE_XPATH = '//span[@class="vp-layer_subscribe-lbl ic_quit-lg"]'
     PLAY_VIDEO = '//div[@class="html5-vpl_panel_play"]'
     PAUSE_VIDEO = '//div[@class="html5-vpl_panel_play __pause"]'
+    STOP_VIDEO = '//div[@al-mousedown="stop()"]'
     CLOSE_VIDEO = '//div[@class="ic media-layer_close_ico"]'
     RELATED_VIDEO = '(//a[@class="vp-layer_video js-vp-layer_video"])[1]'
     VIDEO_PLAY_TIME = '//div[@class="html5-vpl_time"]'
+    VIDEO_WINDOW = '//div[@class="vp_video"]'
+    VIDEO_COVER = '//div[@class="vid-card_cnt_w invisible"]'
 
     def __init__(self, driver, path):
         super(VideoPage, self).__init__(driver)
@@ -38,17 +41,21 @@ class VideoPage(Page):
 
     def is_subscribe(self):
         #self.open()
-        return len(utils.wait_many_xpath(self.driver, self.UNSUBSCRIBE_XPATH)) >0
+        return len(utils.wait_many_xpath(self.driver, self.UNSUBSCRIBE_XPATH)) > 0
 
     def is_not_subscribe(self):
-        return len(utils.wait_many_xpath(self.driver, self.SUBSCRIBE_XPATH)) >0
-
+        return len(utils.wait_many_xpath(self.driver, self.SUBSCRIBE_XPATH)) > 0
 
     def play_video(self):
         utils.wait_xpath(self.driver, self.PLAY_VIDEO, 5).click()
 
     def pause_video(self):
         utils.wait_xpath(self.driver, self.PAUSE_VIDEO, 5).click()
+
+    def stop_video(self):
+        action_chains = ActionChains(self.driver)
+        action_chains.context_click(utils.wait_xpath(self.driver, self.VIDEO_WINDOW)).perform()
+        utils.wait_xpath(self.driver, self.STOP_VIDEO, 5).click()
 
     def close_video(self):
         utils.wait_xpath(self.driver, self.CLOSE_VIDEO).click()
@@ -65,3 +72,10 @@ class VideoPage(Page):
 
     def get_video_play_time(self):
         return utils.wait_xpath(self.driver, self.VIDEO_PLAY_TIME).text
+
+    def is_cover_visible(self):
+        try:
+            self.driver.find_element_by_xpath(self.VIDEO_COVER)
+            return False
+        except Exception:
+            return True
