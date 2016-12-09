@@ -3,6 +3,7 @@
 import os
 from seismograph.ext import selenium
 from seismograph.ext.selenium import forms
+from utils.items import InStatusCheckbox
 
 
 class AuthForm(forms.UIForm):
@@ -23,6 +24,27 @@ class AuthForm(forms.UIForm):
         selenium.query(
             selenium.query.INPUT,
             value=u'Войти',
+            type='submit'
+        ),
+        call=lambda btn: btn.click(),
+    )
+
+
+class NoteCreateForm(forms.UIForm):
+
+    note_text_field = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            id='posting_form_text_field'
+        )
+    )
+
+    in_status = selenium.PageElement(InStatusCheckbox)
+
+    submit = selenium.PageElement(
+        selenium.query(
+            selenium.query.INPUT,
+            value=u'Поделиться',
             type='submit'
         ),
         call=lambda btn: btn.click(),

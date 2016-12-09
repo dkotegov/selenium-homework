@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import program
+from program import program
 
-from tests.notes import *
+from tests.notes.test_create import *
 
 
 if __name__ == '__main__':
-    program.program()
+    program()

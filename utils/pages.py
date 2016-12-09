@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from seismograph.ext import selenium
+from utils import items
 
 
 class BasePage(selenium.Page):
@@ -12,3 +13,13 @@ class BasePage(selenium.Page):
             value=u'Выход'
         ),
     )
+
+
+class NotesPage(BasePage):
+
+    __url_path__ = '/statuses'
+
+    note_input = selenium.PageElement(items.NoteInput)
+
+    def open_note_input(self):
+        self.note_input.click()
