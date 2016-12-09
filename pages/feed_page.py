@@ -1,4 +1,7 @@
+# coding=utf-8
 from seismograph.ext import selenium
+from seismograph.ext.selenium.query import Contains
+
 from utils.xpath_query import XPathQueryObject
 
 import time
@@ -16,7 +19,14 @@ class FeedPage(selenium.Page):
 
     buy_link = selenium.PageElement(
         XPathQueryObject(
-            '//a/span[contains(text(), "Buy OKs")]'
+            u'//a/span[contains(text(), "Купить ОКи")]'
+        )
+    )
+
+    modal_close_button = selenium.PageElement(
+        selenium.query(
+            selenium.query.A,
+            _id='nohook_modal_close'
         )
     )
 
@@ -24,6 +34,19 @@ class FeedPage(selenium.Page):
         selenium.query(
             selenium.query.DIV,
             _id='pmntWzrdCtr',
+        )
+    )
+
+    payment_cards_button = selenium.PageElement(
+        XPathQueryObject(
+            '//a[descendant::i[contains(@class, "ic_cards")]]'
+        )
+    )
+
+    payment_cards_add_button = selenium.PageElement(
+        selenium.query(
+            selenium.query.A,
+            _class='add-stub al add-stub__hor'
         )
     )
 
@@ -165,3 +188,19 @@ class FeedPage(selenium.Page):
     def is_five_plus_available_in_paid_functions(self):
         buy_five_plus = self.browser.find_element_by_css_selector(self.paid_functions_five_plus_locator)
         return buy_five_plus is not None
+
+    def hide_toolbar(self):
+        self.browser.execute_script('document.getElementById("topPanel").style.visibility="hidden"')
+
+    def open_payment_modal(self):
+        self.hide_toolbar()
+        self.buy_link.click()
+
+    def close_payment_modal(self):
+        self.modal_close_button.click()
+
+    def is_payment_modal_open(self):
+        return self.payment_iframe.is_displayed()
+
+    def open_payment_cards(self):
+        pass

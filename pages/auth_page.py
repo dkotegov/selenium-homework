@@ -25,7 +25,7 @@ class AuthPage(selenium.Page):
     submit_button = selenium.PageElement(
         selenium.query(
             selenium.query.INPUT,
-            value=u'Войти',
+            #value=u'Войти',
             _class='button-pro form-actions_yes'
         )
     )
@@ -37,6 +37,6 @@ class AuthPage(selenium.Page):
         self.wait_for_auth()
 
     def wait_for_auth(self):
-        profile_page = FeedPage(self.browser)
-        profile_page.avatar.wait()
+        feed_page = FeedPage(self.browser)
+        feed_page.avatar.wait()
 

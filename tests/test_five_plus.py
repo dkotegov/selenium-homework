@@ -2,7 +2,7 @@
 
 import seismograph
 from seismograph.ext import selenium
-from pages.auth_pages import AuthPage
+from pages.auth_page import AuthPage
 from pages.feed_page import FeedPage
 from pages.profile_page import ProfilePage
 from utils.auth_manager import AuthManager
