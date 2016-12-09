@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import seismograph
 from seismograph.ext import selenium
 from pages.auth_pages import AuthPage
 from pages.feed_page import FeedPage
@@ -15,83 +16,81 @@ COST_1 = u'60'
 COST_2 = u'50'
 
 
+class AuthStep(selenium.Case):
+    """Базовый класс со степом входа в ok.ru"""
+    @seismograph.step(1, 'Login to ok.ru')
+    def auth(self, browser):
+        auth_page = AuthPage(browser)
+        auth_page.open()
+        auth_page.auth(AuthManager.get_login(),
+                       AuthManager.get_password())
+
+
 @suite.register
-def test_five_plus_available_from_toolbar(case, browser):
+class TestFivePlusAvailableFromToolbar(AuthStep, selenium.Case):
     """Доступность покупки функции 5+ из меню платных функций"""
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth(AuthManager.get_login(),
-                   AuthManager.get_password())
-    feed_page = FeedPage(browser)
-    feed_page.open()
-    feed_page.open_toolbar_dropdown()
-    feed_page.open_payments_from_dropdown()
-    feed_page.switch_to_last_frame()
-    feed_page.click_paid_functions()
-    case.assertion.true(feed_page.is_five_plus_available_in_paid_functions())
+    @seismograph.step(2, 'Check is 5+ available')
+    def check_is_available(self, browser):
+        feed_page = FeedPage(browser)
+        feed_page.open()
+        feed_page.open_toolbar_dropdown()
+        feed_page.open_payments_from_dropdown()
+        feed_page.switch_to_last_frame()
+        feed_page.click_paid_functions()
+        feed_page.click_paid_functions()
+        assert feed_page.is_five_plus_available_in_paid_functions()
 
 
 @suite.register
-def test_five_plus_change_cost(case, browser):
+class TestFivePlusChangeCost(AuthStep, selenium.Case):
     """Меняется сумма при нажатии на нужный радио баттон в модальном окне покупки"""
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth(AuthManager.get_login(),
-                   AuthManager.get_password())
-    feed_page = FeedPage(browser)
-    feed_page.open()
-    feed_page.open_payment_dropdown()
-    feed_page.open_five_plus_payment_from_dropdown()
-    feed_page.switch_to_last_frame()
-    cost = feed_page.get_five_plus_cost()
-    case.assertion.equal(cost, DEFAULT_COST)
-    feed_page.click_five_plus_checkbox_by_index(1)
-    cost = feed_page.get_five_plus_cost()
-    case.assertion.equal(cost, COST_1)
-    feed_page.click_five_plus_checkbox_by_index(2)
-    cost = feed_page.get_five_plus_cost()
-    case.assertion.equal(cost, COST_2)
+    @seismograph.step(2, 'Check is 5+ iframe change cost')
+    def check_is_change_cost(self, browser):
+        feed_page = FeedPage(browser)
+        feed_page.open()
+        feed_page.open_payment_dropdown()
+        feed_page.open_five_plus_payment_from_dropdown()
+        feed_page.switch_to_last_frame()
+        cost = feed_page.get_five_plus_cost()
+        assert cost == DEFAULT_COST
+        feed_page.click_five_plus_checkbox_by_index(1)
+        cost = feed_page.get_five_plus_cost()
+        assert cost == COST_1
+        feed_page.click_five_plus_checkbox_by_index(2)
+        cost = feed_page.get_five_plus_cost()
+        assert cost == COST_2
 
 
 @suite.register
-def test_five_plus_payment_available(case, browser):
+class TestFivePlusPaymentAvailable(AuthStep, selenium.Case):
     """Доступность покупки функции 5+ из дропдауна платных функций"""
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth(AuthManager.get_login(),
-                   AuthManager.get_password())
-    feed_page = FeedPage(browser)
-    feed_page.open()
-    feed_page.open_payment_dropdown()
-    feed_page.open_five_plus_payment_from_dropdown()
-    case.assertion.true(feed_page.is_payment_iframe_open())
+    @seismograph.step(2, 'Check is 5+ payment available from dropdown')
+    def check_is_available(self, browser):
+        feed_page = FeedPage(browser)
+        feed_page.open()
+        feed_page.open_payment_dropdown()
+        feed_page.open_five_plus_payment_from_dropdown()
+        assert feed_page.is_payment_iframe_open()
 
 
 @suite.register
-def test_add_five_plus_for_photo(case, browser):
+class TestAddFivePlusForPhoto(AuthStep, selenium.Case):
     """Проставляется оценка 5+ при нажатии на 5+ под фотографией"""
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth(AuthManager.get_login(),
-                   AuthManager.get_password())
-    profile_page = ProfilePage(browser)
-    profile_page.open(id=TEST_PROFILE_ID)
-    profile_page.open_avatar()
-    case.assertion.true(profile_page.is_five_plus_visible())
+    @seismograph.step(2, 'Check is 5+ available under the photo')
+    def check_is_available(self, browser):
+        profile_page = ProfilePage(browser)
+        profile_page.open(id=TEST_PROFILE_ID)
+        profile_page.open_avatar()
+        assert profile_page.is_five_plus_visible()
 
 
 @suite.register
-def test_open_five_plus_payment_from_photo(case, browser):
+class TestOpenFivePlusPaymentFromPhoto(AuthStep, selenium.Case):
     """Открытие модального окна с покупкой при нажатии на 5+ под фотографией"""
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth(AuthManager.get_login(),
-                   AuthManager.get_password())
-    profile_page = ProfilePage(browser)
-    profile_page.open(id=TEST_PROFILE_ID)
-    profile_page.open_avatar()
-    profile_page.open_five_plus_payment_from_photo()
-    case.assertion.true(profile_page.is_five_plus_payment_open())
-
-
-
+    @seismograph.step(2, 'Check is 5+ iframe available from the photo')
+    def check_is_available(self, browser):
+        profile_page = ProfilePage(browser)
+        profile_page.open(id=TEST_PROFILE_ID)
+        profile_page.open_avatar()
+        profile_page.open_five_plus_payment_from_photo()
+        assert profile_page.is_five_plus_payment_open()
