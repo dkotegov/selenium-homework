@@ -1,16 +1,16 @@
-В папке selenium нет geckodriver и selenium-server
-Ссылка на geckofriver: https://github.com/mozilla/geckodriver/releases
+В папке selenium нет geckodriver и selenium-server 
+Ссылка на geckofriver: https://github.com/mozilla/geckodriver/releases 
 Ссылка на selenium-server: http://selenium-release.storage.googleapis.com/index.html?path=3.0/
 
 
-Функции для тестирования всяих штук<br>
-done - сделан<br>
-? - невыполнимо<br>
-1. Проверить возможность удалить запись из своей ленты<br>
-delete_own_post<br>
-2. Проверить появление собственной записи в собственной ленте - done<br>
-create_post<br>
-3. Проверить возможность появления собственной публикации в чужой ленте - ?<br>
+Функции для тестирования всяих штук
+done - сделан
+? - невыполнимо
+*1. Проверить возможность удалить запись из своей ленты
+*delete_own_post
+*2. Проверить появление собственной записи в собственной ленте - done
+create_post
+3. Проверить возможность появления собственной публикации в чужой ленте - ?
 4. Проверить возможность появления публикации сообщества в своей ленте - ?
 5. Проверить возможность перейти по ссылке на запись из ленты 
 getPost
