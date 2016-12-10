@@ -14,5 +14,5 @@ Run -> Edit Configurations -> Environment variables:
 ```
 
 
-http://st-jira.tech-mail.ru/browse/TECH-653
+http://st-jira.tech-mail.ru/browse/TECH-652
 
