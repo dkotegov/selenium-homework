@@ -4,6 +4,7 @@ import os
 import unittest
 import urlparse
 
+import time
 from selenium.webdriver import DesiredCapabilities, Remote
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -54,9 +55,9 @@ class AuthForm(Component):
 
 
 class TopMenu(Component):
-    USERNAME = '//h1[contains(@class, "mctc_name_tx") and contains(@class, "bl")]'
+    AVATAR = '//div[@class="card_wrp"]'
 
-    def get_username(self):
+    def get_avatar(self):
         return WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.USERNAME).text
+            self.driver.find_element_by_xpath(self.AVATAR)
         )
