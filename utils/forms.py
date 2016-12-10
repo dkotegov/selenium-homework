@@ -47,5 +47,5 @@ class NoteCreateForm(forms.UIForm):
             value=u'Поделиться',
             type='submit'
         ),
-        call=lambda btn: btn.click(),
+        call=lambda btn: btn.click()
     )
