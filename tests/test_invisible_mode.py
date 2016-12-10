@@ -141,28 +141,6 @@ class BuyInvisibleMode(WebOkSuite, selenium.Case):
 
 
 @suite.register
-class CheckInvisibleModeFromMainPage(WebOkSuite, selenium.Case):
-    @seismograph.step(2, 'Check invisible from main page')
-    def check_text(self, browser):
-        user_card = LeftColumnTopCardUser(browser)
-        WebDriverWait(browser, 3).until(
-            lambda br: LeftColumnTopCardUser(br).invisible_toggler.first()
-        )
-        if user_card.invisible_toggler.first().is_selected():
-            browser.execute_script(click_element(user_card.check_invisible_mode))
-            WebDriverWait(browser, 3).until(
-                lambda br: LeftColumnTopCardUser(br).invisible_toggler.first()
-            )
-            assert not user_card.invisible_toggler.first().is_selected()
-        else:
-            browser.execute_script(click_element(user_card.check_invisible_mode))
-            WebDriverWait(browser, 3).until(
-                lambda br: LeftColumnTopCardUser(br).invisible_toggler.first()
-            )
-            assert user_card.invisible_toggler.first().is_selected()
-
-
-@suite.register
 class CheckInvisibleModeFromNavbar(WebOkSuite, selenium.Case):
     @seismograph.step(2, 'Check invisible mode from navbar')
     def check_text(self, browser):
@@ -173,9 +151,30 @@ class CheckInvisibleModeFromNavbar(WebOkSuite, selenium.Case):
         if user_card.invisible_toggler.first().is_selected():
             browser.execute_script(click_element(user_card.check_invisible_mode))
         browser.execute_script(click_element(UpperNavbar.click_user_settings_icon))
+        sleep(2)
         browser.execute_script(click_element(UpperNavbar.check_invisible_mode))
-        sleep(3)
+        sleep(2)
         assert user_card.invisible_toggler.first().is_selected()
+
+
+@suite.register
+class CheckInvisibleModeFromMainPage(WebOkSuite, selenium.Case):
+    @seismograph.step(3, 'Check invisible from main page')
+    def check_text(self, browser):
+        user_card = LeftColumnTopCardUser(browser)
+        WebDriverWait(browser, 3).until(
+            lambda br: LeftColumnTopCardUser(br).invisible_toggler.first()
+        )
+        if user_card.invisible_toggler.first().is_selected():
+            browser.execute_script(click_element(user_card.check_invisible_mode))
+            sleep(2)
+            browser.refresh()
+            assert not user_card.invisible_toggler.first().is_selected()
+        else:
+            browser.execute_script(click_element(user_card.check_invisible_mode))
+            sleep(2)
+            browser.refresh()
+            assert user_card.invisible_toggler.first().is_selected()
 
 
 @suite.register
