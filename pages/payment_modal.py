@@ -1,6 +1,7 @@
 # coding=utf-8
 import time
 from seismograph.ext import selenium
+from seismograph.ext.selenium.exceptions import PollingTimeoutExceeded
 from seismograph.ext.selenium.query import Contains
 
 from utils.xpath_query import XPathQueryObject
@@ -40,7 +41,18 @@ class PaymentModal(selenium.Page):
     def switch_to_iframe(self, sel='*'):
         self.browser.switch_to.default_content()
         frames = self.browser.find_elements_by_css_selector('iframe')
-        self.iframe.wait(10)
+
+        try:
+            self.iframe.wait(10)
+        except PollingTimeoutExceeded:
+            found = False
+            for frame in frames:
+                if frame.find_element_by_xpath('..').get_attribute('id') == 'pmntWzrdCtr':
+                    found = True
+                    break
+
+            if not found:
+                raise
 
         max_els = 0
         max_els_frame = 1
@@ -60,7 +72,7 @@ class PaymentModal(selenium.Page):
 
     def open_tab(self, index):
         def get_tab_links():
-            self.switch_to_iframe()
+            self.switch_to_iframe('a.nav-side_i')
             return self.browser.find_elements_by_css_selector('a.nav-side_i')
 
         tab_links = []
