@@ -1,5 +1,4 @@
 # coding=utf-8
-import time
 from seismograph.ext import selenium
 from seismograph.ext.selenium.exceptions import PollingTimeoutExceeded
 from seismograph.ext.selenium.query import Contains
