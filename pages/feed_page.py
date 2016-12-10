@@ -86,11 +86,11 @@ class FeedPage(selenium.Page):
 
     smiles_checkbox_3_locator = 'label[for="val_-1"]'
 
-    paid_functions_locator = 'a[href*="st.mode=47"]'
+    paid_functions_locator = '.nav-side .nav-side_i:nth-child(2)'
 
-    paid_functions_smiles_locator = 'div.va_target a[href*="st.srv=19"]'
+    paid_functions_smiles_locator = '.pf_order_lst .pf_order_i:nth-child(3)'
 
-    paid_functions_five_plus_locator = 'div.va_target a[href*="st.srv=1&"]'
+    paid_functions_five_plus_locator = '.pf_order_lst .pf_order_i:nth-child(1)'
 
     def is_payment_iframe_open(self):
         self.payment_iframe.wait(timeout=3)

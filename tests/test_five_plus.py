@@ -37,7 +37,6 @@ class TestFivePlusAvailableFromToolbar(AuthStep, selenium.Case):
         feed_page.open_payments_from_dropdown()
         feed_page.switch_to_last_frame()
         feed_page.click_paid_functions()
-        feed_page.click_paid_functions()
         assert feed_page.is_five_plus_available_in_paid_functions()
 
 
