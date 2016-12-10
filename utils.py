@@ -4,7 +4,10 @@ from seismograph.ext import selenium
 
 
 DEFAULT_TIMEOUT = 30
+MICRO_TIMEOUT = 0.1
+SHORT_TIMEOUT = 5
 DEFAULT_SLEEP_TIME = 0.1
+
 
 def wait(driver, condition, timeout = DEFAULT_TIMEOUT, sleeptime = DEFAULT_SLEEP_TIME):
     return WebDriverWait(driver, timeout, sleeptime).until(condition)

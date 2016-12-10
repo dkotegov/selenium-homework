@@ -47,14 +47,13 @@ class EditVideoDialog(selenium.PageItem):
         utils.replace_text(title_input, title)
 
     def add_tag(self, tag):
-        tags_input = utils.wait_class(self.browser, self.TAG_INPUT_CLASS)
-        tags_input.send_keys(tag)
+        self.tags_input.set(tag)
 
     def delete_tag(self, tag):
         utils.wait_class(self.browser, self.TAG_INPUT_CLASS)
         delete_elem = utils.wait_xpath(self.browser, self.TAG_DELETE_XPATH.format(tag))
-        delete_elem.click()
-        # self.browser.execute_script('arguments[0].click();', delete_elem)
+        #delete_elem.click()
+        self.browser.execute_script('arguments[0].click();', delete_elem._wrapped)
 
     @property
     def tag_list(self):
@@ -107,6 +106,30 @@ class AddVideoDialog(selenium.PageItem):
         #     page = ChannelPage(self.browser, path)
         #     return page
 
+class Counters(selenium.PageItem):
+
+    SUBSCRPTIONS_COUNT_XPATH = '//div[@class="jcol-l"]/descendant::i[contains(@class,"mml_ic_friends")]/..'
+    VIDEOS_COUNT_XPATH  = '//div[@class="jcol-l"]/descendant::i[contains(@class,"vl_ic_channel")]/..'
+
+    def get_counter_value(self, counter_string):
+        return int(counter_string.split(' ')[0] )
+
+    @property
+    def subscriptions_count(self):
+        count_elem = self.browser.find_elements_by_xpath( self.SUBSCRPTIONS_COUNT_XPATH)
+        if count_elem:
+            counter_string = count_elem[0].text
+            return self.get_counter_value(counter_string)
+        else:
+            return 0
+
+
+    @property
+    def videos_count(self):
+        counter_string = utils.wait_xpath(self.browser, self.VIDEOS_COUNT_XPATH).text
+        return self.get_counter_value(counter_string)
+
+
 
 class ChannelPage(selenium.Page):
     __url_path__ = "/video/c{id}"
@@ -139,11 +162,13 @@ class ChannelPage(selenium.Page):
     subscribe_button = utils.query('A', _id=selenium.query.startswith("vv_btn_album_subscribe"))
     unsubscribe_button = utils.query('A', _id=selenium.query.startswith("vv_btn_album_unsubscribe"))
     add_video_button = utils.query('SPAN', _class = selenium.query.contains('vl_ic_add-video') )
+    main_add_video_button = utils.query('DIV', _class ='vl_add-video')
 
     delete_dialog = selenium.PageElement(DeleteVideoDialog)
     edit_channel_dialog = selenium.PageElement(EditChannelDialog)
     edit_video_dialog = selenium.PageElement(EditVideoDialog)
     add_video_dialog = selenium.PageElement(AddVideoDialog)
+    counters = selenium.PageElement(Counters)
 
     # def __init__(self, browser, path):
     #     super(ChannelPage, self).__init__(browser)
@@ -165,17 +190,30 @@ class ChannelPage(selenium.Page):
     #     utils.wait_class(self.browser, self.EDIT_BUTTON_CLASS).click()
     #     return ChangeChannelDialog(self.browser)
 
+    @property
+    def videos_count(self):
+        return self.counters.videos_count
+
+    @property
+    def subscriptions_count(self):
+        return self.counters.subscriptions_count
+
     def click_add_video(self):
         utils.wait_class(self.browser, self.ADD_VIDEO_CLASS).click()
         return AddVideoDialog(self.browser)
 
-    def add_video_by_url(self, url):
+    def add_video(self, url):
         # add_video_dialog = self.click_add_video()
         # add_video_dialog.choose_add_from_internet()
         # add_video_dialog.set_url(url)
         # page = add_video_dialog.submit()
         # page.open()
         # return page
+        self.add_video_button.click()
+        self.add_video_dialog.add_video_by_url(url)
+        self.browser.refresh()
+
+    def add_video_main(self, url):
         self.add_video_button.click()
         self.add_video_dialog.add_video_by_url(url)
         self.browser.refresh()
@@ -199,8 +237,7 @@ class ChannelPage(selenium.Page):
 
     def click_edit_video(self, name):
         edit_button = utils.wait_xpath(self.browser, self.EDIT_VIDEO_XPATH_TEMPLATE.format(name))
-        self.browser.execute_script('arguments[0].click();', edit_button)
-        return EditVideoDialog(self.browser)
+        self.browser.execute_script('arguments[0].click();', edit_button._wrapped)
 
     def edit_video(self, name, title=None, description=None, new_tags=None, remove_tags=None):
         self.click_edit_video(name)
@@ -208,10 +245,10 @@ class ChannelPage(selenium.Page):
             utils.replace_text(self.edit_video_dialog.title_input, title)
         if description is not None:
             utils.replace_text(self.edit_video_dialog.description_input, description)
-        # if new_tags is not None:
-        #     edit_video_dialog.add_tag(new_tags)
-        # if remove_tags is not None:
-        #     edit_video_dialog.delete_tag(remove_tags)
+        if new_tags is not None:
+            self.edit_video_dialog.add_tag(new_tags)
+        if remove_tags is not None:
+            self.edit_video_dialog.delete_tag(remove_tags)
         # page = edit_video_dialog.submit()
         # self.open()
         self.edit_video_dialog.submit_button.click()
@@ -226,9 +263,9 @@ class ChannelPage(selenium.Page):
         self.browser.refresh()
 
     def get_video_tags(self, video_name):
-        edit_video_dialog = self.click_edit_video(video_name)
-        result = [tag.text for tag in edit_video_dialog.tag_list]
-        edit_video_dialog.submit()
+        self.click_edit_video(video_name)
+        result = [tag.text for tag in self.edit_video_dialog.tag_list]
+        self.edit_video_dialog.submit_button.click()
         return result
 
     def wait_change(self, old_name):
@@ -238,7 +275,8 @@ class ChannelPage(selenium.Page):
         return self.browser.find_elements_by_xpath(self.VIDEOS_LINKS_XPATH)
 
     def subscribe(self):
-        self.subscribe_button.click()
+        self.browser.execute_script('arguments[0].click();', self.subscribe_button._wrapped)
+        #self.subscribe_button.click()
         # utils.wait_xpath(self.browser, self.SUBSCRIBE_XPATH).click()
 
     def unsubscribe(self):
@@ -246,10 +284,13 @@ class ChannelPage(selenium.Page):
         # utils.wait_xpath(self.browser, self.UNSUBSCRIBE_XPATH).click()
 
     def is_subscribe(self):
-        return len(utils.wait_many_xpath(self.browser, self.IS_SUBSCRIBE_XPATH)) > 0
+        self.browser.refresh()
+        return len(self.browser.find_elements_by_xpath(self.IS_SUBSCRIBE_XPATH)) > 0
+
+        # return len(utils.wait_many_xpath(self.browser, self.IS_SUBSCRIBE_XPATH, 3)) > 0
 
     def is_not_subscribe(self):
-        return len(utils.wait_many_xpath(self.browser, self.NOT_SUBSCRIBE_XPATH)) > 0
+        return len(utils.wait_many_xpath(self.browser, self.NOT_SUBSCRIBE_XPATH, 3)) > 0
 
     def get_videos_titles(self):
         return [v.get_attribute('title') for v in self.get_videos_elements()]
@@ -269,10 +310,5 @@ class ChannelPage(selenium.Page):
 
     def open_video_by_link(self, link):
         return VideoPage(link)
-
-    def wait_clickable(self):
-        # condition = (By.CLASS_NAME, self.EDIT_BUTTON_CLASS)
-        # utils.wait(self.browser, EC.element_to_be_selected(condition) )
-        self.open()  # TODO Сделать по-нормальному
 
 
