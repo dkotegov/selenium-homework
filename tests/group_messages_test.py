@@ -41,14 +41,7 @@ class GroupMessagesTest(unittest.TestCase):
         self.driver.quit()
 
     def test(self):
-        auth_page = AuthPage(self.driver)  # Auth here
-        auth_page.open()
 
-        auth_form = auth_page.form
-        auth_form.set_login('technopark16')
-        auth_form.set_password('testQA1')
-        auth_form.submit()
-        user_avatar = auth_page.top_menu.get_avatar() # wait for loading
 
         message_page = GroupMessagesPage(self.driver)  # Go to messages
         message_page.open()
