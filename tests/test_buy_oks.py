@@ -77,18 +77,6 @@ class TestMyCards(AuthStep, OpenPageStep, selenium.Case):
 
 
 @suite.register
-class TestBankCard(AuthStep, OpenPageStep, selenium.Case):
-    @seismograph.step(3, 'Open tab "Bank cards"')
-    def check_open(self, browser):
-        feed_page = FeedPage(browser)
-        payment_modal = feed_page.payment_modal()
-        payment_modal.open()
-        payment_modal.open_tab_transactions()
-        payment_modal.open_tab_bank_card()
-        self.assertion.web_element_exist(browser, payment_modal.get_tab_bank_card_input())
-
-
-@suite.register
 class TestPhone(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Open tab "Phone"')
     def check_open(self, browser):

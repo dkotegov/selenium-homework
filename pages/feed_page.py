@@ -119,7 +119,7 @@ class FeedPage(selenium.Page):
         self.payment_iframe.wait()
 
     def switch_to_last_frame(self):
-        time.sleep(3)  # time for iframe to load data
+        time.sleep(4)  # time for iframe to load data
         frames = self.browser.find_elements_by_css_selector('iframe')
         self.browser.switch_to.frame(len(frames) - 1)
 
