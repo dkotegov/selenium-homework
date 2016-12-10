@@ -33,8 +33,10 @@ class ProfilePage(selenium.Page):
     )
 
     def open_avatar(self):
-        self.avatar.click()
-        self.full_width_avatar.wait(timeout=3)
+        ava = self.avatar.a(_class='card_wrp')
+        ava.wait()
+        ava.click()
+        self.full_width_avatar.wait(timeout=2)
 
     def is_five_plus_visible(self):
         return self.five_plus_button.exist
