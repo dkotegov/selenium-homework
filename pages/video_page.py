@@ -20,18 +20,6 @@ class VideoPage(selenium.Page):
     subscribe_button = utils.query("A", text=u'Подписаться')
     unsubscribe_button = utils.query('SPAN', _class='vp-layer_subscribe-lbl ic_quit-lg')
     subscriptions_count_elem = utils.query('DIV', _class= 'vp-layer-channel_ac_count')
-    # def __init__(self, driver, _id):
-    #     super(VideoPage, self).__init__(driver)
-    #     self.__url_path__ = '/video/{}'.format(_id)
-
-    # @property
-    # def description(self):
-    #     return utils.wait_xpath(self.driver, self.VIDEO_DESCRIPTION_XPATH).text
-    #
-
-    # @property
-    # def title(self):
-    #     return utils.wait_xpath(self.driver, self.VIDEO_TITLE_XPATH).text
 
     @property
     def subscriptions_count(self):
@@ -41,17 +29,9 @@ class VideoPage(selenium.Page):
         utils.wait_xpath(self.browser, self.SUBSCRIBE_XPATH).click()
 
     def unsubscribe(self):
-        #unsubscribe_button = utils.wait_xpath(self.driver, self.UNSUBSCRIBE_XPATH)
         self.browser.execute_script('arguments[0].click();', self.unsubscribe_button._wrapped)
 
     def is_subscribe(self):
-        #return len(utils.wait_many_xpath(self.browser, self.UNSUBSCRIBE_XPATH, 3)) > 0
         self.browser.refresh()
         return len(self.browser.find_elements_by_xpath(self.UNSUBSCRIBE_XPATH)) > 0
-
-    def is_not_subscribe(self):
-        return len(utils.wait_many_xpath(self.browser, self.SUBSCRIBE_XPATH, 3)) > 0
-
-    # def close_video(self):
-    #     utils.wait_xpath(self.browser, self.CLOSE_VIDEO).click()
 

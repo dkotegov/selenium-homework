@@ -9,7 +9,7 @@ from pages.video_page import VideoPage
 suite = seismograph.Suite(__name__, require=['selenium'])
 
 
-# @suite.register
+@suite.register
 class CreateChannelCase(BaseCase):
     TEST_CHANNEL1 = 'TEST_CHANNEL1'
     TEST_CHANNEL2 = 'TEST_CHANNEL2'
@@ -33,7 +33,7 @@ class CreateChannelCase(BaseCase):
         self.assertion.is_not_in(self.TEST_CHANNEL2, self.browser.page_source)
 
 
-#suite.register
+@suite.register
 class AddVideoCase(BaseCase):
     FIRST_CHANNEL_ID = '1533672'
     SECOND_CHANNEL_ID = '1566696'
@@ -65,79 +65,79 @@ class AddVideoCase(BaseCase):
 
 # @suite.register
 class ChangeChannelCase(BaseCase):
-    VIDEO_URL_STUB = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-    VIDEO_NAME_STUB = 'Rick Astley - Never Gonna Give You Up'
-    NEW_VIDEO_NAME_STUB = 'NEW_VIDEO_NAME_STUB'
-    NEW_DESCRIPTION_STUB = 'NEW_DESCRIPTION_STUB'
-    NEW_TAGS_STUB = 'tag tag2'
 
+    def test_move_video(self):
+        DESTINATION_ID = '1534952'
+        SOURCE_ID = '1535208'
+        DESTINATION_NAME ='DESTINATION_CHANNEL'
+        SOURCE_NAME = 'SOURCE_CHANNEL'
+        VIDEO_NAME = 'VIDEO_TO_MOVE'
 
-    # def test_move_video(self):
-    #     DESTINATION_ID = '1534952'
-    #     SOURCE_ID = '1535208'
-    #     DESTINATION_NAME ='DESTINATION_CHANNEL'
-    #     SOURCE_NAME = 'SOURCE_CHANNEL'
-    #     VIDEO_NAME = 'VIDEO_TO_MOVE'
-    #     source = ChannelPage(self.browser)
-    #     destination = ChannelPage(self.browser)
-    #     source.open(id=SOURCE_ID)
-    #     source.move_video(VIDEO_NAME, DESTINATION_NAME)
-    #     self.assertion.is_not_in(VIDEO_NAME, source.get_videos_titles())
-    #     destination.open(id=DESTINATION_ID)
-    #     self.assertion.is_in(VIDEO_NAME, destination.get_videos_titles())
-    #     destination.move_video(VIDEO_NAME, SOURCE_NAME)
+        source = ChannelPage(self.browser)
+        destination = ChannelPage(self.browser)
+        source.open(id=SOURCE_ID)
+        source.move_video(VIDEO_NAME, DESTINATION_NAME)
+        self.assertion.is_not_in(VIDEO_NAME, source.get_videos_titles())
+        destination.open(id=DESTINATION_ID)
+        self.assertion.is_in(VIDEO_NAME, destination.get_videos_titles())
+        destination.move_video(VIDEO_NAME, SOURCE_NAME)
 
-    # def test_rename_channel(self):
-    #     CHANNEL_ID = '1534696'
-    #     CHANNEL_NAME = 'TEST_RENAME'
-    #     NEW_CHANNEL_NAME = 'NEWNAME'
-    #     channel_page = ChannelPage(self.browser)
-    #     channel_page.open(id=CHANNEL_ID)
-    #     channel_page.edit_channel(NEW_CHANNEL_NAME)
-    #     self.assertion.equal(channel_page.channel_name.text, NEW_CHANNEL_NAME)
-    #     channel_page.edit_channel(CHANNEL_NAME)
+    def test_rename_channel(self):
+        CHANNEL_ID = '1534696'
+        CHANNEL_NAME = 'TEST_RENAME'
+        NEW_CHANNEL_NAME = 'NEWNAME'
+
+        channel_page = ChannelPage(self.browser)
+        channel_page.open(id=CHANNEL_ID)
+        channel_page.edit_channel(NEW_CHANNEL_NAME)
+        self.assertion.equal(channel_page.channel_name.text, NEW_CHANNEL_NAME)
+        channel_page.edit_channel(CHANNEL_NAME)
 
 
 
-    # def test_add_tags(self):#TODO исправить
-    #     CHANNEL_ID = '1534184'
-    #     NEW_TAG = 'TAGTAGTAG'
-    #     VIDEO_NAME = 'VIDEO_TO_TEST_TAGS'
-    #     channel_page = ChannelPage(self.browser)
-    #     channel_page.open(id = CHANNEL_ID)
-    #     channel_page.edit_video(VIDEO_NAME, new_tags=NEW_TAG)
-    #     self.assertion.is_in(NEW_TAG, channel_page.get_video_tags(VIDEO_NAME))
-    #     channel_page.edit_video(VIDEO_NAME, remove_tags=NEW_TAG)
-    #     self.assertion.is_not_in(NEW_TAG, channel_page.get_video_tags(VIDEO_NAME))
+    def test_add_tags(self):#TODO исправить
+        CHANNEL_ID = '1534184'
+        NEW_TAG = 'TAGTAGTAG'
+        VIDEO_NAME = 'VIDEO_TO_TEST_TAGS'
 
-    # def test_change_video_name(self):
-    #     CHANNEL_ID = '1533928'
-    #     VIDEO_ID = '202886615528'
-    #     NEW_VIDEO_NAME = self.NEW_VIDEO_NAME_STUB
-    #     channel_page = ChannelPage(self.browser )
-    #     channel_page.open(id=CHANNEL_ID)
-    #     channel_page.edit_video(self.VIDEO_NAME_STUB, title=self.NEW_VIDEO_NAME_STUB)
-    #     video_page = VideoPage(self.browser)
-    #     video_page.open(id=VIDEO_ID)
-    #     #utils.wait_change_url(self.browser)
-    #     video_title = video_page.title.text
-    #     self.assertion.equal(self.NEW_VIDEO_NAME_STUB, video_title)
-    #     channel_page.open(id=CHANNEL_ID)
-    #     channel_page.edit_video(self.NEW_VIDEO_NAME_STUB, title=self.VIDEO_NAME_STUB)
+        channel_page = ChannelPage(self.browser)
+        channel_page.open(id = CHANNEL_ID)
+        channel_page.edit_video(VIDEO_NAME, new_tags=NEW_TAG)
+        self.assertion.is_in(NEW_TAG, channel_page.get_video_tags(VIDEO_NAME))
+        channel_page.edit_video(VIDEO_NAME, remove_tags=NEW_TAG)
+        self.assertion.is_not_in(NEW_TAG, channel_page.get_video_tags(VIDEO_NAME))
 
-    # def test_change_video_description(self):
-    #     OLD_DESCRIPTION = 'OLD_DESCRIPTION'
-    #     NEW_DESCRIPTION = 'NEW_DESCRIPTION'
-    #     CHANNEL_ID = '1534440'
-    #     VIDEO_ID = '205047337448'
-    #     channel_page = ChannelPage(self.browser)
-    #     channel_page.open(id=CHANNEL_ID)
-    #     channel_page.edit_video(self.VIDEO_NAME_STUB, description=NEW_DESCRIPTION)
-    #     video_page = VideoPage(self.browser)
-    #     video_page.open(id=VIDEO_ID)
-    #     self.assertion.equal(NEW_DESCRIPTION, video_page.description.text)  # TODO
-    #     channel_page.open(id=CHANNEL_ID)
-    #     channel_page.edit_video(self.VIDEO_NAME_STUB, description=OLD_DESCRIPTION)
+    def test_change_video_name(self):
+        CHANNEL_ID = '1533928'
+        VIDEO_ID = '202886615528'
+        NEW_VIDEO_NAME = 'NEW_VIDEO_NAME'
+        OLD_VIDEO_NAME = 'OLD_VIDEO_NAME'
+
+        channel_page = ChannelPage(self.browser )
+        channel_page.open(id=CHANNEL_ID)
+        channel_page.edit_video(OLD_VIDEO_NAME, title=NEW_VIDEO_NAME)
+        video_page = VideoPage(self.browser)
+        video_page.open(id=VIDEO_ID)
+        video_title = video_page.title.text
+        self.assertion.equal(NEW_VIDEO_NAME, video_title)
+        channel_page.open(id=CHANNEL_ID)
+        channel_page.edit_video(NEW_VIDEO_NAME, title=OLD_VIDEO_NAME)
+
+    def test_change_video_description(self):
+        OLD_DESCRIPTION = 'OLD_DESCRIPTION'
+        NEW_DESCRIPTION = 'NEW_DESCRIPTION'
+        CHANNEL_ID = '1534440'
+        VIDEO_ID = '205047337448'
+        VIDEO_NAME = 'Rick Astley - Never Gonna Give You Up'
+
+        channel_page = ChannelPage(self.browser)
+        channel_page.open(id=CHANNEL_ID)
+        channel_page.edit_video(VIDEO_NAME, description=NEW_DESCRIPTION)
+        video_page = VideoPage(self.browser)
+        video_page.open(id=VIDEO_ID)
+        self.assertion.equal(NEW_DESCRIPTION, video_page.description.text)
+        channel_page.open(id=CHANNEL_ID)
+        channel_page.edit_video(VIDEO_NAME, description=OLD_DESCRIPTION)
 
 
 @suite.register
