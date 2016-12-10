@@ -27,19 +27,6 @@ class PaymentModal(selenium.Page):
         )
     )
 
-    payment_cards_button = selenium.PageElement(
-        XPathQueryObject(
-            '//a[descendant::i[contains(@class, "ic_cards")]]'
-        )
-    )
-
-    payment_cards_add_button = selenium.PageElement(
-        selenium.query(
-            selenium.query.A,
-            _class='add-stub al add-stub__hor'
-        )
-    )
-
     def open(self):
         self.browser.execute_script('document.getElementById("topPanel").style.visibility="hidden"')
         self.buy_link.click()
@@ -51,15 +38,19 @@ class PaymentModal(selenium.Page):
         return self.iframe.is_displayed()
 
     def switch_to_iframe(self, sel='*'):
+        self.browser.switch_to.default_content()
         frames = self.browser.find_elements_by_css_selector('iframe')
+        self.iframe.wait(10)
+
         max_els = 0
         max_els_frame = 1
-        for i in range(1, len(frames)):
+        for i in range(0, len(frames)):
             try:
                 self.browser.switch_to.frame(i)
             except:
                 continue
             els = self.browser.find_element_by_css_selector('body').find_elements_by_css_selector(sel)
+
             if len(els) > max_els:
                 max_els = len(els)
                 max_els_frame = i

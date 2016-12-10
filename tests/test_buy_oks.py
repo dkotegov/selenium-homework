@@ -22,7 +22,7 @@ class OpenPageStep(selenium.Case):
     @seismograph.step(2, 'Open page')
     def auth(self, browser):
         feed_page = FeedPage(browser)
-        #feed_page.open()
+        # feed_page.open()
         feed_page.avatar.wait(5)
 
 
@@ -74,7 +74,6 @@ class TestMyCards(AuthStep, OpenPageStep, selenium.Case):
         payment_modal.open()
         payment_modal.open_tab_my_cards()
         self.assertion.text_exist(payment_modal.get_tab_my_cards_add(), u'Добавление карты')
-        payment_modal.get_tab_my_cards_add_link().click()
 
 
 @suite.register
