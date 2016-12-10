@@ -3,7 +3,7 @@
 import os
 from seismograph.ext import selenium
 from seismograph.ext.selenium import forms
-from utils.items import InStatusCheckbox, NoteCreateFormAddedText, NoteCreateFormControls
+from utils.items import InStatusCheckbox, NoteCreateFormAddedText, NoteCreateFormControls, NoteCreateFormAddedAudio
 
 
 class AuthForm(forms.UIForm):
@@ -41,6 +41,8 @@ class NoteCreateForm(forms.UIForm):
         we_class=NoteCreateFormAddedText
     )
 
+    added_audio = selenium.PageElement(NoteCreateFormAddedAudio)
+
     in_status = selenium.PageElement(InStatusCheckbox)
 
     controls = selenium.PageElement(NoteCreateFormControls)
@@ -54,8 +56,11 @@ class NoteCreateForm(forms.UIForm):
         call=lambda btn: btn.click()
     )
 
-    def send_keys_in_last_text_input(self, text):
+    def send_keys_in_last_text_form(self, text):
         self.note_text_fields[-1].text_input.send_keys(text)
 
-    def delete_last_added_text_input(self):
+    def delete_last_added_text_form(self):
         self.note_text_fields[-1].delete()
+
+    def delete_last_added_audio(self):
+        return self.added_audio.delete_last()
