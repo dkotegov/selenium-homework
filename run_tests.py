@@ -5,8 +5,8 @@ import videopreview_test
 import channels
 
 suites = [
-    channels.suite,
-    #videopreview_test.suite,
+    #channels.suite,
+    videopreview_test.suite,
 ]
 
 if __name__ == '__main__':

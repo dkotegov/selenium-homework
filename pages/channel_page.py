@@ -184,6 +184,11 @@ class ChannelPage(selenium.Page):
     def unsubscribe(self):
         self.unsubscribe_button.click()
 
+    def open_video_by_id(self, video_id):
+        link = self.browser.div( data_id=video_id)
+        link.click()
+        utils.wait_change_url(self.browser)
+
     def is_subscribe(self):
         self.browser.refresh()
         return len(self.browser.find_elements_by_xpath(self.IS_SUBSCRIBE_XPATH)) > 0
