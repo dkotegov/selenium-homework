@@ -59,8 +59,17 @@ class PaymentModal(selenium.Page):
         self.browser.switch_to.frame(max_els_frame)
 
     def open_tab(self, index):
-        self.switch_to_iframe()
-        tab_links = self.browser.find_elements_by_css_selector('a.nav-side_i')
+        def get_tab_links():
+            self.switch_to_iframe()
+            return self.browser.find_elements_by_css_selector('a.nav-side_i')
+
+        tab_links = []
+
+        tries = 0
+        while tries < 5 and index >= len(tab_links):
+            tab_links = get_tab_links()
+            tries += 1
+
         tab_links[index].click()
         self.browser.switch_to.default_content()
 
