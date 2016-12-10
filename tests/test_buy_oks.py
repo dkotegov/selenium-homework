@@ -1,6 +1,5 @@
 # coding=utf-8
 import seismograph
-import time
 from seismograph.ext import selenium
 from pages.auth_page import AuthPage
 from pages.feed_page import FeedPage
