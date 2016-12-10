@@ -2,8 +2,8 @@ import os
 
 
 class AuthManager:
-    ENV_AUTH_LOGIN = 'AUTH_LOGIN'
-    ENV_AUTH_PASSWORD = 'AUTH_PASSWORD'
+    ENV_AUTH_LOGIN = 'LOGIN'
+    ENV_AUTH_PASSWORD = 'PASSWORD'
 
     @classmethod
     def get_login(cls, ending=''):

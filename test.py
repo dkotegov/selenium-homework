@@ -9,10 +9,10 @@ from tests import test_buy_oks
 
 suites = [
     test_five_plus.suite,
-    test_smiles.suite,
-    test_invisible_mode.suite,
-    test_all_included.suite,
-    test_buy_oks.suite
+    #test_smiles.suite,
+    #test_invisible_mode.suite,
+    #test_all_included.suite,
+    #test_buy_oks.suite
 ]
 
 if __name__ == '__main__':

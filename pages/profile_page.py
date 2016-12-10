@@ -14,7 +14,7 @@ class ProfilePage(selenium.Page):
     full_width_avatar = selenium.PageElement(
         selenium.query(
             selenium.query.DIV,
-            _class='photo-layer_img_w',
+            _id='photo-layer_img_w',
         )
     )
 
@@ -34,7 +34,7 @@ class ProfilePage(selenium.Page):
 
     def open_avatar(self):
         self.avatar.click()
-        self.full_width_avatar.wait(timeout=2)
+        self.full_width_avatar.wait(timeout=3)
 
     def is_five_plus_visible(self):
         return self.five_plus_button.exist
