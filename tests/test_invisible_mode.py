@@ -159,7 +159,7 @@ class CheckInvisibleModeFromNavbar(WebOkSuite, selenium.Case):
 
 @suite.register
 class CheckInvisibleModeFromMainPage(WebOkSuite, selenium.Case):
-    @seismograph.step(3, 'Check invisible from main page')
+    @seismograph.step(2, 'Check invisible from main page')
     def check_text(self, browser):
         user_card = LeftColumnTopCardUser(browser)
         WebDriverWait(browser, 3).until(
