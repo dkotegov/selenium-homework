@@ -1,28 +1,19 @@
-from .base import Component, Page
+# from .base import Component, Page
+from seismograph.ext import selenium
+from seismograph.ext.selenium import PageElement as PE
+from seismograph.ext.selenium import query as _
+from utils import query
 
-class AuthPage(Page):
-    PATH = ''
+class AuthPage(selenium.Page):
     TITLE = 'OK.RU'
+    __url_path__ = '/'
 
-    @property
-    def form(self):
-        return AuthForm(self.driver)
 
-class AuthForm(Component):
-    LOGIN_XPATH = '//input[@name="st.email"]'
-    PASSWORD_XPATH = '//input[@name="st.password"]'
-    SUBMIT_XPATH = '//*[@class="button-pro form-actions_yes"]'  # TODO
-
-    def set_login(self, login):
-        self.driver.find_element_by_xpath(self.LOGIN_XPATH).send_keys(login)
-
-    def set_password(self, pwd):
-        self.driver.find_element_by_xpath(self.PASSWORD_XPATH).send_keys(pwd)
-
-    def submit(self):
-        self.driver.find_element_by_xpath(self.SUBMIT_XPATH).click()
+    login_field = query('INPUT', name="st.email")
+    password_field = query('INPUT', name="st.password")
+    submit_button = query('INPUT', _class = "button-pro form-actions_yes")
 
     def signin(self, login, password):
-        self.set_login(login)
-        self.set_password(password)
-        self.submit()
+        self.login_field.set(login)
+        self.password_field.set(password)
+        self.submit_button.click()
