@@ -25,61 +25,61 @@ def _get_note_text():
     return u'TEST NOTE - ТЕСТОВАЯ ЗАМЕТКА - {0}'.format(random.randint(0, 1000))
 
 
-# @suite.register
-# def test_create_with_text_boxes(case, browser):
-#     """
-#         Заполняем случайным образом несколько текстовых форм.
-#         Удаляем одну из форм.
-#         Добавляем заметку, проверяем получившейся в ней текст.
-#         Удаляем заметку.
-#     """
-#
-#     note_texts_count = 3
-#
-#     _auth(browser)
-#
-#     time.sleep(1)
-#
-#     notes_page = NotesPage(browser)
-#     notes_page.open()
-#     notes_page.open_note_input()
-#
-#     time.sleep(1)
-#
-#     note_texts = []
-#     for i in range(0, note_texts_count + 2):
-#         note_texts.append(_get_note_text())
-#
-#     note_form = NoteCreateForm(browser)
-#     note_form.send_keys_in_last_text_form(note_texts[0])
-#     for i in range(1, note_texts_count + 1):
-#         note_form.controls.add_text_form()
-#         note_form.send_keys_in_last_text_form(note_texts[i])
-#
-#     note_form.delete_last_added_text_form()
-#
-#     time.sleep(1)
-#
-#     note_form.in_status.unchecked()
-#     note_form.submit()
-#
-#     time.sleep(1)
-#
-#     note_final_text = '\n'.join(note_texts[:-2])
-#     case.assertion.equal(notes_page.get_last_note().get_text(), note_final_text)
-#
-#     notes_page.get_last_note().delete()
-#
-#     notes_page.refresh()
-#     time.sleep(1)
-#
-#     with case.assertion.raises(IndexError):
-#         notes_page.get_last_note()
-#
-#
-# @suite.register
-# def test_create_with_photo(case, browser):
-#     pass
+@suite.register
+def test_create_with_text_boxes(case, browser):
+    """
+        Заполняем случайным образом несколько текстовых форм.
+        Удаляем одну из форм.
+        Добавляем заметку, проверяем получившейся в ней текст.
+        Удаляем заметку.
+    """
+
+    note_texts_count = 3
+
+    _auth(browser)
+
+    time.sleep(1)
+
+    notes_page = NotesPage(browser)
+    notes_page.open()
+    notes_page.open_note_input()
+
+    time.sleep(1)
+
+    note_texts = []
+    for i in range(0, note_texts_count + 2):
+        note_texts.append(_get_note_text())
+
+    note_form = NoteCreateForm(browser)
+    note_form.send_keys_in_last_text_form(note_texts[0])
+    for i in range(1, note_texts_count + 1):
+        note_form.controls.add_text_form()
+        note_form.send_keys_in_last_text_form(note_texts[i])
+
+    note_form.delete_last_added_text_form()
+
+    time.sleep(1)
+
+    note_form.in_status.unchecked()
+    note_form.submit()
+
+    time.sleep(1)
+
+    note_final_text = '\n'.join(note_texts[:-2])
+    case.assertion.equal(notes_page.get_last_note().get_text(), note_final_text)
+
+    notes_page.get_last_note().delete()
+
+    notes_page.refresh()
+    time.sleep(1)
+
+    with case.assertion.raises(IndexError):
+        notes_page.get_last_note()
+
+
+@suite.register
+def test_create_with_photo(case, browser):
+    pass
 
 
 @suite.register
