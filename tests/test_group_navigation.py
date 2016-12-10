@@ -103,6 +103,7 @@ class SearchGroup(Component):
         self.driver.find_element_by_xpath('lp floatRight').click()
 
 
+
 class NavigationGroupTest(#seismograph.Case):
 
     unittest.TestCase):
@@ -158,6 +159,7 @@ class NavigationGroupTest(#seismograph.Case):
 
         self.groups_page.create_group()
         self.driver.execute_script("window.history.go(-1)")
+        self.groups_page.my_groups()
         # search.open_group()
 
 
