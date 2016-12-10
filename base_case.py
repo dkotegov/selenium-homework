@@ -12,6 +12,7 @@ from pages.auth_page import AuthPage
 
 
 class BaseCase(seismograph.Case):
+
     def setup(self):
         self.selenium = self.ext('selenium')
         self.selenium.start()

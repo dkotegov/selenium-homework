@@ -31,7 +31,7 @@ class CreateChannelCase(BaseCase):
         self.channel_page.delete_channel()
         self.assertion.is_not_in(self.TEST_CHANNEL2, self.browser.page_source)
 
-@suite.register
+#@suite.register
 class ChangeChannelCase(BaseCase):
     VIDEO_URL_STUB = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
     VIDEO_NAME_STUB = 'Rick Astley - Never Gonna Give You Up'

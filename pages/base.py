@@ -1,4 +1,4 @@
-from urlparse import  urljoin
+from urlparse import urljoin
 
 
 class Page(object):

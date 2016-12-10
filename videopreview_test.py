@@ -7,7 +7,7 @@ from pages.video_page import VideoPage
 suite = seismograph.Suite(__name__, require=['selenium'])
 
 
-@suite.register
+#@suite.register
 class VideoPreviewTest(BaseCase):
     def test_openclose(self):
         newvideos_page = NewVideos(self.browser)
