@@ -12,7 +12,7 @@ class DeleteVideoDialog(selenium.PageItem):
     submit_button = utils.query('INPUT', value=u'Удалить')
 
 
-class EditChannelDialog(Component):
+class EditChannelDialog(selenium.PageItem):
     CHANNEL_NAME_XPATH = '//input[@name="st.vv_albumName"]'
     CHANNEL_SUBMIT_XPATH = '//input[@value="Сохранить"]'
 
@@ -135,7 +135,7 @@ class ChannelPage(selenium.Page):
     delete_button = utils.query('SPAN', _class='tico_img vl_ic_delete')  # TODO
     edit_video_buttons = utils.query('A', _class='vid-card_ac_i ic vl_ic_edit')
     channel_name = utils.query('DIV', _class="mml_ucard_n_g")
-    edit_channel_button = utils.query('SPAN', _class = selenium.query.contains('vl_edit'))
+    edit_channel_button = utils.query('SPAN', _class = selenium.query.contains('vl_ic_edit'))
     subscribe_button = utils.query('A', _id=selenium.query.startswith("vv_btn_album_subscribe"))
     unsubscribe_button = utils.query('A', _id=selenium.query.startswith("vv_btn_album_unsubscribe"))
     add_video_button = utils.query('SPAN', _class = selenium.query.contains('vl_ic_add-video') )

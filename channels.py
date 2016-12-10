@@ -55,26 +55,24 @@ class ChangeChannelCase(BaseCase):
     #     self.assertion.is_in(VIDEO_NAME, destination.get_videos_titles())
     #     destination.move_video(VIDEO_NAME, SOURCE_NAME)
 
-    # def test_rename_channel(self):#TODO fix
-    #     CHANNEL_ID = '1534696'
-    #     CHANNEL_NAME = 'TEST_RENAME'
-    #     NEW_CHANNEL_NAME = 'NEWNAME'
-    #     channel_page = ChannelPage(self.browser)
-    #     try:
-    #         channel_page.open(id=CHANNEL_ID)
-    #         channel_page.edit_channel(NEW_CHANNEL_NAME)
-    #         self.assertEqual(channel_page.channel_name, NEW_CHANNEL_NAME)
-    #     finally:
-    #         channel_page.edit_channel(CHANNEL_NAME)
-
-    def test_add_video(self):
-        CHANNEL_ID = '1533672'
+    def test_rename_channel(self):  # TODO fix
+        CHANNEL_ID = '1534696'
+        CHANNEL_NAME = 'TEST_RENAME'
+        NEW_CHANNEL_NAME = 'NEWNAME'
         channel_page = ChannelPage(self.browser)
         channel_page.open(id=CHANNEL_ID)
-        channel_page.add_video_by_url(self.VIDEO_URL_STUB)
-        self.assertion.is_in(self.VIDEO_NAME_STUB, channel_page.get_videos_titles())
-        channel_page.delete_video(self.VIDEO_NAME_STUB)
-        self.assertion.is_not_in(self.VIDEO_NAME_STUB, channel_page.get_videos_titles())
+        channel_page.edit_channel(NEW_CHANNEL_NAME)
+        self.assertion.equal(channel_page.channel_name.text, NEW_CHANNEL_NAME)
+        channel_page.edit_channel(CHANNEL_NAME)
+
+    # def test_add_video(self):
+    #     CHANNEL_ID = '1533672'
+    #     channel_page = ChannelPage(self.browser)
+    #     channel_page.open(id=CHANNEL_ID)
+    #     channel_page.add_video_by_url(self.VIDEO_URL_STUB)
+    #     self.assertion.is_in(self.VIDEO_NAME_STUB, channel_page.get_videos_titles())
+    #     channel_page.delete_video(self.VIDEO_NAME_STUB)
+    #     self.assertion.is_not_in(self.VIDEO_NAME_STUB, channel_page.get_videos_titles())
 
     # def test_add_tags(self):#TODO исправить
     #     CHANNEL_LINK = 'video/c1534184'
