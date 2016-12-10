@@ -52,7 +52,8 @@ class PaymentModal(selenium.Page):
                     break
 
             if not found:
-                raise
+                self.open()
+                self.iframe.wait(10)
 
         max_els = 0
         max_els_frame = 1
