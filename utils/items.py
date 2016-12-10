@@ -48,6 +48,6 @@ class Note(selenium.PageItem):
 
     def delete(self):
         with self.browser.action_chains as action:
-            action.move_to_element(self.delete_btn)
+            action.move_to_element(self)
             action.click(self.delete_btn)
             action.perform()

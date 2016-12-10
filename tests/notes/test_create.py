@@ -35,13 +35,13 @@ def test_create_with_text_boxes(case, browser):
     note_form.in_status.unchecked()
     note_form.submit()
 
-    time.sleep(3)
-    notes_page.refresh()
+    time.sleep(2)
     case.assertion.equal(notes_page.get_last_note().get_text(), NOTE_TEXT)
 
     notes_page.get_last_note().delete()
 
+    notes_page.refresh()
+    time.sleep(2)
 
-
-
-
+    with case.assertion.raises(IndexError):
+        notes_page.get_last_note()
