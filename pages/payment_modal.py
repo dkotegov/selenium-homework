@@ -32,6 +32,11 @@ class PaymentModal(selenium.Page):
         self.browser.execute_script('document.getElementById("topPanel").style.visibility="hidden"')
         self.buy_link.click()
 
+        try:
+            self.iframe.wait(10)
+        except PollingTimeoutExceeded:
+            self.buy_link.click()
+
     def close(self):
         self.modal_close_button.click()
 
@@ -52,7 +57,8 @@ class PaymentModal(selenium.Page):
                     break
 
             if not found:
-                raise
+                self.open()
+                self.iframe.wait(10)
 
         max_els = 0
         max_els_frame = 1
