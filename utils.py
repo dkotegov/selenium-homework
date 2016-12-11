@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from selenium.webdriver.support.ui import WebDriverWait
-from seismograph.ext.selenium import PageElement
-from seismograph.ext.selenium import query as _query
+from seismograph.ext import selenium
 
 
 DEFAULT_TIMEOUT = 30
+MICRO_TIMEOUT = 0.1
+SHORT_TIMEOUT = 5
 DEFAULT_SLEEP_TIME = 0.1
+
 
 def wait(driver, condition, timeout = DEFAULT_TIMEOUT, sleeptime = DEFAULT_SLEEP_TIME):
     return WebDriverWait(driver, timeout, sleeptime).until(condition)
@@ -34,9 +36,10 @@ def replace_text(web_element, new_text):
     web_element.send_keys(new_text)
 
 def query(tag, **kwargs):
-    return PageElement(
-        _query(
-            getattr(_query, tag),
+    return selenium.PageElement(
+        selenium.query(
+            getattr(selenium.query, tag),
             **kwargs
         )
     )
+

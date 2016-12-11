@@ -6,9 +6,10 @@ import channels
 import tests_for_video_comments.single_video as sv
 
 suites = [
-    sv.suite
-    #channels.suite,
-    #videopreview_test.suite,
+    sv.suite,
+    channels.suite,
+    videopreview_test.suite,
+
 ]
 
 if __name__ == '__main__':
