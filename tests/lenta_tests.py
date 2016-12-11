@@ -67,10 +67,11 @@ def test_make_repost(case, browser):
 
     feed_page = FeedPage(browser)
     time.sleep(1)
-    content = feed_page.getPopularContent()
-    feed_page.makeRepost()
-    a = 5
-    b = 7
+    val =  feed_page.makeRepost()
+    if val == u'Опубликовано!':
+        return True
+    else:
+        return False
 
 
 
