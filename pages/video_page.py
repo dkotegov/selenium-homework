@@ -5,9 +5,43 @@ from selenium.webdriver.common.action_chains import ActionChains
 import utils
 from seismograph.ext import selenium
 
+class AttachVideoDialog(selenium.PageItem):
+
+    __area__ = selenium.query(
+        selenium.query.DIV,
+        _id='hook_Block_AttachShareVideoContent'
+    )
+
+    VIDEO = '(.//a[contains(@class,"attachInput")])[1]'
+    @property
+    def video(self):
+        return utils.wait_xpath(self.browser, self.VIDEO)
+    #video = utils.wait_xpath(self.browser, '(//a[contains(@class,"ttachInput")])[0]')
+    #video = utils.query( 'A' ,_class= selenium.query.contains('attachInput') )
+
+
+class AttachPhotoDialog(selenium.PageItem):
+
+    __area__ = selenium.query(
+        selenium.query.DIV,
+        _class=selenium.query.contains('modal-new_center')
+    )
+
+    photo = utils.query('DIV', _class= selenium.query.contains('photo-crop_cnt selectable-card'))
+    add_btn =utils.query('INPUT', _id= selenium.query.contains('hook_FormButton_button_attach'))
+
+    def add_photo(self):
+        self.photo.click()
+        self.add_btn.click()
+
 class SendCommentForm(selenium.PageItem):
-    INPUT_XPATH = '(//div[contains(@class, "js-comments_add")])[last()]'
-    SUBMIT_XPATH = '(//button[@class="button-pro form-actions_yes"])[last()]'
+    INPUT_XPATH = '(.//div[contains(@class, "js-comments_add")])[last()]'
+    SUBMIT_XPATH = '(.//button[@class="button-pro form-actions_yes"])[last()]'
+
+    _area__ = selenium.query(
+        selenium.query.DIV,
+        _class=selenium.query.contains('comments_form')
+    )
 
     @property
     def input(self):
@@ -17,9 +51,57 @@ class SendCommentForm(selenium.PageItem):
     def submit(self):
         return utils.wait_xpath(self.browser, self.SUBMIT_XPATH)
 
-    def add_comment(self, text):
-        utils.js_set_text(self.browser, self.input, text)
+    def add_comment(self, text=None,video = None, photo = None, photo_pc = None):
+        if text:
+            utils.js_set_text(self.browser, self.input, text)
+        if video:
+            self.attach_video()
+        if photo:
+            self.attach_photo()
+        if photo_pc:
+            self.attach_photo_from_pc(photo_pc)
         utils.js_click(self.browser, self.submit)
+
+    # el_input = PageElement(
+    #     query(
+    #         query.DIV,
+    #         _class=query.contains('js-comments_add comments_add-ceditable'),
+    #         _id=query.contains('field_')
+    #     ),
+    #     we_class=InputField
+    # )
+
+    attach_video_button= utils.query('ANY', _class = selenium.query.contains('ic_videoattach') )
+    attach_photo_button = utils.query(
+            'ANY',
+            _class= selenium.query.contains('ic_okphotoattach')
+            #href=selenium.query.startswith('javascript')
+    )
+
+    attach_photo_from_pc_button = utils.query('INPUT', _class= selenium.query.contains('h-mod html5-upload-link') )
+    photo_dialog = selenium.PageElement(AttachPhotoDialog)
+    video_dialog = selenium.PageElement(AttachVideoDialog)
+
+    def attach_video(self):
+        utils.js_click(self.browser, self.attach_video_button)
+        utils.js_click(self.browser, self.video_dialog.video)
+        #self.video_dialog.video.click()
+
+
+    def attach_photo(self):
+        utils.js_click(self.browser, self.attach_photo_button)
+        self.photo_dialog.add_photo()
+        self.input.click()
+
+
+    def attach_photo_from_pc(self, path):
+        self.attach_photo_from_pc_button.send_keys(path)
+
+    # def set_text(self, text):
+    #     self.el_input.set_text(text)
+    #
+    # def submit(self):
+    #     self.el_send_btn.send()
 
 class LastComment(selenium.PageItem):
 
@@ -27,12 +109,23 @@ class LastComment(selenium.PageItem):
     #__area__ = utils.query('DIV', _class= selenium.query.contains('last-comment') )
 
     IS_DELETED_CLASS = 'delete-stub_info'
+    IS_KLASSED_XPATH = ".//span[contains(text(), 'Вы')]"
+    VIDEO_ATTACHED_XPATH = '".//a[contains(@class,"video-card_lk")]'
+    PHOTO_ATTACHED_XPATH = './/a[contains(@class,"collage_cnt")]'
 
     remove_button  = utils.query('A', _class= selenium.query.contains('comments_remove'))
     author  = utils.query('A', _href= selenium.query.startswith('/profile') )
     recover_button = utils.query('A', _class= selenium.query.contains('delete-stub_cancel'))
     klass   = utils.query('SPAN', _id= selenium.query.contains('hook_VoteHook') )
     content = utils.text_field('DIV', _class= selenium.query.contains('comments_text'))
+    reply_button = utils.query('A', _class= selenium.query.contains('comments_reply'))
+
+    def is_klassed(self):
+        self.we.wait()
+        return len(self.we.find_elements_by_xpath(self.IS_KLASSED_XPATH)) > 0
+
+    def switch_class(self):
+        utils.js_click(self.browser, self.klass)
 
     @property
     def is_deleted(self):
@@ -48,6 +141,31 @@ class LastComment(selenium.PageItem):
     def to_author_page(self):
         utils.js_click(self.browser, self.author)
 
+    def reply_click(self):
+        utils.js_click(self.browser, self.author)
+
+    def check_photo_attachment(self):
+        photo_lst = self.we.find_elements_by_xpath(self.PHOTO_ATTACHED_XPATH)
+        return len(photo_lst) > 0
+
+    def check_video_attachment(self):
+        video_lst = self.we.find_elements_by_xpath(self.VIDEO_ATTACHED_XPATH)
+        return len(video_lst) > 0
+
+
+
+class DescriptionItem(selenium.PageItem):
+
+    __area__ = selenium.query(
+        selenium.query.DIV,
+        _class='vp-layer-description'
+    )
+    expand = utils.query('DIV', _class= selenium.query.contains('js-vp-layer-description_more') )
+
+    def check_expanded(self):
+        #el_expand = self.browser.span(_class=query.contains(self.css_expand))
+        css_cls = self.expand.attr._class
+        return 'invisible' in css_cls
 
 class VideoPage(selenium.Page):
     SUBSCRIBE_XPATH = '//a[text()="Подписаться"]'
@@ -77,6 +195,7 @@ class VideoPage(selenium.Page):
     unsubscribe_button = utils.query('SPAN', _class='vp-layer_subscribe-lbl ic_quit-lg')
     subscriptions_count_elem = utils.query('DIV', _class='vp-layer-channel_ac_count')
     send_comment_form = selenium.PageElement(SendCommentForm)
+    description_item  = selenium.PageElement(DescriptionItem)
     last_comment = selenium.PageElement(
        selenium.query(
            selenium.query.DIV,
@@ -160,18 +279,21 @@ class VideoPage(selenium.Page):
     #@property
     #def comments_list(self):
 
-
-    def add_comment(self, text):
+    def reply_last_comment(self, text):
+        self.last_comment.reply_click()
         self.send_comment_form.add_comment(text)
 
-    def delete_last_comment(self):
-        utils.js_click(
-            self.browser,
-            utils.wait_xpath(self.browser, self.DELETE_LAST_COMMENT_XPATH)
-        )
+    def add_comment(self, text=None, video = None, photo = None, photo_pc = None ):
+        self.send_comment_form.add_comment(text, video, photo, photo_pc)
 
-    def recover_last_comment(self):
-        utils.js_click(
-            self.browser,
-            utils.wait_xpath(self.browser, self.RECOVER_LAST_COMMENT_XPATH)
-        )
+    # def delete_last_comment(self):
+    #     utils.js_click(
+    #         self.browser,
+    #         utils.wait_xpath(self.browser, self.DELETE_LAST_COMMENT_XPATH)
+    #     )
+    #
+    # def recover_last_comment(self):
+    #     utils.js_click(
+    #         self.browser,
+    #         utils.wait_xpath(self.browser, self.RECOVER_LAST_COMMENT_XPATH)
+    #     )
