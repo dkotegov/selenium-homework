@@ -6,7 +6,7 @@ from pages.feed_page import FeedPage
 
 
 class AuthPage(selenium.Page):
-    __url_path__ = '/'
+    __url_path__ = '/dk?st.cmd=anonymMain'
 
     email_field = selenium.PageElement(
         selenium.query(
