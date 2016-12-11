@@ -38,7 +38,7 @@ class VideoPreviewTest(BaseCase):
         videoplayer_page = VideoPage(self.browser)
         videoplayer_page.rewind_video(0)
         time1 = videoplayer_page.get_video_play_time()
-        videoplayer_page.play_video_until('0:01')
+        videoplayer_page.play_video_until('0:02')
         time2 = videoplayer_page.get_video_play_time()
         self.assertion.not_equal(time1, time2)
 
@@ -54,11 +54,8 @@ class VideoPreviewTest(BaseCase):
 
     def test_next_video(self):
         videoplayer_page = VideoPage(self.browser)
-        previous_url = self.browser.current_url
-        videoplayer_page.play_next_video()
-        #nextvideo_page = VideoPage(self.browser)
-        self.assertion.not_equal(previous_url, self.browser.current_url)
-        # TODO Заранее получать ссылку следующего видео и сравнивать с ней
+        next_video_url = videoplayer_page.play_next_video()
+        self.assertion.not_equal(next_video_url, self.browser.current_url)
 
     def test_video_rewind(self):#TODO ELEMENT NOT VISIBLE
         videoplayer_page = VideoPage(self.browser)

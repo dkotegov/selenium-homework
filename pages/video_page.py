@@ -54,8 +54,11 @@ class VideoPage(selenium.Page):
         utils.wait_value(self.browser, self.VIDEO_PLAY_TIME, time)
 
     def play_next_video(self):
-        utils.wait_xpath(self.browser, self.NEXT_VIDEO).click()
+        elem = utils.wait_xpath(self.browser, self.NEXT_VIDEO)
+        next_video_url = elem.get_attribute("href")
+        elem.click()
         utils.wait_change_url(self.browser)
+        return next_video_url
 
     def pause_video(self):
         utils.wait_xpath(self.browser, self.PAUSE_VIDEO).click()
@@ -64,7 +67,7 @@ class VideoPage(selenium.Page):
         progress_bar = utils.wait_xpath(self.browser, self.PROGRESS_BAR)
         progress_bar_width = progress_bar.size['width']
         action_chains = ActionChains(self.browser)
-        action_chains.move_to_element(progress_bar).move_by_offset((progress_bar_width/100) * (percent-50), 0).click().perform()
+        action_chains.move_to_element(progress_bar).move_by_offset((progress_bar_width/100)*(percent-50), 0).click().perform()
 
     def stop_video(self):
         action_chains = ActionChains(self.browser)
