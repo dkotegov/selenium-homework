@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
+import seismograph
 
-import sys
-import unittest
+import videopreview_test
+import channels
+
+suites = [
+    # channels.suite,
+    videopreview_test.suite,
+]
 
 if __name__ == '__main__':
-    suite = unittest.TestSuite((
-
-    ))
-    result = unittest.TextTestRunner().run(suite)
-
-    sys.exit(not result.wasSuccessful())
+    seismograph.main(config_path='config.py',
+                     suites=suites)

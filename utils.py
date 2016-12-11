@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.keys import Keys
+from seismograph.ext import selenium
 
 DEFAULT_TIMEOUT = 30
+MICRO_TIMEOUT = 0.1
+SHORT_TIMEOUT = 5
 DEFAULT_SLEEP_TIME = 0.1
 
 
@@ -38,3 +40,12 @@ def wait_change_url(driver, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIM
 def replace_text(web_element, new_text):
     web_element.clear()
     web_element.send_keys(new_text)
+
+
+def query(tag, **kwargs):
+    return selenium.PageElement(
+        selenium.query(
+            getattr(selenium.query, tag),
+            **kwargs
+        )
+    )
