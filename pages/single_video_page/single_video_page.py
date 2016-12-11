@@ -27,12 +27,14 @@ class SingleVideoPage(Page):
         )
     )
 
-    def send_comment(self, with_photo=False, with_video=False, text="123"):
+    def send_comment(self, with_photo=False, with_video=False, with_pc_photo=False, photo_path="", text="123"):
         form = VideoCommentForm(self.browser)
         if with_photo:
             form.attach_photo_in_dialog()
         if with_video:
             form.attach_video_in_dialog()
+        if with_pc_photo:
+            form.attach_photo_from_pc(photo_path)
         form.set_text(text)
         form.submit()
         self.refresh()

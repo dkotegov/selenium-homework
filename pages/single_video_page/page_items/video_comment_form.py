@@ -83,7 +83,12 @@ class VideoCommentForm(PageItem):
     class AttachPhotoFromPc(PageItem):
 
         def attach_click(self, path):
-            self.we.send_keys(path)
+            x_path = "//span[@class='comments_attach_trigger']//ul[@class='u-menu']/li[3]/span/input"
+            driver = self.browser._wrapped
+            lst = utils.wait_many_xpath(driver, x_path)
+            elem = lst[-1]
+            #ScriptUtil.click_directly(driver, elem)
+            elem.send_keys(path)
 
     el_attach_photo_from_pc = PageElement(
         query(
@@ -95,7 +100,7 @@ class VideoCommentForm(PageItem):
 
     def attach_video_in_dialog(self):
         self.el_attach_video.attach_click()
-        dialog = PageElement(AttachVideoDialog)
+        dialog = AttachVideoDialog(self.browser)
         dialog.el_video.click_video()
 
     def attach_photo_in_dialog(self):
