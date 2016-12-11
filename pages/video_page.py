@@ -6,10 +6,27 @@ import utils
 from base import Page
 from seismograph.ext import selenium
 
+class SendCommentForm(selenium.PageItem):
+    INPUT_XPATH = '(//div[contains(@class, "js-comments_add")])[last()]'
+    SUBMIT_XPATH = '(//button[@class="button-pro form-actions_yes"])[last()]'
+
+    @property
+    def input(self):
+        return utils.wait_xpath(self.browser, self.INPUT_XPATH)
+
+    @property
+    def submit(self):
+        return utils.wait_xpath(self.browser, self.SUBMIT_XPATH)
+
+    def add_comment(self, text):
+        utils.js_set_text(self.browser, self.input, text)
+        utils.js_click(self.browser, self.submit)
+
 
 class VideoPage(selenium.Page):
     SUBSCRIBE_XPATH = '//a[text()="Подписаться"]'
     UNSUBSCRIBE_XPATH = '//span[@class="vp-layer_subscribe-lbl ic_quit-lg"]'
+    DELETE_LAST_COMMENT_XPATH ='(//a[contains(@class, "fade-on-hover comments_remove")])[last()]'
     PLAY_VIDEO = '//div[@class="html5-vpl_panel_play"]'
     PAUSE_VIDEO = '//div[@class="html5-vpl_panel_play __pause"]'
     STOP_VIDEO = '//div[@al-mousedown="stop()"]'
@@ -32,6 +49,7 @@ class VideoPage(selenium.Page):
     close_video_button = utils.query("DIV", _class="ic media-layer_close_ico")
     unsubscribe_button = utils.query('SPAN', _class='vp-layer_subscribe-lbl ic_quit-lg')
     subscriptions_count_elem = utils.query('DIV', _class='vp-layer-channel_ac_count')
+    send_comment_form = selenium.PageElement(SendCommentForm)
 
     @property
     def subscriptions_count(self):
@@ -80,9 +98,9 @@ class VideoPage(selenium.Page):
         elem = utils.wait_xpath(self.browser, self.FULLSCREEN_MODE).click()
 
     def close_fullscreen(self):
-        self.browser.execute_script(
-            "$(arguments[0]).click();",
-             utils.wait_xpath(self.browser, self.FULLSCREEN_MODE)._wrapped
+        utils.js_click(
+             self.browser,
+             utils.wait_xpath(self.browser, self.FULLSCREEN_MODE)
         )
 
     def get_url_related_video(self):
@@ -104,3 +122,16 @@ class VideoPage(selenium.Page):
             return False
         except Exception:
             return True
+
+    #@property
+    #def comments_list(self):
+
+
+    def add_comment(self, text):
+        self.send_comment_form.add_comment(text)
+
+    def delete_last_comment(self):
+        utils.js_click(
+            self.browser,
+            utils.wait_xpath(self.browser, self.DELETE_LAST_COMMENT_XPATH)
+        )

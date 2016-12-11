@@ -35,6 +35,13 @@ def replace_text(web_element, new_text):
     web_element.clear()
     web_element.send_keys(new_text)
 
+def js_click(driver, element):
+    driver.execute_script('arguments[0].click();', element._wrapped)
+
+def js_set_text(driver, element, text):
+    driver.execute_script('arguments[0].innerHTML = arguments[1];', element._wrapped, text)
+
+
 def query(tag, **kwargs):
     return selenium.PageElement(
         selenium.query(

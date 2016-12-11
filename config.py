@@ -1,6 +1,6 @@
 import os
 
-browser = os.environ.get('BROWSER', 'firefox')
+browser = os.environ.get('BROWSER', 'CHROME')
 
 SELENIUM_EX = {
     'USE_REMOTE': True,
@@ -10,6 +10,6 @@ SELENIUM_EX = {
     'PAGE_LOAD_TIMEOUT': 60,
 
     'REMOTE': {
-        'command_executor': 'http://192.168.238.128:4444/wd/hub',
+        'command_executor': 'http://127.0.0.1:4444/wd/hub',
     }
 }
