@@ -89,7 +89,7 @@ class ChangeChannelCase(BaseCase):
         channel_page = ChannelPage(self.browser)
         channel_page.open(id=CHANNEL_ID)
         channel_page.edit_channel(NEW_CHANNEL_NAME)
-        self.assertion.equal(channel_page.channel_name.text, NEW_CHANNEL_NAME)
+        self.assertion.equal(channel_page.channel_name, NEW_CHANNEL_NAME)
         channel_page.edit_channel(CHANNEL_NAME)
 
 

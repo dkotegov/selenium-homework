@@ -7,27 +7,26 @@ from seismograph.ext.selenium import query
 from pages.single_video_page.utils import ScriptUtil
 import utils
 
+class Class(selenium.PageItem):
+    pass
 
 class LastComment(PageItem):
 
-    __area__ = query(
-        query.DIV,
-        _class=query.contains('last-comment')
-    )
 
-    el_remove = PageElement(
-        query(
-            query.A,
-            _class=query.contains('comments_remove')
-        )
-    )
+    __area__ = utils.query('DIV', _class=query.contains('last-comment') )
 
-    el_author = PageElement(
-        query(
-            query.A,
-            _href=query.startswith('/profile')
-        )
-    )
+    IS_DELETED_CLASS = 'delete-stub_info'
+
+    remove  = utils.query('A', _class=query.contains('comments_remove'))
+    author  = utils.query('A', _href=query.startswith('/profile') )
+    recover = utils.query('A', _class=query.contains('delete-stub_cancel'))
+    klass   = utils.query('SPAN', _id=query.contains('hook_VoteHook') )
+    content = utils.text_field('DIV', _class=query.contains('comments_text'))
+
+    @property
+    def is_deleted(self):
+        self.we.wait()
+        return len(self.we.find_elements_by_class_name(self.IS_DELETED_CLASS)) > 0
 
     class Content(PageItem):
 

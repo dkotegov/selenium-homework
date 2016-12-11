@@ -3,7 +3,6 @@
 from selenium.webdriver.common.action_chains import ActionChains
 
 import utils
-from base import Page
 from seismograph.ext import selenium
 
 class SendCommentForm(selenium.PageItem):
@@ -22,11 +21,39 @@ class SendCommentForm(selenium.PageItem):
         utils.js_set_text(self.browser, self.input, text)
         utils.js_click(self.browser, self.submit)
 
+class LastComment(selenium.PageItem):
+
+
+    #__area__ = utils.query('DIV', _class= selenium.query.contains('last-comment') )
+
+    IS_DELETED_CLASS = 'delete-stub_info'
+
+    remove_button  = utils.query('A', _class= selenium.query.contains('comments_remove'))
+    author  = utils.query('A', _href= selenium.query.startswith('/profile') )
+    recover_button = utils.query('A', _class= selenium.query.contains('delete-stub_cancel'))
+    klass   = utils.query('SPAN', _id= selenium.query.contains('hook_VoteHook') )
+    content = utils.text_field('DIV', _class= selenium.query.contains('comments_text'))
+
+    @property
+    def is_deleted(self):
+        self.we.wait()
+        return len(self.we.find_elements_by_class_name(self.IS_DELETED_CLASS)) > 0
+
+    def remove(self):
+        utils.js_click(self.browser, self.remove_button)
+
+    def recover(self):
+        utils.js_click(self.browser, self.recover_button)
+
+    def to_author_page(self):
+        utils.js_click(self.browser, self.author)
+
 
 class VideoPage(selenium.Page):
     SUBSCRIBE_XPATH = '//a[text()="Подписаться"]'
     UNSUBSCRIBE_XPATH = '//span[@class="vp-layer_subscribe-lbl ic_quit-lg"]'
     DELETE_LAST_COMMENT_XPATH ='(//a[contains(@class, "fade-on-hover comments_remove")])[last()]'
+    RECOVER_LAST_COMMENT_XPATH = '(//a[contains(@class, "delete-stub_cancel")])[last()]'
     PLAY_VIDEO = '//div[@class="html5-vpl_panel_play"]'
     PAUSE_VIDEO = '//div[@class="html5-vpl_panel_play __pause"]'
     STOP_VIDEO = '//div[@al-mousedown="stop()"]'
@@ -50,6 +77,13 @@ class VideoPage(selenium.Page):
     unsubscribe_button = utils.query('SPAN', _class='vp-layer_subscribe-lbl ic_quit-lg')
     subscriptions_count_elem = utils.query('DIV', _class='vp-layer-channel_ac_count')
     send_comment_form = selenium.PageElement(SendCommentForm)
+    last_comment = selenium.PageElement(
+       selenium.query(
+           selenium.query.DIV,
+           _class= selenium.query.contains('last-comment')
+       ),
+       we_class =  LastComment
+    )
 
     @property
     def subscriptions_count(self):
@@ -134,4 +168,10 @@ class VideoPage(selenium.Page):
         utils.js_click(
             self.browser,
             utils.wait_xpath(self.browser, self.DELETE_LAST_COMMENT_XPATH)
+        )
+
+    def recover_last_comment(self):
+        utils.js_click(
+            self.browser,
+            utils.wait_xpath(self.browser, self.RECOVER_LAST_COMMENT_XPATH)
         )
