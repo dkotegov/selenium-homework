@@ -4,6 +4,7 @@ from pages.single_video_page.single_video_page import SingleVideoPage
 
 suite = seismograph.Suite(__name__, require=['selenium'])
 
+
 @suite.register
 class Test1Case(BaseCase):
 
@@ -13,9 +14,10 @@ class Test1Case(BaseCase):
         self.video_page.open(id=206458458600)
 
     def test1(self):
-        self.video_page.description_item.do_expand()
-        self.video_page.description_item.check_expanded()
-        cmnts = self.video_page.info_item.el_comments_link.get_comments_count()
-        self.video_page.info_item.el_klasses_btn.switch_klass()
-        kls = self.video_page.info_item.el_klasses_btn.get_klasses_count()
+        #self.video_page.description_item.do_expand()
+        #self.video_page.description_item.check_expanded()
+        #cmnts = self.video_page.info_item.el_comments_link.get_comments_count()
+        #self.video_page.info_item.el_klasses_btn.switch_klass()
+        #kls = self.video_page.info_item.el_klasses_btn.get_klasses_count()
+        self.video_page.send_comment(with_photo=True, with_video=False, text="comment_with_photo2")
         pass
