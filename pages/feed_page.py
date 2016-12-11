@@ -1,4 +1,7 @@
+# coding=utf-8
 from seismograph.ext import selenium
+
+from pages.comment_page import CommentPage
 from smth.xpath import XPathQueryObject
 
 import time
@@ -27,9 +30,7 @@ class FeedPage(selenium.Page):
     )
 
     def getPopularContent(self):
-        time.sleep(1)
         self.popular_posts.click()
-        time.sleep(1)
         content = self.browser.find_elements_by_css_selector('div.feed')[0]
         return content
 
@@ -55,11 +56,19 @@ class FeedPage(selenium.Page):
         # return self.browser.execute_script("$('[id*='hook_Block_ReshareNow_']')[0].click()")
         return 1
 
+    def makeComment(self, content, feed_page):
+        button = content.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
+        button.click()
+        comment_body = CommentPage(feed_page.browser)
+        comment_body.comment_input.set(u'lel')
+        content.browser.find_elements_by_id('ok-e-d_button')[0].click()
+        comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-1]
+        comment_div = comment.find_element_by_css_selector('div.d_comment_text')
+        if comment_div.text == 'lel':
+            assert True
+        else:
+            assert False
 
-
-
-    def makeComment(self):
-        return 1
 
     def makeSelfComment(self):
         return 1

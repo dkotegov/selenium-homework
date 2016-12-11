@@ -57,6 +57,20 @@ suite = selenium.Suite(__name__)
 #         return True
 #     else:
 #         return False
+#
+# @suite.register
+# def test_make_repost(case, browser):
+#     auth_page = AuthPage(browser)
+#     auth_page.open()
+#     auth_page.auth('89260665086',
+#                    'Gfhjkmlkzjr1488')
+#
+#     feed_page = FeedPage(browser)
+#     time.sleep(1)
+#     content = feed_page.getPopularContent()
+#     feed_page.makeRepost()
+#     a = 5
+#     b = 7
 
 @suite.register
 def test_make_repost(case, browser):
@@ -68,9 +82,8 @@ def test_make_repost(case, browser):
     feed_page = FeedPage(browser)
     time.sleep(1)
     content = feed_page.getPopularContent()
-    feed_page.makeRepost()
-    a = 5
-    b = 7
+    feed_page.makeComment(content, feed_page)
+
 
 
 
