@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import random
 
+import random
 import time
 
 from conf.base import OK_URL, STATIC_PATH
@@ -177,6 +177,61 @@ def test_create_with_audio(case, browser):
     expected_names = notes_page.get_last_note().get_audio_names()
     for name, expected_name in zip(sorted(records_names), sorted(expected_names)):
         case.assertion.is_in(name, expected_name)
+
+    notes_page.get_last_note().delete()
+
+    notes_page.refresh()
+    time.sleep(1)
+
+    with case.assertion.raises(IndexError):
+        notes_page.get_last_note()
+
+
+@suite.register
+def test_create_with_place(case, browser):
+    """
+        Добавляем заметку и указываем несколько мест, проверяя возможность их удаления.
+        Проверяем наличие карты и правильные ли места.
+        Удаляем заметку.
+    """
+
+    _auth(browser)
+
+    notes_page = NotesPage(browser)
+    notes_page.open()
+    notes_page.open_note_input()
+
+    time.sleep(1)
+
+    note_form = NoteCreateForm(browser)
+    note_form.actions.add_place()
+
+    time.sleep(1)
+
+    expected_place_name = note_form.place_select.select_random_place()
+    time.sleep(1)
+    place_name = note_form.place_select.selected_place.get_name()
+    case.assertion.equal(expected_place_name, place_name)
+
+    note_form.place_select.remove_selected_place()
+    time.sleep(1)
+
+    search_place_name = u'Москва'
+    note_form.actions.add_place()
+    note_form.place_select.search(search_place_name)
+    time.sleep(1)
+    place_name = note_form.place_select.select_first_place()
+    case.assertion.equal(search_place_name, place_name)
+    time.sleep(1)
+
+    note_form.in_status.unchecked()
+    note_form.submit()
+    time.sleep(1)
+
+    expected_place_names = notes_page.get_last_note().get_place_names()
+    case.assertion.is_in(place_name, expected_place_names)
+
+    case.assertion.equal(notes_page.get_last_note().get_map_count(), 1)
 
     notes_page.get_last_note().delete()
 

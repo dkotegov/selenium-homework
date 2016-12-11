@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import random
 
 from seismograph.ext import selenium
@@ -60,6 +61,21 @@ class Note(selenium.PageItem):
         is_list=True
     )
 
+    place_header = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class='feed_h'
+        )
+    )
+
+    maps = selenium.PageElement(
+        selenium.query(
+            selenium.query.A,
+            _class='media-map_a'
+        ),
+        is_list=True
+    )
+
     def get_text(self):
         return self.text_content.text
 
@@ -68,6 +84,12 @@ class Note(selenium.PageItem):
 
     def get_photo_count(self):
         return len(self.photo_content)
+
+    def get_place_names(self):
+        return self.place_header.text
+
+    def get_map_count(self):
+        return len(self.maps)
 
     def delete(self):
         with self.browser.action_chains as action:
@@ -118,6 +140,22 @@ class NoteCreateFormControls(selenium.PageItem):
     add_audio = _get_control.__func__('openmusic')
 
     add_poll = _get_control.__func__('openpoll')
+
+
+class NoteCreateFormActions(selenium.PageItem):
+
+    __area__ = selenium.query(
+        selenium.query.DIV,
+        _class='form-actions'
+    )
+
+    add_place = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            uid='plBtn'
+        ),
+        call=lambda btn: btn.click()
+    )
 
 
 class NoteCreateFormAddedElement(selenium.PageItem):
@@ -269,3 +307,75 @@ class AddAudioPopup(selenium.PageItem):
             record.click()
 
         return [record.text for record in records]
+
+
+class NoteCreateFormPlaceSelect(selenium.PageItem):
+
+    class Place(selenium.PageItem):
+
+        get_name = selenium.PageElement(
+            selenium.query(
+                selenium.query.DIV,
+                _class=selenium.query.contains('ucard_info_name'),
+            ),
+            call=lambda field: field.text
+        )
+
+    class SelectedPlace(selenium.PageItem):
+
+        __area__ = selenium.query(
+            selenium.query.DIV,
+            _class='pform_map_search_result'
+        )
+
+        get_name = selenium.PageElement(
+            selenium.query(
+                selenium.query.SPAN,
+                uid='plc'
+            ),
+            call=lambda field: field.text
+        )
+
+        remove = selenium.PageElement(
+            selenium.query(
+                selenium.query.DIV,
+                id=selenium.query.contains('PlaceSelctionRemove')
+            ),
+            call=lambda btn: btn.click()
+        )
+
+    search_input = selenium.PageElement(
+        selenium.query(
+            selenium.query.INPUT,
+            id=selenium.query.contains('PlaceSearchInput')
+        )
+    )
+
+    place_list = selenium.PageElement(
+        selenium.query(
+            selenium.query.LI,
+            _class='suggest_li',
+        ),
+        is_list=True,
+        we_class=Place
+    )
+
+    selected_place = selenium.PageElement(SelectedPlace)
+
+    def search(self, place_name):
+        self.search_input.send_keys(place_name)
+
+    def select_random_place(self):
+        random_place = random.choice(self.place_list)
+        place_name = random_place.get_name()
+        random_place.click()
+        return place_name
+
+    def select_first_place(self):
+        first_place = self.place_list[0]
+        place_name = first_place.get_name()
+        first_place.click()
+        return place_name
+
+    def remove_selected_place(self):
+        self.selected_place.remove()

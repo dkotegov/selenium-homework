@@ -4,7 +4,7 @@ import os
 from seismograph.ext import selenium
 from seismograph.ext.selenium import forms
 from utils.items import InStatusCheckbox, NoteCreateFormAddedText, NoteCreateFormControls, NoteCreateFormAddedAudio, \
-    NoteCreateFormAddedPhoto
+    NoteCreateFormAddedPhoto, NoteCreateFormActions, NoteCreateFormPlaceSelect
 
 
 class AuthForm(forms.UIForm):
@@ -56,6 +56,10 @@ class NoteCreateForm(forms.UIForm):
     in_status = selenium.PageElement(InStatusCheckbox)
 
     controls = selenium.PageElement(NoteCreateFormControls)
+
+    actions = selenium.PageElement(NoteCreateFormActions)
+
+    place_select = selenium.PageElement(NoteCreateFormPlaceSelect)
 
     submit = selenium.PageElement(
         selenium.query(
