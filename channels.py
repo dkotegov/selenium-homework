@@ -8,7 +8,7 @@ from pages.video_page import VideoPage
 
 suite = seismograph.Suite(__name__, require=['selenium'])
 
-#@suite.register
+@suite.register
 class CreateChannelCase(BaseCase):
     TEST_CHANNEL1 = 'TEST_CHANNEL1'
     TEST_CHANNEL2 = 'TEST_CHANNEL2'

@@ -3,7 +3,7 @@ import seismograph
 
 import videopreview_test
 import channels
-import tests.single_video as sv
+import tests_for_video_comments.single_video as sv
 
 suites = [
     sv.suite

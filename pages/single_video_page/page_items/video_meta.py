@@ -2,7 +2,6 @@ from seismograph.ext import selenium
 from seismograph.ext.selenium import PageItem
 from seismograph.ext.selenium import PageElement
 from seismograph.ext.selenium import query
-from .page_item_base import PageItemBase
 
 
 class InfoItem(PageItem):
@@ -35,11 +34,11 @@ class InfoItem(PageItem):
 
     class CommentsLink(PageItem):
 
-        X_CNT = "/span[contains(@class, 'widget_count')]"
+        X_CNT = "./span[contains(@class, 'widget_count')]"
 
         def get_comments_count(self):
             cnt = self.we.find_element_by_xpath(self.X_CNT)
-            return cnt.txt
+            return cnt.text
 
         def open(self):
             self.we.click()
@@ -47,25 +46,30 @@ class InfoItem(PageItem):
     el_comments_link = PageElement(
         query(
             query.A,
-            query.expression(
-                _class=query.contains('widget_cnt'),
-                _href=query.startswith('/discussions')
-            )
+            _class=query.contains('widget_cnt'),
+            _href=query.startswith('/discussions')
         ),
         we_class=CommentsLink
     )
+
+    class KlassesBtn(PageItem):
+
+        X_CNT = "./span[contains(@class, 'widget_count')]"
+
+        def get_klasses_count(self):
+            cnt = self.we.find_element_by_xpath(self.X_CNT)
+            return cnt.text
+
+        def switch_klass(self):
+            self.we.click()
 
     el_klasses_btn = PageElement(
         query(
             query.BUTTON,
-            query.expression(
-                _class=query.contains('widget_cnt'),
-                _href=query.startswith('/discussions')
-            )
+            _class=query.contains('controls-list_lk')
         ),
-        we_class=CommentsLink
+        we_class=KlassesBtn
     )
-
 
 
 class ChannelItem(PageItem):
@@ -112,7 +116,7 @@ class DescriptionItem(PageItem):
     css_expand = 'js-vp-layer-description_more'
     el_expand = PageElement(
         query(
-            query.SPAN,
+            query.DIV,
             _class=query.contains(css_expand)
         )
     )
@@ -125,6 +129,6 @@ class DescriptionItem(PageItem):
     def check_expanded(self):
         #el_expand = self.browser.span(_class=query.contains(self.css_expand))
         css_cls = self.el_expand.attr._class
-        if css_cls.contains('invisible'):
+        if 'invisible' in css_cls:
             return True
         return False
