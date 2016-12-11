@@ -31,6 +31,9 @@ def wait_change_url(driver, timeout = DEFAULT_TIMEOUT, sleeptime = DEFAULT_SLEEP
     current_url = driver.current_url
     return wait(driver, lambda d: d.current_url != current_url, timeout, sleeptime)
 
+def wait_value(driver, xpath, value, timeout = DEFAULT_TIMEOUT, sleeptime = DEFAULT_SLEEP_TIME):
+    return wait(driver, lambda d: d.find_element_by_xpath(xpath).text == value, timeout, sleeptime)
+
 def replace_text(web_element, new_text):
     web_element.clear()
     web_element.send_keys(new_text)

@@ -23,7 +23,6 @@ class VideoPage(selenium.Page):
     PROGRESS_BAR = '//div[@class="html5-vpl_progress-bar"]'
     FULLSCREEN_MODE = '//div[@class="html5-vpl_fullscreen"]'
     VIDEO = '//div[@class="html5-vpl_vid_display"]'
-    # AD_SKIP = 'div[@class="html5-vpl_adv al-hide"]'
 
     __url_path__ = '/video/{id}'
 
@@ -48,24 +47,29 @@ class VideoPage(selenium.Page):
         return len(utils.wait_many_xpath(self.browser, self.UNSUBSCRIBE_XPATH)) > 0
 
     def play_video(self):
-        utils.wait_xpath(self.browser, self.PLAY_VIDEO, 5).click()
+        if not self.is_video_playing():
+            utils.wait_xpath(self.browser, self.PLAY_VIDEO).click()
+
+    def play_video_until(self, time):
+        utils.wait_value(self.browser, self.VIDEO_PLAY_TIME, time)
 
     def play_next_video(self):
         utils.wait_xpath(self.browser, self.NEXT_VIDEO).click()
         utils.wait_change_url(self.browser)
 
     def pause_video(self):
-        utils.wait_xpath(self.browser, self.PAUSE_VIDEO, 5).click()
+        utils.wait_xpath(self.browser, self.PAUSE_VIDEO).click()
 
     def rewind_video(self, percent):
         progress_bar = utils.wait_xpath(self.browser, self.PROGRESS_BAR)
+        progress_bar_width = progress_bar.size['width']
         action_chains = ActionChains(self.browser)
-        action_chains.move_to_element(progress_bar).move_by_offset(percent, 0).click().perform()
+        action_chains.move_to_element(progress_bar).move_by_offset((progress_bar_width/100) * (percent-50), 0).click().perform()
 
     def stop_video(self):
         action_chains = ActionChains(self.browser)
         action_chains.context_click(utils.wait_xpath(self.browser, self.VIDEO_WINDOW)).perform()
-        utils.wait_xpath(self.browser, self.STOP_VIDEO, 5).click()
+        utils.wait_xpath(self.browser, self.STOP_VIDEO).click()
 
     def close_video(self):
         utils.wait_xpath(self.browser, self.CLOSE_VIDEO).click()
@@ -104,3 +108,10 @@ class VideoPage(selenium.Page):
             return False
         except Exception:
             return True
+
+    def is_video_playing(self):
+        try:
+            self.browser.find_element_by_xpath(self.PAUSE_VIDEO)
+            return True
+        except Exception:
+            return False

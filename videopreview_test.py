@@ -2,7 +2,7 @@
 import seismograph
 
 from base_case import BaseCase
-import time
+import utils, time
 from pages.channel_page import ChannelPage
 # from pages.suggestedvideos_page import SuggestedVideos
 from pages.video_page import VideoPage
@@ -12,13 +12,14 @@ suite = seismograph.Suite(__name__, require=['selenium'])
 TEST_CHANNEL_ID = '1567208'
 TEST_VIDEO_ID = '206523142632'
 
+
 @suite.register
 class VideoPreviewTest(BaseCase):
 
     def setup(self):
         super(VideoPreviewTest, self).setup()
         self.videos_page = ChannelPage(self.browser)
-        self.videos_page.open(id= TEST_CHANNEL_ID)
+        self.videos_page.open(id=TEST_CHANNEL_ID)
         self.videos_page.open_video_by_id(TEST_VIDEO_ID)
 
     def test_openclose(self):
@@ -35,19 +36,16 @@ class VideoPreviewTest(BaseCase):
 
     def test_video_plays(self):
         videoplayer_page = VideoPage(self.browser)
-        videoplayer_page.play_video()
+        videoplayer_page.rewind_video(0)
         time1 = videoplayer_page.get_video_play_time()
-        time.sleep(3)
+        videoplayer_page.play_video_until('0:01')
         time2 = videoplayer_page.get_video_play_time()
         self.assertion.not_equal(time1, time2)
 
     def test_video_pauses(self):
         videoplayer_page = VideoPage(self.browser)
         videoplayer_page.pause_video()
-        time1 = videoplayer_page.get_video_play_time()
-        time.sleep(3)
-        time2 = videoplayer_page.get_video_play_time()
-        self.assertion.equal(time1, time2)
+        self.assertion.false(videoplayer_page.is_video_playing())
 
     def test_video_stops(self):
         videoplayer_page = VideoPage(self.browser)
