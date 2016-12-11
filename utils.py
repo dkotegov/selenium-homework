@@ -36,6 +36,12 @@ def wait_change_url(driver, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIM
     current_url = driver.current_url
     return wait(driver, lambda d: d.current_url != current_url, timeout, sleeptime)
 
+def wait_value(driver, xpath, value, timeout = DEFAULT_TIMEOUT, sleeptime = DEFAULT_SLEEP_TIME):
+    return wait(driver, lambda d: d.find_element_by_xpath(xpath).text == value, timeout, sleeptime)
+
+def wait_screen_change(driver, xpath, timeout = DEFAULT_TIMEOUT, sleeptime = DEFAULT_SLEEP_TIME):
+    size = driver.find_element_by_xpath(xpath).size['width']
+    return wait(driver, lambda d: d.find_element_by_xpath(xpath).size['width'] != size, timeout, sleeptime)
 
 def replace_text(web_element, new_text):
     web_element.clear()
@@ -70,3 +76,36 @@ def query(tag, **kwargs):
 def text_field(tag, **kwargs):
     kwargs.update({'pe_property':lambda we: we.text})
     return query(tag, **kwargs)
+
+def time_to_int(time):
+    time = time.split(':')
+    result = 0
+    if len(time) == 3:
+        result = int(time[0])*3600 + int(time[1])*60 + int(time[2])
+    if len(time) == 2:
+        result = int(time[0])*60 + int(time[1])
+    if len(time) == 1:
+        result = int(time[0])
+
+    return result
+
+
+def int_to_time(x):
+    result = ''
+    hours = 0
+    if x >= 3600:
+        hours = x/3600
+        result += str(hours) + ':'
+
+    minutes = x/60 - hours*60
+    if x >= 3600 and minutes < 10:
+        result += '0'
+    result += str(minutes) + ':'
+
+    seconds = x - minutes*60 - hours*3600
+    if seconds < 10:
+        result += '0'
+    result += str(seconds)
+    return result
+
+

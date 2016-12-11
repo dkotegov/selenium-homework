@@ -12,7 +12,7 @@ class AttachVideoDialog(selenium.PageItem):
         _id='hook_Block_AttachShareVideoContent'
     )
 
-    VIDEO = '(.//a[contains(@class,"attachInput")])[1]'
+    VIDEO = '(.//a[contains(@class,"attachInput")])'
     @property
     def video(self):
         return utils.wait_xpath(self.browser, self.VIDEO)
@@ -62,20 +62,11 @@ class SendCommentForm(selenium.PageItem):
             self.attach_photo_from_pc(photo_pc)
         utils.js_click(self.browser, self.submit)
 
-    # el_input = PageElement(
-    #     query(
-    #         query.DIV,
-    #         _class=query.contains('js-comments_add comments_add-ceditable'),
-    #         _id=query.contains('field_')
-    #     ),
-    #     we_class=InputField
-    # )
-
+    attach_button = utils.query('DIV', _class = selenium.query.contains('comments_attach_trigger_ic'))
     attach_video_button= utils.query('ANY', _class = selenium.query.contains('ic_videoattach') )
     attach_photo_button = utils.query(
             'ANY',
             _class= selenium.query.contains('ic_okphotoattach')
-            #href=selenium.query.startswith('javascript')
     )
 
     attach_photo_from_pc_button = utils.query('INPUT', _class= selenium.query.contains('h-mod html5-upload-link') )
@@ -83,9 +74,18 @@ class SendCommentForm(selenium.PageItem):
     video_dialog = selenium.PageElement(AttachVideoDialog)
 
     def attach_video(self):
+        utils.js_click(self.browser, self.attach_button)
         utils.js_click(self.browser, self.attach_video_button)
+        # action_chains = ActionChains(self.browser)
+        # action_chains.\
+        #     move_to_element(self.attach_button).\
+        #     click().\
+        #     move_to_element(self.attach_video_button). \
+        #     click().\
+        #     move_to_element(self.video_dialog.video).\
+        #     click().\
+        #     perform()
         utils.js_click(self.browser, self.video_dialog.video)
-        #self.video_dialog.video.click()
 
 
     def attach_photo(self):
@@ -97,11 +97,6 @@ class SendCommentForm(selenium.PageItem):
     def attach_photo_from_pc(self, path):
         self.attach_photo_from_pc_button.send_keys(path)
 
-    # def set_text(self, text):
-    #     self.el_input.set_text(text)
-    #
-    # def submit(self):
-    #     self.el_send_btn.send()
 
 class LastComment(selenium.PageItem):
 
@@ -168,24 +163,27 @@ class DescriptionItem(selenium.PageItem):
         return 'invisible' in css_cls
 
 class VideoPage(selenium.Page):
+
     SUBSCRIBE_XPATH = '//a[text()="Подписаться"]'
     UNSUBSCRIBE_XPATH = '//span[@class="vp-layer_subscribe-lbl ic_quit-lg"]'
-    DELETE_LAST_COMMENT_XPATH ='(//a[contains(@class, "fade-on-hover comments_remove")])[last()]'
-    RECOVER_LAST_COMMENT_XPATH = '(//a[contains(@class, "delete-stub_cancel")])[last()]'
-    PLAY_VIDEO = '//div[@class="html5-vpl_panel_play"]'
-    PAUSE_VIDEO = '//div[@class="html5-vpl_panel_play __pause"]'
-    STOP_VIDEO = '//div[@al-mousedown="stop()"]'
-    CLOSE_VIDEO = '//div[@class="ic media-layer_close_ico"]'
-    RELATED_VIDEO = '(//a[@class="vp-layer_video js-vp-layer_video"])[1]'
-    NEXT_VIDEO = '//div[@class="html5-vpl_next"]'
     VIDEO_PLAY_TIME = '//div[@class="html5-vpl_time"]'
-    VIDEO_TIME_REMAINED = '//div[@class="html5-vpl_time __remained"]'
+    STOP = '//div[@al-mousedown="stop()"]'
     VIDEO_WINDOW = '//div[@class="html5-vpl_vid"]'
-    VIDEO_COVER = '//div[@class="vid-card_cnt_w invisible"]'
-    PROGRESS_BAR = '//div[@class="html5-vpl_progress-bar"]'
-    FULLSCREEN_MODE = '//div[@class="html5-vpl_fullscreen"]'
-    VIDEO = '//div[@class="html5-vpl_vid_display"]'
-    # AD_SKIP = 'div[@class="html5-vpl_adv al-hide"]'
+
+    unsubscribe_xpath = utils.query('SPAN', _class='vp-layer_subscribe-lbl ic_quit-lg')
+    play = utils.query('DIV', _class='html5-vpl_panel_play')
+    pause = utils.query('DIV', _class='html5-vpl_panel_play __pause')
+    close_vid = utils.query('DIV', _class='ic media-layer_close_ico')
+    related_vid = utils.query('A', _class='vp-layer_video js-vp-layer_video')
+    next_vid = utils.query('DIV', _class='html5-vpl_next')
+    video_time_remained = utils.query('DIV', _class='html5-vpl_time __remained')
+    video_cover = utils.query('DIV', _class='vid-card_cnt_w invisible')
+    progress_bar = utils.query('DIV', _class='html5-vpl_progress-bar')
+    widescreen_mode = utils.query('DIV', _class='html5-vpl_widescreen')
+    fullscreen_mode = utils.query('DIV', _class='html5-vpl_fullscreen')
+    roll_in_vid = utils.query('DIV', _class='ic media-layer_turn_ico')
+    get_url = utils.query('A', _class='html5-vpl_ac_i __link')
+    url = utils.query('INPUT', _class='html5-vpl_it')
 
     __url_path__ = '/video/{id}'
 
@@ -209,7 +207,7 @@ class VideoPage(selenium.Page):
         return int(self.subscriptions_count_elem.text.split(' ')[0])
 
     def subscribe(self):
-        utils.wait_xpath(self.browser, self.SUBSCRIBE_XPATH).click()
+        utils.wait_xpath(self.browser, self.subscribe_xpath).click()
 
     def unsubscribe(self):
         self.browser.execute_script('arguments[0].click();', self.unsubscribe_button._wrapped)
@@ -219,65 +217,86 @@ class VideoPage(selenium.Page):
         return len(utils.wait_many_xpath(self.browser, self.UNSUBSCRIBE_XPATH)) > 0
 
     def play_video(self):
-        utils.wait_xpath(self.browser, self.PLAY_VIDEO, 5).click()
+        if not self.is_video_playing():
+            self.play.click()
+
+    def play_video_during(self, time):
+        curr_time = utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text
+        curr_time = utils.time_to_int(curr_time)
+        result_time = utils.int_to_time(curr_time + time)
+        utils.wait_value(self.browser, self.VIDEO_PLAY_TIME, result_time)
 
     def play_next_video(self):
-        utils.wait_xpath(self.browser, self.NEXT_VIDEO).click()
+        elem = self.next_vid
+        next_video_url = elem.get_attribute("href")
+        elem.click()
         utils.wait_change_url(self.browser)
+        return next_video_url
 
     def pause_video(self):
-        utils.wait_xpath(self.browser, self.PAUSE_VIDEO, 5).click()
+        self.pause.click()
 
     def rewind_video(self, percent):
-        progress_bar = utils.wait_xpath(self.browser, self.PROGRESS_BAR)
+        progress_bar = self.progress_bar
+        progress_bar_width = progress_bar.size['width']
         action_chains = ActionChains(self.browser)
-        action_chains.move_to_element(progress_bar).move_by_offset(percent, 0).click().perform()
+        action_chains.move_to_element(progress_bar).move_by_offset((progress_bar_width/100)*(percent-50), 0).click().perform()
 
     def stop_video(self):
         action_chains = ActionChains(self.browser)
         action_chains.context_click(utils.wait_xpath(self.browser, self.VIDEO_WINDOW)).perform()
-        utils.wait_xpath(self.browser, self.STOP_VIDEO, 5).click()
+        utils.wait_xpath(self.browser, self.STOP).click()
 
     def close_video(self):
-        utils.wait_xpath(self.browser, self.CLOSE_VIDEO).click()
+        self.close_vid.click()
 
     def open_related_video_in_new_tab(self):
-        link = utils.wait_xpath(self.browser, self.RELATED_VIDEO).get_attribute("href")
+        link = self.related_vid.first().get_attribute("href")
         self.browser.execute_script("window.open('about:blank', '_blank');")
         self.browser.switch_to_window(self.browser.window_handles[1])
         self.browser.get(link)
 
     def open_fullscreen(self):
-        elem = utils.wait_xpath(self.browser, self.FULLSCREEN_MODE).click()
+        self.fullscreen_mode.click()
 
     def close_fullscreen(self):
         utils.js_click(
              self.browser,
-             utils.wait_xpath(self.browser, self.FULLSCREEN_MODE)
+             utils.wait_xpath(self.browser,  self.fullscreen_mode)
         )
 
+    def open_widescreen(self):
+        self.widescreen_mode.click()
+        utils.wait_screen_change(self.browser, self.VIDEO_WINDOW)
+
+    def rollin_video(self):
+        self.roll_in_vid.click()
+        utils.wait_screen_change(self.browser, self.VIDEO_WINDOW)
+
+    def get_video_url(self):
+        self.get_url.click()
+        url = self.url.get_attribute("value")
+        return url
+
     def get_url_related_video(self):
-        url = utils.wait_xpath(self.browser, self.RELATED_VIDEO).get_attribute("href")
+        url = self.related_vid.first().get_attribute("href")
         return url.split('?')[0]
 
     def get_video_play_time(self):
         return float(utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text.replace(':', '.'))
 
     def get_video_time_remained(self):
-        return float(utils.wait_xpath(self.browser, self.VIDEO_TIME_REMAINED).text.replace(':', '.'))
+        return float(self.video_time_remained.text.replace(':', '.'))
 
     def get_video_window_size(self):
         return utils.wait_xpath(self.browser, self.VIDEO_WINDOW).size
 
     def is_cover_visible(self):
         try:
-            self.browser.find_element_by_xpath(self.VIDEO_COVER)
+            self.browser.find_element_by_xpath(self.video_cover)
             return False
         except Exception:
             return True
-
-    #@property
-    #def comments_list(self):
 
     def reply_last_comment(self, text):
         self.last_comment.reply_click()
@@ -286,14 +305,9 @@ class VideoPage(selenium.Page):
     def add_comment(self, text=None, video = None, photo = None, photo_pc = None ):
         self.send_comment_form.add_comment(text, video, photo, photo_pc)
 
-    # def delete_last_comment(self):
-    #     utils.js_click(
-    #         self.browser,
-    #         utils.wait_xpath(self.browser, self.DELETE_LAST_COMMENT_XPATH)
-    #     )
-    #
-    # def recover_last_comment(self):
-    #     utils.js_click(
-    #         self.browser,
-    #         utils.wait_xpath(self.browser, self.RECOVER_LAST_COMMENT_XPATH)
-    #     )
+    def is_video_playing(self):
+        try:
+            self.browser.find_element_by_xpath(self.pause)
+            return True
+        except Exception:
+            return False
