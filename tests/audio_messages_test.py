@@ -19,22 +19,24 @@ class GroupMessagesPage(Page):
 
 class MessagesMenu(Component):
     ATTACH_BUTTON_TRIG = '//span[@class="comments_attach_trigger"]'
-    ATTACH_VIDEOMSG_BUTTON = '//span[@class="comments_attach_trigger"]/div[2]/div/div/ul/li[2]'
+    ATTACH_VIDEOMSG_BUTTON = '//span[@class="comments_attach_trigger"]/div[2]/div/div/ul/li[1]'
     VIDEOMSG_POPUP = '//span[@id="hook_Modal_popLayerModal"]'
 
     def get_button_attach(self):
-        return WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.ATTACH_BUTTON_TRIG).text
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.ATTACH_BUTTON_TRIG)
         )
+        self.driver.find_element_by_xpath(self.ATTACH_BUTTON_TRIG).click()
 
     def get_button_videomessage(self):
-        return WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.ATTACH_VIDEOMSG_BUTTON).text
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.ATTACH_VIDEOMSG_BUTTON)
         )
+        self.driver.find_element_by_xpath(self.ATTACH_VIDEOMSG_BUTTON).click()
 
     def get_videomessage_popup(self):
         return WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.VIDEOMSG_POPUP).text
+            lambda d: d.find_element_by_xpath(self.VIDEOMSG_POPUP)
         )
 
 
@@ -59,11 +61,9 @@ class AudioMessagesTest(unittest.TestCase):
         message_page = GroupMessagesPage(self.driver)  # Go to messages
         message_page.open()
 
-        clip_icon = message_page.messages_menu.get_button_attach()
-        clip_icon.click()
+        message_page.messages_menu.get_button_attach()
 
-        videomsg_button = message_page.messages_menu.get_button_videomessage()
-        videomsg_button.click()
+        message_page.messages_menu.get_button_videomessage()
 
         videomsg_popup = message_page.messages_menu.get_videomessage_popup()
         self.assertIsNotNone(videomsg_popup)
