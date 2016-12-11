@@ -154,13 +154,20 @@ def test_make_group_comment(case, browser):
     time.sleep(1)
     post_page.makeGroupComment()
 
-=======
-    val =  feed_page.makeRepost()
+@suite.register
+def test_make_repost(case, browser):
+    auth_page = AuthPage(browser)
+    auth_page.open()
+    auth_page.auth('89260665086',
+                   'Gfhjkmlkzjr1488')
+
+    feed_page = FeedPage(browser)
+    time.sleep(1)
+    val = feed_page.makeRepost()
     if val == u'Опубликовано!':
         return True
     else:
         return False
-
 
 
 
