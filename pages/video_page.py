@@ -8,26 +8,26 @@ from seismograph.ext import selenium
 
 
 class VideoPage(selenium.Page):
+
     SUBSCRIBE_XPATH = '//a[text()="Подписаться"]'
-    UNSUBSCRIBE_XPATH = '//span[@class="vp-layer_subscribe-lbl ic_quit-lg"]'
-    PLAY_VIDEO = '//div[@class="html5-vpl_panel_play"]'
-    PAUSE_VIDEO = '//div[@class="html5-vpl_panel_play __pause"]'
-    STOP_VIDEO = '//div[@al-mousedown="stop()"]'
-    CLOSE_VIDEO = '//div[@class="ic media-layer_close_ico"]'
-    RELATED_VIDEO = '(//a[@class="vp-layer_video js-vp-layer_video"])[1]'
-    NEXT_VIDEO = '//div[@class="html5-vpl_next"]'
     VIDEO_PLAY_TIME = '//div[@class="html5-vpl_time"]'
-    VIDEO_TIME_REMAINED = '//div[@class="html5-vpl_time __remained"]'
+    STOP = '//div[@al-mousedown="stop()"]'
     VIDEO_WINDOW = '//div[@class="html5-vpl_vid"]'
-    VIDEO_COVER = '//div[@class="vid-card_cnt_w invisible"]'
-    PROGRESS_BAR = '//div[@class="html5-vpl_progress-bar"]'
-    WIDESCREEN_MODE = '//div[@class="html5-vpl_widescreen"]'
-    FULLSCREEN_MODE = '//div[@class="html5-vpl_fullscreen"]'
-    ROLL_IN_VIDEO = '//div[@class="ic media-layer_turn_ico"]'
-    ROLL_OUT_VIDEO = '//span[@class="vp-modal_h_ac_i __roll-out js-modal-restore"]'
-    GET_URL = '//a[@class="html5-vpl_ac_i __link"]'
-    URL = '//input[@class="html5-vpl_it"]'
-    VIDEO = '//div[@class="html5-vpl_vid_display"]'
+
+    unsubscribe_xpath = utils.query('SPAN', _class='vp-layer_subscribe-lbl ic_quit-lg')
+    play = utils.query('DIV', _class='html5-vpl_panel_play')
+    pause = utils.query('DIV', _class='html5-vpl_panel_play __pause')
+    close_vid = utils.query('DIV', _class='ic media-layer_close_ico')
+    related_vid = utils.query('A', _class='vp-layer_video js-vp-layer_video')
+    next_vid = utils.query('DIV', _class='html5-vpl_next')
+    video_time_remained = utils.query('DIV', _class='html5-vpl_time __remained')
+    video_cover = utils.query('DIV', _class='vid-card_cnt_w invisible')
+    progress_bar = utils.query('DIV', _class='html5-vpl_progress-bar')
+    widescreen_mode = utils.query('DIV', _class='html5-vpl_widescreen')
+    fullscreen_mode = utils.query('DIV', _class='html5-vpl_fullscreen')
+    roll_in_vid = utils.query('DIV', _class='ic media-layer_turn_ico')
+    get_url = utils.query('A', _class='html5-vpl_ac_i __link')
+    url = utils.query('INPUT', _class='html5-vpl_it')
 
     __url_path__ = '/video/{id}'
 
@@ -42,18 +42,18 @@ class VideoPage(selenium.Page):
         return int(self.subscriptions_count_elem.text.split(' ')[0])
 
     def subscribe(self):
-        utils.wait_xpath(self.browser, self.SUBSCRIBE_XPATH).click()
+        utils.wait_xpath(self.browser, self.subscribe_xpath).click()
 
     def unsubscribe(self):
         self.browser.execute_script('arguments[0].click();', self.unsubscribe_button._wrapped)
 
     def is_subscribe(self):
         self.browser.refresh()
-        return len(utils.wait_many_xpath(self.browser, self.UNSUBSCRIBE_XPATH)) > 0
+        return len(utils.wait_many_xpath(self.browser, self.unsubscribe_xpath)) > 0
 
     def play_video(self):
         if not self.is_video_playing():
-            utils.wait_xpath(self.browser, self.PLAY_VIDEO).click()
+            self.play.click()
 
     def play_video_during(self, time):
         curr_time = utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text
@@ -62,17 +62,17 @@ class VideoPage(selenium.Page):
         utils.wait_value(self.browser, self.VIDEO_PLAY_TIME, result_time)
 
     def play_next_video(self):
-        elem = utils.wait_xpath(self.browser, self.NEXT_VIDEO)
+        elem = self.next_vid
         next_video_url = elem.get_attribute("href")
         elem.click()
         utils.wait_change_url(self.browser)
         return next_video_url
 
     def pause_video(self):
-        utils.wait_xpath(self.browser, self.PAUSE_VIDEO).click()
+        self.pause.click()
 
     def rewind_video(self, percent):
-        progress_bar = utils.wait_xpath(self.browser, self.PROGRESS_BAR)
+        progress_bar = self.progress_bar
         progress_bar_width = progress_bar.size['width']
         action_chains = ActionChains(self.browser)
         action_chains.move_to_element(progress_bar).move_by_offset((progress_bar_width/100)*(percent-50), 0).click().perform()
@@ -80,62 +80,62 @@ class VideoPage(selenium.Page):
     def stop_video(self):
         action_chains = ActionChains(self.browser)
         action_chains.context_click(utils.wait_xpath(self.browser, self.VIDEO_WINDOW)).perform()
-        utils.wait_xpath(self.browser, self.STOP_VIDEO).click()
+        utils.wait_xpath(self.browser, self.STOP).click()
 
     def close_video(self):
-        utils.wait_xpath(self.browser, self.CLOSE_VIDEO).click()
+        self.close_vid.click()
 
     def open_related_video_in_new_tab(self):
-        link = utils.wait_xpath(self.browser, self.RELATED_VIDEO).get_attribute("href")
+        link = self.related_vid.first().get_attribute("href")
         self.browser.execute_script("window.open('about:blank', '_blank');")
         self.browser.switch_to_window(self.browser.window_handles[1])
         self.browser.get(link)
 
     def open_fullscreen(self):
-        utils.wait_xpath(self.browser, self.FULLSCREEN_MODE).click()
+        self.fullscreen_mode.click()
 
     def close_fullscreen(self):
         self.browser.execute_script(
             "$(arguments[0]).click();",
-             utils.wait_xpath(self.browser, self.FULLSCREEN_MODE)._wrapped
+             self.fullscreen_mode._wrapped
         )
 
     def open_widescreen(self):
-        utils.wait_xpath(self.browser, self.WIDESCREEN_MODE).click()
+        self.widescreen_mode.click()
         utils.wait_screen_change(self.browser, self.VIDEO_WINDOW)
 
     def rollin_video(self):
-        utils.wait_xpath(self.browser, self.ROLL_IN_VIDEO).click()
+        self.roll_in_vid.click()
         utils.wait_screen_change(self.browser, self.VIDEO_WINDOW)
 
     def get_video_url(self):
-        utils.wait_xpath(self.browser, self.GET_URL).click()
-        url = utils.wait_xpath(self.browser, self.URL).get_attribute("value")
+        self.get_url.click()
+        url = self.url.get_attribute("value")
         return url
 
     def get_url_related_video(self):
-        url = utils.wait_xpath(self.browser, self.RELATED_VIDEO).get_attribute("href")
+        url = self.related_vid.first().get_attribute("href")
         return url.split('?')[0]
 
     def get_video_play_time(self):
         return float(utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text.replace(':', '.'))
 
     def get_video_time_remained(self):
-        return float(utils.wait_xpath(self.browser, self.VIDEO_TIME_REMAINED).text.replace(':', '.'))
+        return float(self.video_time_remained.text.replace(':', '.'))
 
     def get_video_window_size(self):
         return utils.wait_xpath(self.browser, self.VIDEO_WINDOW).size
 
     def is_cover_visible(self):
         try:
-            self.browser.find_element_by_xpath(self.VIDEO_COVER)
+            self.browser.find_element_by_xpath(self.video_cover)
             return False
         except Exception:
             return True
 
     def is_video_playing(self):
         try:
-            self.browser.find_element_by_xpath(self.PAUSE_VIDEO)
+            self.browser.find_element_by_xpath(self.pause)
             return True
         except Exception:
             return False
