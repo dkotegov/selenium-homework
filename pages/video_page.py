@@ -21,7 +21,12 @@ class VideoPage(selenium.Page):
     VIDEO_WINDOW = '//div[@class="html5-vpl_vid"]'
     VIDEO_COVER = '//div[@class="vid-card_cnt_w invisible"]'
     PROGRESS_BAR = '//div[@class="html5-vpl_progress-bar"]'
+    WIDESCREEN_MODE = '//div[@class="html5-vpl_widescreen"]'
     FULLSCREEN_MODE = '//div[@class="html5-vpl_fullscreen"]'
+    ROLL_IN_VIDEO = '//div[@class="ic media-layer_turn_ico"]'
+    ROLL_OUT_VIDEO = '//span[@class="vp-modal_h_ac_i __roll-out js-modal-restore"]'
+    GET_URL = '//a[@class="html5-vpl_ac_i __link"]'
+    URL = '//input[@class="html5-vpl_it"]'
     VIDEO = '//div[@class="html5-vpl_vid_display"]'
 
     __url_path__ = '/video/{id}'
@@ -50,8 +55,11 @@ class VideoPage(selenium.Page):
         if not self.is_video_playing():
             utils.wait_xpath(self.browser, self.PLAY_VIDEO).click()
 
-    def play_video_until(self, time):
-        utils.wait_value(self.browser, self.VIDEO_PLAY_TIME, time)
+    def play_video_during(self, time):
+        curr_time = utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text
+        curr_time = utils.time_to_int(curr_time)
+        result_time = utils.int_to_time(curr_time + time)
+        utils.wait_value(self.browser, self.VIDEO_PLAY_TIME, result_time)
 
     def play_next_video(self):
         elem = utils.wait_xpath(self.browser, self.NEXT_VIDEO)
@@ -84,13 +92,26 @@ class VideoPage(selenium.Page):
         self.browser.get(link)
 
     def open_fullscreen(self):
-        elem = utils.wait_xpath(self.browser, self.FULLSCREEN_MODE).click()
+        utils.wait_xpath(self.browser, self.FULLSCREEN_MODE).click()
 
     def close_fullscreen(self):
         self.browser.execute_script(
             "$(arguments[0]).click();",
              utils.wait_xpath(self.browser, self.FULLSCREEN_MODE)._wrapped
         )
+
+    def open_widescreen(self):
+        utils.wait_xpath(self.browser, self.WIDESCREEN_MODE).click()
+        utils.wait_screen_change(self.browser, self.VIDEO_WINDOW)
+
+    def rollin_video(self):
+        utils.wait_xpath(self.browser, self.ROLL_IN_VIDEO).click()
+        utils.wait_screen_change(self.browser, self.VIDEO_WINDOW)
+
+    def get_video_url(self):
+        utils.wait_xpath(self.browser, self.GET_URL).click()
+        url = utils.wait_xpath(self.browser, self.URL).get_attribute("value")
+        return url
 
     def get_url_related_video(self):
         url = utils.wait_xpath(self.browser, self.RELATED_VIDEO).get_attribute("href")
