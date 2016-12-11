@@ -204,6 +204,19 @@ suite = selenium.Suite(__name__)
 #
 #     feed_page = FeedPage(browser)
 #     time.sleep(1)
+#     content = feed_page.getPopularContent()
+#     time.sleep(1)
+#     feed_page.makeOneLike()
+#
+# @suite.register
+# def test_make_repost_by_double_click(case, browser):
+#     auth_page = AuthPage(browser)
+#     auth_page.open()
+#     auth_page.auth('89260665086',
+#     'Gfhjkmlkzjr1488')
+#
+#     feed_page = FeedPage(browser)
+#     time.sleep(1)
 #     val = feed_page.makeDoubleClickRepost()
 #     if val == u'Опубликовано!':
 #         return True
@@ -229,11 +242,3 @@ def test_make_repost(case, browser):
             return False
     else:
         return False
-
-
-
-
-
-
-
-
