@@ -15,7 +15,7 @@ class AttachVideoDialog(PageItem):
     class Video(PageItem):
 
         def click_video(self):
-            self.we.click()
+            ScriptUtil.click_directly_seismograph(self.browser, self.we)
 
     el_video = PageElement(
         query(
