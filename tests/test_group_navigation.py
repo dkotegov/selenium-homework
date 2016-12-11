@@ -9,6 +9,8 @@ import time
 
 from selenium.webdriver import DesiredCapabilities, Remote
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
@@ -69,6 +71,11 @@ class GroupsPage(Page):
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath("//div[@class='posting-form_itx_dec itx_w']")
         )
+    def my_groups(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath("//a[@class='lp floatRight'")
+        )
+        self.driver.find_element_by_xpath("//a[@class='lp floatRight'").click()
 
     def refresh_page(self):
         self.driver.refresh()
@@ -76,7 +83,7 @@ class GroupsPage(Page):
 class SearchGroup(Component):
     SEARCH_BLOCK = "//input[@id='query_userAltGroupSearch']"
     SUBMIT = "//span[@class='search-input_control search-input_search-ic']"
-    SEARCH_RESULT = "//div[@class='ellip']/a"
+    SEARCH_RESULT = "//div[@class='ucard-v']/div[@class='caption']/a"
 
     def set_text(self, text):
         WebDriverWait(self.driver, 30, 0.1).until(
@@ -89,18 +96,27 @@ class SearchGroup(Component):
             lambda d: d.find_element_by_xpath(self.SEARCH_RESULT).text
         )
     def open_group(self):
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.SEARCH_RESULT).click()
-        )
-        elem = WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_id('mctc_navMenu __groups')
-        )
-        print(elem)
-    def my_groups(self):
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath('lp floatRight')
-        )
-        self.driver.find_element_by_xpath('lp floatRight').click()
+        self.driver.find_element_by_xpath(self.SEARCH_RESULT).click()
+        # self.driver.execute_script("document.getElementsByXpath('//ul[@class=u-menu_li_ul]').style.display='block';")
+        # elem = WebDriverWait(self.driver, 30, 0.1).until(
+        #     lambda d: d.find_element_by_xpath("//ul[@class='u-menu_li_ul']")
+        # )
+        # elem.style.display = 'block'
+        print('additional actions')
+        #WebDriverWait(self.driver, 30, 0.1).until(EC.element_to_be_clickable((By.XPATH, "//li[@class='u-menu_li']/a/span")))
+        # delete = WebDriverWait(self.driver, 30, 0.1).until(
+        #     lambda d: d.
+        # )
+        # self.driver.find_element_by_xpath("//li[@class='u-menu_li']/a/span").click()
+        # print('delete clicked')
+        # confirm = WebDriverWait(self.driver, 30, 0.1).until(
+        #     lambda d: d.find_element_by_id("hook_FormButton_button_delete")
+        # )
+        # confirm.click()
+        # WebDriverWait(self.driver, 30, 0.1).until(
+        #     lambda d: d.find_element_by_id("hook_Block_CreateGroupBlock")
+        # )
+
 
 
 
@@ -130,40 +146,39 @@ class NavigationGroupTest(#seismograph.Case):
 
         user_name = auth_page.user_block.get_username()
         self.assertEqual(user_name, self.USERNAME)
-
-        # self.groups_page = GroupsPage(self.driver)
         self.groups_page = GroupsPage(self.driver)
-
-        # self.group_page = GroupPage(self.driver)
-        # self.group_page.open()
-        # self.new_post = self.group_page.creating_post
 
     def tearDown(self):
         self.driver.quit()
 
-    def test_groups_navigation(self):
+    def test_scroll(self):
         self.groups_page.open()
-        # self.groups_page.scroll_to_bottom
+        self.groups_page.scroll_to_bottom
 
-        # search = self.groups_page.form
-        # search.set_text(u'Газета')
-        # print("waiting for ")
-        # element = WebDriverWait(self.driver, 30, 0.1).until(
-        #     lambda d: d.find_element_by_id('hook_Block_UserGroupsSearch')
-        # )
-        # print("waited")
-        # print(element)
-        # search_result = search.check_result()
-        # print(search_result)
-        # self.assertEqual(search_result, u'Российская Газета')
+    def test_groups_open(self):
+        self.groups_page.open()
 
+    def test_create_group(self):
+        self.groups_page.open()
         self.groups_page.create_group()
-        self.driver.execute_script("window.history.go(-1)")
-        self.groups_page.my_groups()
-        # search.open_group()
 
+    def test_search_created_group(self):
+        self.groups_page.open()
+        search = self.groups_page.form
+        search.set_text(u'Как я открыл selenium и познал...')
+        element = WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_id('hook_Block_UserGroupsSearch')
+        )
+        search_result = search.check_result()
+        print(search_result)
+        self.assertEqual(search_result, u'Как я открыл selenium и познал...')
 
-        # self.driver.execute_script("window.history.go(-1)")
-        # element = WebDriverWait(self.driver, 30, 0.1).until(
-        #     lambda d: d.find_element_by_id('hook_Block_UserGroupsSearch')
-        # )
+    def test_open_my_group(self):
+        self.groups_page.open()
+        search = self.groups_page.form
+        search.set_text(u'Как я открыл selenium и познал...')
+        element = WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_id('hook_Block_UserGroupsSearch')
+        )
+        search_result = search.check_result()
+        search.open_group()
