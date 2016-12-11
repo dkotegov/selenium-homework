@@ -183,7 +183,7 @@ suite = selenium.Suite(__name__)
 #     feed_page.makeLikeTwoLikes()
 
 @suite.register
-def test_make_two_likes(case, browser):
+def test_make_one_likes(case, browser):
     auth_page = AuthPage(browser)
     auth_page.open()
     auth_page.auth('89260665086',
