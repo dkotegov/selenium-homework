@@ -169,7 +169,32 @@ suite = selenium.Suite(__name__)
 #         return True
 #     else:
 #         return False
+#
+# @suite.register
+# def test_make_two_likes(case, browser):
+#     auth_page = AuthPage(browser)
+#     auth_page.open()
+#     auth_page.auth('89260665086',
+#                    'Gfhjkmlkzjr1488')
+#
+#     feed_page = FeedPage(browser)
+#     time.sleep(1)
+#     content = feed_page.getPopularContent()
+#     time.sleep(1)
+#     feed_page.makeLikeTwoLikes()
 
+# @suite.register
+# def test_make_one_likes(case, browser):
+#     auth_page = AuthPage(browser)
+#     auth_page.open()
+#     auth_page.auth('89260665086',
+#                    'Gfhjkmlkzjr1488')
+#
+#     feed_page = FeedPage(browser)
+#     time.sleep(1)
+#     content = feed_page.getPopularContent()
+#     time.sleep(1)
+#     feed_page.makeOneLike()
 # @suite.register
 # def test_make_repost_by_double_click(case, browser):
 #     auth_page = AuthPage(browser)
@@ -186,7 +211,7 @@ suite = selenium.Suite(__name__)
 #         return False
 
 @suite.register
-def test_make_repost_and_delete(case, browser):
+def test_make_repost(case, browser):
     auth_page = AuthPage(browser)
     auth_page.open()
     auth_page.auth('89260665086',
