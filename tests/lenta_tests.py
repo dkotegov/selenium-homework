@@ -142,20 +142,48 @@ suite = selenium.Suite(__name__)
 #
 
 
-@suite.register
-def test_make_group_comment(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+# @suite.register
+# def test_make_group_comment(case, browser):
+#     auth_page = AuthPage(browser)
+#     auth_page.open()
+#     auth_page.auth('89260665086',
+#                    'Gfhjkmlkzjr1488')
+#
+#     post_page = GPP(browser)
+#     post_page.open()
+#     time.sleep(1)
+#     post_page.makeGroupComment()
+#
+# @suite.register
+# def test_make_repost(case, browser):
+#     auth_page = AuthPage(browser)
+#     auth_page.open()
+#     auth_page.auth('89260665086',
+#                    'Gfhjkmlkzjr1488')
+#
+#     feed_page = FeedPage(browser)
+#     time.sleep(1)
+#     val = feed_page.makeRepost()
+#     if val == u'Опубликовано!':
+#         return True
+#     else:
+#         return False
+#
+# @suite.register
+# def test_make_two_likes(case, browser):
+#     auth_page = AuthPage(browser)
+#     auth_page.open()
+#     auth_page.auth('89260665086',
+#                    'Gfhjkmlkzjr1488')
+#
+#     feed_page = FeedPage(browser)
+#     time.sleep(1)
+#     content = feed_page.getPopularContent()
+#     time.sleep(1)
+#     feed_page.makeLikeTwoLikes()
 
-    post_page = GPP(browser)
-    post_page.open()
-    time.sleep(1)
-    post_page.makeGroupComment()
-
 @suite.register
-def test_make_repost(case, browser):
+def test_make_two_likes(case, browser):
     auth_page = AuthPage(browser)
     auth_page.open()
     auth_page.auth('89260665086',
@@ -163,11 +191,7 @@ def test_make_repost(case, browser):
 
     feed_page = FeedPage(browser)
     time.sleep(1)
-    val = feed_page.makeRepost()
-    if val == u'Опубликовано!':
-        return True
-    else:
-        return False
-
-
+    content = feed_page.getPopularContent()
+    time.sleep(1)
+    feed_page.makeOneLike()
 

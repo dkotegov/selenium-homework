@@ -165,3 +165,35 @@ class FeedPage(selenium.Page):
     def repostDoubleClick(self):
         return 1
 
+    def makeLikeTwoLikes(self):
+        time.sleep(5)
+        val = self.browser.find_elements_by_css_selector('button.h-mod.widget_cnt')[-1].text
+
+        self.browser.execute_script('''$('div.feed_cnt').first().find('button.h-mod.widget_cnt').last().click()''')
+        self.browser.execute_script('''$('div.feed_cnt').first().find('button.h-mod.widget_cnt').last().click()''')
+
+        new_val = self.browser.find_elements_by_css_selector('button.h-mod.widget_cnt')[-1].text
+
+        if val == new_val:
+            assert True
+        else:
+            assert False
+
+        pass
+
+    def makeOneLike(self):
+        # может быть и false, если кто-то уберет лайк
+        time.sleep(5)
+        val = self.browser.find_element_by_css_selector('div.feed_cnt').find_elements_by_css_selector('button.h-mod.widget_cnt')[-1].text
+
+        self.browser.execute_script('''$('div.feed_cnt').first().find('button.h-mod.widget_cnt').last().click()''')
+
+        new_val = self.browser.find_element_by_css_selector('div.feed_cnt').find_elements_by_css_selector('button.h-mod.widget_cnt')[-1].text
+
+        if val != new_val:
+            assert True
+        else:
+            assert False
+
+        pass
+
