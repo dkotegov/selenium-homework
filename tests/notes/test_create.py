@@ -3,7 +3,7 @@ import random
 
 import time
 
-from conf.base import OK_URL
+from conf.base import OK_URL, STATIC_PATH
 from seismograph.ext import selenium
 from utils.forms import AuthForm, NoteCreateForm
 from utils.items import AddAudioPopup
@@ -19,6 +19,8 @@ def _auth(browser):
     auth_form = AuthForm(browser)
     auth_form.fill()
     auth_form.submit()
+
+    time.sleep(3)
 
 
 def _get_note_text():
@@ -38,12 +40,9 @@ def test_create_with_text_boxes(case, browser):
 
     _auth(browser)
 
-    time.sleep(1)
-
     notes_page = NotesPage(browser)
     notes_page.open()
     notes_page.open_note_input()
-
     time.sleep(1)
 
     note_texts = []
@@ -57,12 +56,10 @@ def test_create_with_text_boxes(case, browser):
         note_form.send_keys_in_last_text_form(note_texts[i])
 
     note_form.delete_last_added_text_form()
-
     time.sleep(1)
 
     note_form.in_status.unchecked()
     note_form.submit()
-
     time.sleep(1)
 
     note_final_text = '\n'.join(note_texts[:-2])
@@ -79,7 +76,56 @@ def test_create_with_text_boxes(case, browser):
 
 @suite.register
 def test_create_with_photo(case, browser):
-    pass
+    """
+        Создаем заметку с несколькими фотографиями разных форматов + некоторые из фото не валидны.
+        Проверяем удаление фотографий внутри блока, а так же самого блока с фотографиями.
+        Проверяем кол-во фотографий в созданной заметке.
+        Удаляем заметку.
+    """
+
+    _auth(browser)
+
+    notes_page = NotesPage(browser)
+    notes_page.open()
+    notes_page.open_note_input()
+    time.sleep(1)
+
+    note_form = NoteCreateForm(browser)
+    photo_names = (
+        'test-img.png',
+        'test-img.png',
+        'test-img.png',
+        'test-img-small.png',
+        'test-img.png',
+        'test-img-small.png',
+    )
+    for name in photo_names:
+        photo = '{0}img/{1}'.format(STATIC_PATH, name)
+        note_form.controls.add_photo(photo)
+        time.sleep(1)
+
+    note_form.delete_last_added_photo_block()
+    time.sleep(1)
+
+    note_form.delete_last_added_photo_in_block()
+    time.sleep(1)
+
+    # Остается три валидных фото
+
+    note_form.in_status.unchecked()
+    note_form.submit()
+
+    time.sleep(1)
+
+    case.assertion.equal(notes_page.get_last_note().get_photo_count(), 3)
+
+    notes_page.get_last_note().delete()
+
+    notes_page.refresh()
+    time.sleep(1)
+
+    with case.assertion.raises(IndexError):
+        notes_page.get_last_note()
 
 
 @suite.register
@@ -87,13 +133,11 @@ def test_create_with_audio(case, browser):
     """
         Выбираем случайным образом несколько аудиозаписей из поиска.
         Добавляем заметку, проверяем названия добавленных аудиозаписей.
-        Проверяем возможность удаления аудиозаписи.
+        Проверяем возможность удаления аудиозаписей.
         Удаляем заметку.
     """
 
     _auth(browser)
-
-    time.sleep(1)
 
     notes_page = NotesPage(browser)
     notes_page.open()
@@ -120,11 +164,10 @@ def test_create_with_audio(case, browser):
 
     time.sleep(1)
 
-    last_record_name = note_form.delete_last_added_audio()
-
-    time.sleep(1)
-
-    records_names.remove(last_record_name)
+    for _ in range(2):
+        last_record_name = note_form.delete_last_added_audio()
+        time.sleep(1)
+        records_names.remove(last_record_name)
 
     note_form.in_status.unchecked()
     note_form.submit()

@@ -52,11 +52,22 @@ class Note(selenium.PageItem):
         is_list=True
     )
 
+    photo_content = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class='collage_i'
+        ),
+        is_list=True
+    )
+
     def get_text(self):
         return self.text_content.text
 
     def get_audio_names(self):
         return [record.text for record in self.audio_content]
+
+    def get_photo_count(self):
+        return len(self.photo_content)
 
     def delete(self):
         with self.browser.action_chains as action:
@@ -83,9 +94,26 @@ class NoteCreateFormControls(selenium.PageItem):
                 call=lambda btn: btn.click()
             )
 
+    class AddImageBtn(selenium.PageItem):
+
+        __area__ = selenium.query(
+            selenium.query.A,
+            id=selenium.query.contains('openimage')
+        )
+
+        file_input = selenium.PageElement(
+            selenium.query(
+                selenium.query.INPUT,
+                _class='html5-upload-link'
+            )
+        )
+
     add_text_form = _get_control.__func__('opentext')
 
-    add_photo = _get_control.__func__('openimage')
+    add_photo = selenium.PageElement(
+        AddImageBtn,
+        call=lambda btn, file_name: btn.file_input.send_keys(file_name)
+    )
 
     add_audio = _get_control.__func__('openmusic')
 
@@ -125,11 +153,6 @@ class NoteCreateFormAddedAudio(NoteCreateFormAddedElement):
 
     class AddedAudio(selenium.PageItem):
 
-        # __area__ = selenium.query(
-        #     selenium.query.SPAN,
-        #     _class=selenium.query.contains('posting-form_track_info_w')
-        # )
-
         info = selenium.PageElement(
             selenium.query(
                 selenium.query.SPAN,
@@ -165,6 +188,36 @@ class NoteCreateFormAddedAudio(NoteCreateFormAddedElement):
         info = audio.info()
         audio.delete()
         return info
+
+
+class NoteCreateFormAddedPhoto(NoteCreateFormAddedElement):
+
+    class AddedPhoto(selenium.PageItem):
+
+        delete_btn = selenium.PageElement(
+            selenium.query(
+                selenium.query.DIV,
+                id=selenium.query.contains('remove')
+            )
+        )
+
+        def delete(self):
+            with self.browser.action_chains as action:
+                action.move_to_element(self)
+                action.click(self.delete_btn)
+                action.perform()
+
+    photos = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            id=selenium.query.contains('preview')
+        ),
+        is_list=True,
+        we_class=AddedPhoto
+    )
+
+    def delete_last_inside_block(self):
+        self.photos[-1].delete()
 
 
 class AddAudioPopup(selenium.PageItem):
@@ -216,4 +269,3 @@ class AddAudioPopup(selenium.PageItem):
             record.click()
 
         return [record.text for record in records]
-

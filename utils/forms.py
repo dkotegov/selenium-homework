@@ -3,7 +3,8 @@
 import os
 from seismograph.ext import selenium
 from seismograph.ext.selenium import forms
-from utils.items import InStatusCheckbox, NoteCreateFormAddedText, NoteCreateFormControls, NoteCreateFormAddedAudio
+from utils.items import InStatusCheckbox, NoteCreateFormAddedText, NoteCreateFormControls, NoteCreateFormAddedAudio, \
+    NoteCreateFormAddedPhoto
 
 
 class AuthForm(forms.UIForm):
@@ -32,7 +33,7 @@ class AuthForm(forms.UIForm):
 
 class NoteCreateForm(forms.UIForm):
 
-    note_text_fields = selenium.PageElement(
+    added_text_fields = selenium.PageElement(
         selenium.query(
             selenium.query.DIV,
             _class='posting-form_sctn_w'
@@ -42,6 +43,15 @@ class NoteCreateForm(forms.UIForm):
     )
 
     added_audio = selenium.PageElement(NoteCreateFormAddedAudio)
+
+    added_photos = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class=selenium.query.contains('posting-form_sctn_w')
+        ),
+        is_list=True,
+        we_class=NoteCreateFormAddedPhoto
+    )
 
     in_status = selenium.PageElement(InStatusCheckbox)
 
@@ -57,10 +67,16 @@ class NoteCreateForm(forms.UIForm):
     )
 
     def send_keys_in_last_text_form(self, text):
-        self.note_text_fields[-1].text_input.send_keys(text)
+        self.added_text_fields[-1].text_input.send_keys(text)
 
     def delete_last_added_text_form(self):
-        self.note_text_fields[-1].delete()
+        self.added_text_fields[-1].delete()
 
     def delete_last_added_audio(self):
         return self.added_audio.delete_last()
+
+    def delete_last_added_photo_in_block(self):
+        self.added_photos[1].delete_last_inside_block()
+
+    def delete_last_added_photo_block(self):
+        self.added_photos[1].delete()

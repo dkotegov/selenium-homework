@@ -36,4 +36,3 @@ class NotesPage(BasePage):
 
     def get_last_note(self):
         return self.notes[0]
-
