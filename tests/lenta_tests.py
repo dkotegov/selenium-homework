@@ -2,6 +2,7 @@
 from seismograph.ext import selenium
 from pages.auth_page import AuthPage
 from pages.feed_page import FeedPage
+from pages.profile_page import ProfilePage
 import time
 
 from pages.group_post_page import PostPage as GPP
@@ -182,16 +183,50 @@ suite = selenium.Suite(__name__)
 #     time.sleep(1)
 #     feed_page.makeLikeTwoLikes()
 
+# @suite.register
+# def test_make_one_likes(case, browser):
+#     auth_page = AuthPage(browser)
+#     auth_page.open()
+#     auth_page.auth('89260665086',
+#                    'Gfhjkmlkzjr1488')
+#
+#     feed_page = FeedPage(browser)
+#     time.sleep(1)
+#     content = feed_page.getPopularContent()
+#     time.sleep(1)
+#     feed_page.makeOneLike()
+#
+# @suite.register
+# def test_make_repost_by_double_click(case, browser):
+# auth_page = AuthPage(browser)
+# auth_page.open()
+# auth_page.auth('89260665086',
+# 'Gfhjkmlkzjr1488')
+#
+# feed_page = FeedPage(browser)
+# time.sleep(1)
+# val = feed_page.makeDoubleClickRepost()
+# if val == u'Опубликовано!':
+# return True
+# else:
+# return False
+
 @suite.register
-def test_make_one_likes(case, browser):
+def test_make_repost_and_delete(case, browser):
     auth_page = AuthPage(browser)
     auth_page.open()
     auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    'Gfhjkmlkzjr1488')
 
     feed_page = FeedPage(browser)
     time.sleep(1)
-    content = feed_page.getPopularContent()
-    time.sleep(1)
-    feed_page.makeOneLike()
-
+    val = feed_page.makeRepost()
+    if val == u'Опубликовано!':
+        profile_page = ProfilePage(browser)
+        profile_page.open()
+        if profile_page.delete_my_post():
+            return True
+        else:
+            return False
+    else:
+        return False

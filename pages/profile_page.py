@@ -22,8 +22,9 @@ class ProfilePage(selenium.Page):
             return False
 
     def delete_my_post(self):
+        time.sleep(2)
         self.browser.execute_script("$('a.al.feed_close')[0].click();")
-        time.sleep(1)
+        time.sleep(2)
         try:
             self.browser.find_elements_by_css_selector('div.feed-list')[0].find_elements_by_css_selector('span.delete-stub_info.tico')[0]
             return True
