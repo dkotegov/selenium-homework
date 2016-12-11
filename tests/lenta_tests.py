@@ -171,7 +171,7 @@ suite = selenium.Suite(__name__)
 #         return False
 
 # @suite.register
-# def test_make_repost(case, browser):
+# def test_make_repost_by_double_click(case, browser):
 #     auth_page = AuthPage(browser)
 #     auth_page.open()
 #     auth_page.auth('89260665086',
@@ -186,7 +186,7 @@ suite = selenium.Suite(__name__)
 #         return False
 
 @suite.register
-def test_make_repost(case, browser):
+def test_make_repost_and_delete(case, browser):
     auth_page = AuthPage(browser)
     auth_page.open()
     auth_page.auth('89260665086',
