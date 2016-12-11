@@ -51,10 +51,8 @@ class GroupsPage(Page):
         group = links[randint(0, len(links)-1)]
         print group
 
-    def create_group(self):
-        print("start")
+    def create_group(self, name):
         self.driver.find_element_by_xpath(self.CREATE_GROUP).click()
-        print("Click")
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath("//a[@class='create-group-dialog_i']")
         )
@@ -63,7 +61,7 @@ class GroupsPage(Page):
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_id('hook_Form_PopLayerCreateAltGroupDialog2Form')
         )
-        self.driver.find_element_by_id("field_name").send_keys(u'Как я открыл selenium и познал...')
+        self.driver.find_element_by_id("field_name").send_keys(name)
         self.driver.find_element_by_id("field_description").send_keys(u'...')
         Select(self.driver.find_element_by_id('field_pageMixedCategory')).select_by_value('subcatVal12005')
         self.driver.find_element_by_id("hook_FormButton_button_create").click()
@@ -71,6 +69,7 @@ class GroupsPage(Page):
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath("//div[@class='posting-form_itx_dec itx_w']")
         )
+
     def my_groups(self):
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath("//a[@class='lp floatRight'")
@@ -84,6 +83,9 @@ class SearchGroup(Component):
     SEARCH_BLOCK = "//input[@id='query_userAltGroupSearch']"
     SUBMIT = "//span[@class='search-input_control search-input_search-ic']"
     SEARCH_RESULT = "//div[@class='ucard-v']/div[@class='caption']/a"
+    ADDITIONAL_ACTIONS = 'tico_simb_txt'
+    DELETE_BUTTON = "//i[@class='tico_img ic ic_delete']"
+    CONFIRM_BUTTON = "//i[@class='tico_img ic ic_delete']"
 
     def set_text(self, text):
         WebDriverWait(self.driver, 30, 0.1).until(
@@ -97,32 +99,29 @@ class SearchGroup(Component):
         )
     def open_group(self):
         self.driver.find_element_by_xpath(self.SEARCH_RESULT).click()
-        self.driver.execute_script("window.scrollTo(0, 300);")
-        
-        elem = WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_elements_by_class_name('tico_simb_txt')
-        )
-        print(elem)
-        elem[0].click()
-        print('additional actions')
-        while True:
-            try:
-                delete = WebDriverWait(self.driver, 30, 0.1).until(
-                    lambda d: d.find_element_by_xpath("//i[@class='tico_img ic ic_delete']")
-                )
-                self.driver.find_element_by_xpath("//i[@class='tico_img ic ic_delete']").click()
-                print('delete clicked')
-                break
-            except:
-                pass
+        # self.driver.execute_script("window.scrollTo(0, 200);")
 
-        confirm = WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_id("hook_FormButton_button_delete")
-        )
-        confirm.click()
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_id("hook_Block_CreateGroupBlock")
-        )
+        # elem = WebDriverWait(self.driver, 30, 0.1).until(
+        #     lambda d: d.find_elements_by_class_name(self.ADDITIONAL_ACTIONS)
+        # )
+        # elem[0].click()
+        # while True:
+        #     try:
+        #         delete = WebDriverWait(self.driver, 30, 0.1).until(
+        #             lambda d: d.find_element_by_xpath(self.DELETE_BUTTON)
+        #         )
+        #         self.driver.find_element_by_xpath(self.DELETE_BUTTON).click()
+        #         break
+        #     except:
+        #         pass
+        #
+        # confirm = WebDriverWait(self.driver, 30, 0.1).until(
+        #     lambda d: d.find_element_by_id(self.CONFIRM_BUTTON)
+        # )
+        # confirm.click()
+        # WebDriverWait(self.driver, 30, 0.1).until(
+        #     lambda d: d.find_element_by_id(self.CONFIRM_BUTTON)
+        # )
 
 
 
@@ -132,6 +131,7 @@ class NavigationGroupTest(#seismograph.Case):
     unittest.TestCase):
     USERLOGIN = 'technopark30'
     USERNAME = u'Евдакия Фёдорова'
+    GROUP_NAME = u'Как я открыл selenium и познал...'
     PASSWORD = os.environ.get('PASSWORD', 'testQA1')
     groups_page = GroupsPage
 
@@ -167,7 +167,7 @@ class NavigationGroupTest(#seismograph.Case):
 
     def test_create_group(self):
         self.groups_page.open()
-        self.groups_page.create_group()
+        self.groups_page.create_group(self.GROUP_NAME)
 
     def test_search_created_group(self):
         self.groups_page.open()
@@ -178,7 +178,7 @@ class NavigationGroupTest(#seismograph.Case):
         )
         search_result = search.check_result()
         print(search_result)
-        self.assertEqual(search_result, u'Как я открыл selenium и познал...')
+        self.assertEqual(search_result, self.GROUP_NAME)
 
     def test_open_my_group(self):
         self.groups_page.open()
