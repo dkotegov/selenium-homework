@@ -5,26 +5,28 @@ from seismograph.ext.selenium import query
 from pages.single_video_page.utils import ScriptUtil
 from .attach_video_dialog import AttachVideoDialog
 from .attach_photo_dialog import AttachPhotoDialog
+import utils
 
 
 class VideoCommentForm(PageItem):
 
     __area__ = query(
         query.DIV,
-        _class=query.contains('comments_form')
+        _id='movie-comments'
     )
 
     class InputField(PageItem):
 
         def set_text(self, text):
-            self.we.click()
-            self.we.send_keys(text)
+            ScriptUtil.click_directly_seismograph(self.browser, self.we)
+            ScriptUtil.set_text_directly_seismograph(self.browser, self.we, text)
+            #self.we.click()
+            #self.we.send_keys(text)
 
     el_input = PageElement(
         query(
             query.DIV,
-            _class=query.contains('js-comments_add comments_add-ceditable'),
-            _id=query.contains('field_')
+            _class=query.contains('js-comments_add')
         ),
         we_class=InputField
     )
@@ -33,6 +35,7 @@ class VideoCommentForm(PageItem):
 
         def send(self):
             ScriptUtil.click_directly_seismograph(self.browser, self.we)
+            #self.we.click()
 
     el_send_btn = PageElement(
         query(
@@ -45,7 +48,11 @@ class VideoCommentForm(PageItem):
     class AttachVideo(PageItem):
 
         def attach_click(self):
-            ScriptUtil.click_directly_seismograph(self.browser, self.we)
+            x_path = "//span[@class='comments_attach_trigger']//ul[@class='u-menu']/li[1]/a"
+            driver = self.browser._wrapped
+            lst = utils.wait_many_xpath(driver, x_path)
+            elem = lst[-1]
+            ScriptUtil.click_directly(driver, elem)
 
     el_attach_video = PageElement(
         query(
@@ -58,7 +65,11 @@ class VideoCommentForm(PageItem):
     class AttachPhoto(PageItem):
 
         def attach_click(self):
-            ScriptUtil.click_directly_seismograph(self.browser, self.we)
+            x_path = "//span[@class='comments_attach_trigger']//ul[@class='u-menu']/li[2]/a/span"
+            driver = self.browser._wrapped
+            lst = utils.wait_many_xpath(driver, x_path)
+            elem = lst[-1]
+            ScriptUtil.click_directly(driver, elem)
 
     el_attach_photo = PageElement(
         query(
@@ -89,7 +100,7 @@ class VideoCommentForm(PageItem):
 
     def attach_photo_in_dialog(self):
         self.el_attach_photo.attach_click()
-        dialog = PageElement(AttachPhotoDialog)
+        dialog = AttachPhotoDialog(self.browser)
         dialog.el_photo.click_photo()
         dialog.el_add_btn.click_btn()
 

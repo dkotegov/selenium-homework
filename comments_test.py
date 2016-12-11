@@ -89,22 +89,24 @@ class CommentsCase(BaseCase):
     #     self.browser.refresh()
     #     self.assertion.false(self.video_page.last_comment.is_klassed())
 
-    # def test_photo_attachment(self):
-    #     VIDEO_ID = '207003062760'
-    #
-    #     self.video_page.open(id=VIDEO_ID)
-    #     self.video_page.add_comment( photo=True)
-    #
-    #     self.video_page.last_comment.remove()
-
-    def test_video_attachment(self):
-        VIDEO_ID = '207004439016'
+    def test_photo_attachment(self):
+        VIDEO_ID = '207003062760'
 
         self.video_page.open(id=VIDEO_ID)
-        self.video_page.add_comment(video=True)
+        self.video_page.add_comment( photo=True)
 
-        self.assertion.true(self.video_page.last_comment.check_video_attachment())
+        self.browser.refresh()
+        self.assertion.true( self.video_page.last_comment.check_photo_attachment())
         self.video_page.last_comment.remove()
+
+    # def test_video_attachment(self):
+    #     VIDEO_ID = '207004439016'
+    #
+    #     self.video_page.open(id=VIDEO_ID)
+    #     self.video_page.add_comment(video=True)
+    #
+    #     self.assertion.true(self.video_page.last_comment.check_video_attachment())
+    #     self.video_page.last_comment.remove()
 
 
 

@@ -31,6 +31,11 @@ class AttachPhotoDialog(selenium.PageItem):
     add_btn =utils.query('INPUT', _id= selenium.query.contains('hook_FormButton_button_attach'))
 
     def add_photo(self):
+        x_path = "//span[@class='comments_attach_trigger']//ul[@class='u-menu']/li[2]/a/span"
+        #driver = self.browser._wrapped
+        lst = utils.wait_many_xpath(self.browser, x_path)
+        elem = lst[-1]
+        utils.js_click(self.browser, elem)
         self.photo.click()
         self.add_btn.click()
 
