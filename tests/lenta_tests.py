@@ -72,8 +72,47 @@ suite = selenium.Suite(__name__)
 #     a = 5
 #     b = 7
 
+# @suite.register
+# def test_make_self_comment(case, browser):
+#     auth_page = AuthPage(browser)
+#     auth_page.open()
+#     auth_page.auth('89260665086',
+#                    'Gfhjkmlkzjr1488')
+#
+#     feed_page = FeedPage(browser)
+#     time.sleep(1)
+#     content = feed_page.getPopularContent()
+#     feed_page.makeSelfComment(content, feed_page)
+#
+
+# @suite.register
+# def test_make_comment(case, browser):
+#     auth_page = AuthPage(browser)
+#     auth_page.open()
+#     auth_page.auth('89260665086',
+#                    'Gfhjkmlkzjr1488')
+#
+#     feed_page = FeedPage(browser)
+#     time.sleep(1)
+#     content = feed_page.getPopularContent()
+#     feed_page.makeComment(content, feed_page)
+
+
+# @suite.register
+# def test_make_like(case, browser):
+#     auth_page = AuthPage(browser)
+#     auth_page.open()
+#     auth_page.auth('89260665086',
+#                    'Gfhjkmlkzjr1488')
+#
+#     feed_page = FeedPage(browser)
+#     time.sleep(1)
+#     content = feed_page.getPopularContent()
+#     feed_page.makeLikeOnSelfComment(content, feed_page)
+
+
 @suite.register
-def test_make_repost(case, browser):
+def test_make_double_like(case, browser):
     auth_page = AuthPage(browser)
     auth_page.open()
     auth_page.auth('89260665086',
@@ -82,7 +121,7 @@ def test_make_repost(case, browser):
     feed_page = FeedPage(browser)
     time.sleep(1)
     content = feed_page.getPopularContent()
-    feed_page.makeComment(content, feed_page)
+    feed_page.repostDoubleClick(content, feed_page)
 
 
 

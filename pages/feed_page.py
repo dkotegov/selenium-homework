@@ -57,6 +57,20 @@ class FeedPage(selenium.Page):
         return 1
 
     def makeComment(self, content, feed_page):
+        time.sleep(5)
+        button = content.browser.find_elements_by_css_selector('div.feed_f')[2].find_element_by_css_selector('a')
+        button.click()
+        comment_body = CommentPage(feed_page.browser)
+        comment_body.comment_input.set(u'lel')
+        content.browser.find_elements_by_id('ok-e-d_button')[0].click()
+        comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-1]
+        comment_div = comment.find_element_by_css_selector('div.d_comment_text')
+        if comment_div.text == 'lel':
+            assert True
+        else:
+            assert False
+
+    def makeSelfComment(self, content, feed_page):
         button = content.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
         button.click()
         comment_body = CommentPage(feed_page.browser)
@@ -69,13 +83,21 @@ class FeedPage(selenium.Page):
         else:
             assert False
 
-
-    def makeSelfComment(self):
-        return 1
-
-    def makeLikeOnSelfComment(self):
-        return 1
-
+    def makeLikeOnSelfComment(self, content, feed_page):
+        button = content.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
+        button.click()
+        comment_body = CommentPage(feed_page.browser)
+        comment_body.comment_input.set(u'lel')
+        content.browser.find_elements_by_id('ok-e-d_button')[0].click()
+        comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-1]
+        like_div = comment.find_element_by_css_selector('div.klass_w')
+        like_div.click()
+        like_div.click()
+        like_div.click()
+        if len(like_div.text) == 2:
+            assert True
+        else:
+            assert False
 
     def makeLike(self):
         return 1
@@ -86,6 +108,20 @@ class FeedPage(selenium.Page):
     def makeLikeForSomemoneComment(self):
         return 1
 
-    def repostDoubleClick(self):
-        return 1
+    def repostDoubleClick(self, content, feed_page):
+        button = content.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
+        button.click()
+        comment_body = CommentPage(feed_page.browser)
+        comment_body.comment_input.set(u'lel')
+        content.browser.find_elements_by_id('ok-e-d_button')[0].click()
+        comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-1]
+        like_div = comment.find_element_by_css_selector('div.klass_w')
+        like_div.click()
+        like_div.click()
+        like_div.click()
+        like_div.click()
+        if len(like_div.text) != 2:
+            assert True
+        else:
+            assert False
 
