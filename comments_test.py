@@ -14,7 +14,7 @@ class CommentsCase(BaseCase):
     def setup(self):
         super(CommentsCase, self).setup()
         self.video_page = VideoPage(self.browser)
-    #
+
     # def test_add_comment(self):
     #     VIDEO_ID = '206460097000'
     #     COMMENT = 'TESTCOMMENT__TESTCOMMENT'
@@ -89,15 +89,15 @@ class CommentsCase(BaseCase):
     #     self.browser.refresh()
     #     self.assertion.false(self.video_page.last_comment.is_klassed())
 
-    def test_photo_attachment(self):
-        VIDEO_ID = '207003062760'
-
-        self.video_page.open(id=VIDEO_ID)
-        self.video_page.add_comment( photo=True)
-
-        self.browser.refresh()
-        self.assertion.true( self.video_page.last_comment.check_photo_attachment())
-        self.video_page.last_comment.remove()
+    # def test_photo_attachment(self):
+    #     VIDEO_ID = '207003062760'
+    #
+    #     self.video_page.open(id=VIDEO_ID)
+    #     self.video_page.add_comment( photo=True)
+    #
+    #     self.browser.refresh()
+    #     self.assertion.true( self.video_page.last_comment.check_photo_attachment())
+    #     self.video_page.last_comment.remove()
 
     # def test_video_attachment(self):
     #     VIDEO_ID = '207004439016'
@@ -105,17 +105,19 @@ class CommentsCase(BaseCase):
     #     self.video_page.open(id=VIDEO_ID)
     #     self.video_page.add_comment(video=True)
     #
+    #     self.browser.refresh()
     #     self.assertion.true(self.video_page.last_comment.check_video_attachment())
     #     self.video_page.last_comment.remove()
 
 
+    def test_photo_attachment_from_pc(self):
+        VIDEO_ID = '207005094376'
 
-    # def test_photo_attachment_from_pc(self):
-    #     VIDEO_ID = '207005094376'
-    #
-    #     self.video_page.open(id=VIDEO_ID)
-    #     self.video_page.add_comment(photo_pc=os.path.abspath('./unnamed.png'))
-    #
-    #     self.video_page.last_comment.remove()
+        self.video_page.open(id=VIDEO_ID)
+        self.video_page.add_comment(photo_pc=os.path.abspath('./unnamed.png'))
+
+        self.browser.refresh()
+        self.assertion.true(self.video_page.last_comment.check_photo_attachment())
+        self.video_page.last_comment.remove()
 
 

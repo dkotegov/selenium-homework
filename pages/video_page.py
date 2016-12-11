@@ -12,10 +12,12 @@ class AttachVideoDialog(selenium.PageItem):
         _id='hook_Block_AttachShareVideoContent'
     )
 
-    VIDEO = '(.//a[contains(@class,"attachInput")])'
-    @property
-    def video(self):
-        return utils.wait_xpath(self.browser, self.VIDEO)
+    # VIDEO = '(.//a[contains(@class,"attachInput")])'
+    # @property
+    # def video(self):
+    #     return utils.wait_xpath(self.browser, self.VIDEO)
+    video = utils.query( 'A',_class = selenium.query.contains('attachInput') )
+
     #video = utils.wait_xpath(self.browser, '(//a[contains(@class,"ttachInput")])[0]')
     #video = utils.query( 'A' ,_class= selenium.query.contains('attachInput') )
 
@@ -42,6 +44,7 @@ class AttachPhotoDialog(selenium.PageItem):
 class SendCommentForm(selenium.PageItem):
     INPUT_XPATH = '(.//div[contains(@class, "js-comments_add")])[last()]'
     SUBMIT_XPATH = '(.//button[@class="button-pro form-actions_yes"])[last()]'
+    ATTACHMENT_UPLOADED_CLASS = 'attach-photo_del'
 
     _area__ = selenium.query(
         selenium.query.DIV,
@@ -78,19 +81,15 @@ class SendCommentForm(selenium.PageItem):
     photo_dialog = selenium.PageElement(AttachPhotoDialog)
     video_dialog = selenium.PageElement(AttachVideoDialog)
 
+    #TODO
     def attach_video(self):
-        utils.js_click(self.browser, self.attach_button)
+        #utils.js_click(self.browser, self.attach_button)
+        x_path = "//span[@class='comments_attach_trigger']//ul[@class='u-menu']/li[1]/a"
         utils.js_click(self.browser, self.attach_video_button)
-        # action_chains = ActionChains(self.browser)
-        # action_chains.\
-        #     move_to_element(self.attach_button).\
-        #     click().\
-        #     move_to_element(self.attach_video_button). \
-        #     click().\
-        #     move_to_element(self.video_dialog.video).\
-        #     click().\
-        #     perform()
-        utils.js_click(self.browser, self.video_dialog.video)
+        lst = utils.wait_many_xpath(self.browser, x_path)
+        elem = lst[-1]
+        utils.js_click(self.browser, elem)
+        utils.js_click(self.browser, self.video_dialog.video.first())
 
 
     def attach_photo(self):
@@ -100,7 +99,11 @@ class SendCommentForm(selenium.PageItem):
 
 
     def attach_photo_from_pc(self, path):
-        self.attach_photo_from_pc_button.send_keys(path)
+        x_path = "//span[@class='comments_attach_trigger']//ul[@class='u-menu']/li[3]/span/input"
+        lst = utils.wait_many_xpath(self.browser, x_path)
+        elem = lst[-1]
+        elem.send_keys(path)
+        utils.wait_class(self.browser, self.ATTACHMENT_UPLOADED_CLASS)
 
 
 class LastComment(selenium.PageItem):
@@ -110,7 +113,7 @@ class LastComment(selenium.PageItem):
 
     IS_DELETED_CLASS = 'delete-stub_info'
     IS_KLASSED_XPATH = ".//span[contains(text(), 'Вы')]"
-    VIDEO_ATTACHED_XPATH = '".//a[contains(@class,"video-card_lk")]'
+    VIDEO_ATTACHED_XPATH = './/a[contains(@class,"video-card_lk")]'
     PHOTO_ATTACHED_XPATH = './/a[contains(@class,"collage_cnt")]'
 
     remove_button  = utils.query('A', _class= selenium.query.contains('comments_remove'))
