@@ -97,25 +97,32 @@ class SearchGroup(Component):
         )
     def open_group(self):
         self.driver.find_element_by_xpath(self.SEARCH_RESULT).click()
-        # self.driver.execute_script("document.getElementsByXpath('//ul[@class=u-menu_li_ul]').style.display='block';")
-        # elem = WebDriverWait(self.driver, 30, 0.1).until(
-        #     lambda d: d.find_element_by_xpath("//ul[@class='u-menu_li_ul']")
-        # )
-        # elem.style.display = 'block'
+        self.driver.execute_script("window.scrollTo(0, 300);")
+        
+        elem = WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_elements_by_class_name('tico_simb_txt')
+        )
+        print(elem)
+        elem[0].click()
         print('additional actions')
-        #WebDriverWait(self.driver, 30, 0.1).until(EC.element_to_be_clickable((By.XPATH, "//li[@class='u-menu_li']/a/span")))
-        # delete = WebDriverWait(self.driver, 30, 0.1).until(
-        #     lambda d: d.
-        # )
-        # self.driver.find_element_by_xpath("//li[@class='u-menu_li']/a/span").click()
-        # print('delete clicked')
-        # confirm = WebDriverWait(self.driver, 30, 0.1).until(
-        #     lambda d: d.find_element_by_id("hook_FormButton_button_delete")
-        # )
-        # confirm.click()
-        # WebDriverWait(self.driver, 30, 0.1).until(
-        #     lambda d: d.find_element_by_id("hook_Block_CreateGroupBlock")
-        # )
+        while True:
+            try:
+                delete = WebDriverWait(self.driver, 30, 0.1).until(
+                    lambda d: d.find_element_by_xpath("//i[@class='tico_img ic ic_delete']")
+                )
+                self.driver.find_element_by_xpath("//i[@class='tico_img ic ic_delete']").click()
+                print('delete clicked')
+                break
+            except:
+                pass
+
+        confirm = WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_id("hook_FormButton_button_delete")
+        )
+        confirm.click()
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_id("hook_Block_CreateGroupBlock")
+        )
 
 
 
