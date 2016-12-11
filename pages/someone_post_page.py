@@ -18,3 +18,6 @@ class PostPage(selenium.Page):
 
     def makeRepost(self):
         return 1
+
+    def makeLike(self):
+        return 1

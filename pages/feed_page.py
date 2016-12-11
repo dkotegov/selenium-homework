@@ -51,6 +51,11 @@ class FeedPage(selenium.Page):
         current_counter = int(like_button.find_elements_by_css_selector('span.widget_count')[0].text)
         return current_counter
 
+    def makeRepost(self):
+        # return self.browser.execute_script("$('[id*='hook_Block_ReshareNow_']')[0].click()")
+        return 1
+
+
 
 
     def makeComment(self):
