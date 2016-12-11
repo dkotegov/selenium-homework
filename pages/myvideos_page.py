@@ -31,12 +31,14 @@ class MyVideosPage(Page):
         create_channel_dialog.set_channel_name(name)
         return create_channel_dialog.submit()
 
+
 class VideoActionList(Component):
     CREATE_CHANNEL_ID = 'vv_btn_create_channel_left_menu'
 
     def create_channel(self):
         utils.wait_id(self.driver, self.CREATE_CHANNEL_ID).click()
         return CreateChannelDialog(self.driver)
+
 
 class CreateChannelDialog(Component):
     CHANNEL_NAME_XPATH = '//input[@name="st.vv_albumName"]'

@@ -2,11 +2,12 @@ import os
 import unittest
 
 import selenium
-#from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+# from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver import DesiredCapabilities, Remote
 
 import utils
 from pages.auth_page import AuthPage
+
 
 # firefox_capabilities = DesiredCapabilities.FIREFOX
 # firefox_capabilities['marionette'] = True
@@ -18,7 +19,7 @@ class BaseCase(unittest.TestCase):
             command_executor='http://127.0.0.1:4444/wd/hub',
             desired_capabilities=getattr(DesiredCapabilities, browser).copy()
         )
-        #self.driver = selenium.webdriver.Firefox(capabilities=firefox_capabilities)
+        # self.driver = selenium.webdriver.Firefox(capabilities=firefox_capabilities)
         page = AuthPage(self.driver)
         page.open()
         auth_form = page.form

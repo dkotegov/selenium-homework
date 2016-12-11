@@ -1,5 +1,6 @@
 from .base import Component, Page
 
+
 class AuthPage(Page):
     PATH = ''
     TITLE = 'OK.RU'
@@ -7,6 +8,7 @@ class AuthPage(Page):
     @property
     def form(self):
         return AuthForm(self.driver)
+
 
 class AuthForm(Component):
     LOGIN_XPATH = '//input[@name="st.email"]'
