@@ -121,7 +121,7 @@ def test_make_double_like(case, browser):
     feed_page = FeedPage(browser)
     time.sleep(1)
     content = feed_page.getPopularContent()
-    feed_page.repostDoubleClick(content, feed_page)
+    feed_page.makeDoubleLike(content, feed_page)
 
 
 

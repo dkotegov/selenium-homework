@@ -99,16 +99,7 @@ class FeedPage(selenium.Page):
         else:
             assert False
 
-    def makeLike(self):
-        return 1
-
-    def makeGroupComment(self):
-        return 1
-
-    def makeLikeForSomemoneComment(self):
-        return 1
-
-    def repostDoubleClick(self, content, feed_page):
+    def makeDoubleLike(self, content, feed_page):
         button = content.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
         button.click()
         comment_body = CommentPage(feed_page.browser)
@@ -124,4 +115,13 @@ class FeedPage(selenium.Page):
             assert True
         else:
             assert False
+
+    def makeGroupComment(self):
+        return 1
+
+    def makeLikeForSomemoneComment(self):
+        return 1
+
+    def repostDoubleClick(self):
+        return 1
 
