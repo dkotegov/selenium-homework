@@ -1,4 +1,7 @@
+# coding=utf-8
 from seismograph.ext import selenium
+
+from pages.comment_page import CommentPage
 from smth.xpath import XPathQueryObject
 from repost_popup import RepostPage
 
@@ -43,7 +46,9 @@ class FeedPage(selenium.Page):
     )
 
     def getPopularContent(self):
+
         self.popular_posts.wait()
+
         self.popular_posts.click()
         content = self.browser.find_elements_by_css_selector('div.feed')[0]
         return content
@@ -51,7 +56,6 @@ class FeedPage(selenium.Page):
     def getAuthor(self,content):
         return content.find_elements_by_css_selector('span.shortcut-wrap')[0].find_elements_by_css_selector('a.o')[0],\
                content.find_elements_by_css_selector('span.shortcut-wrap')[0].find_elements_by_css_selector('a.o')[0].get_attribute('href')
-
 
     def getPost(self):
         return 1
@@ -72,6 +76,81 @@ class FeedPage(selenium.Page):
         self.make_reshar_div.click()
         return 1
 
+
+    def makeComment(self, content, feed_page):
+        time.sleep(5)
+        self.browser.execute_script('''$('div.feed_cnt').first().find('a.h-mod.widget_cnt').first().click()''')
+        time.sleep(5)
+        comment_body = CommentPage(feed_page.browser)
+        comment_body.comment_input.set(u'hmm...')
+        content.browser.find_elements_by_id('ok-e-d_button')[0].click()
+        comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-1]
+        comment_div = comment.find_element_by_css_selector('div.d_comment_text')
+        if comment_div.text == 'hmm...':
+            assert True
+        else:
+            assert False
+
+    def makeSelfComment(self, content, feed_page):
+        button = content.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
+        button.click()
+        comment_body = CommentPage(feed_page.browser)
+        comment_body.comment_input.set(u'lel')
+        content.browser.find_elements_by_id('ok-e-d_button')[0].click()
+        comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-1]
+        comment_div = comment.find_element_by_css_selector('div.d_comment_text')
+        if comment_div.text == 'lel':
+            assert True
+        else:
+            assert False
+
+    def makeLikeOnSelfComment(self, content, feed_page):
+        button = content.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
+        button.click()
+        comment_body = CommentPage(feed_page.browser)
+        comment_body.comment_input.set(u'lel')
+        content.browser.find_elements_by_id('ok-e-d_button')[0].click()
+        comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-1]
+        like_div = comment.find_element_by_css_selector('div.klass_w')
+        like_div.click()
+        like_div.click()
+        like_div.click()
+        if len(like_div.text) == 2:
+            assert True
+        else:
+            assert False
+
+    def makeDoubleLike(self, content, feed_page):
+        button = content.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
+        button.click()
+        comment_body = CommentPage(feed_page.browser)
+        comment_body.comment_input.set(u'lel')
+        content.browser.find_elements_by_id('ok-e-d_button')[0].click()
+        comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-1]
+        like_div = comment.find_element_by_css_selector('div.klass_w')
+        like_div.click()
+        like_div.click()
+        like_div.click()
+        like_div.click()
+        if len(like_div.text) != 2:
+            assert True
+        else:
+            assert False
+
+    def makeLikeForSomemoneComment(self, content, feed_page):
+        button = content.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
+        button.click()
+        comment_body = CommentPage(feed_page.browser)
+        comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-1]
+        like_div = comment.find_element_by_css_selector('div.klass_w')
+        like_div.click()
+        like_div.click()
+        like_div.click()
+        if len(like_div.text) == 2:
+            assert True
+        else:
+            assert False
+            
     def makeRepost(self):
         self.popular_posts.wait()
         time.sleep(1)
@@ -82,25 +161,6 @@ class FeedPage(selenium.Page):
         time.sleep(2)
         val = self.browser.find_elements_by_css_selector("span.tico")[13].text
         return val
-
-    def makeComment(self):
-        return 1
-
-    def makeSelfComment(self):
-        return 1
-
-    def makeLikeOnSelfComment(self):
-        return 1
-
-
-    def makeLike(self):
-        return 1
-
-    def makeGroupComment(self):
-        return 1
-
-    def makeLikeForSomemoneComment(self):
-        return 1
 
     def repostDoubleClick(self):
         return 1
