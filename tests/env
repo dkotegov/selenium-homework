@@ -1,0 +1,3 @@
+export OKRU_USERNAME="name lastname"
+export OKRU_LOGIN="tp_login"
+export OKRU_PASSWORD="password1234"

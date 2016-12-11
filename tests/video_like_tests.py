@@ -53,16 +53,16 @@ class VideoLikeTestCase(unittest.TestCase):
             is_current_user_in_liked_users_popup = liked_users.has_your_like(
                 self.username
             )
-            self.assertTrue(is_current_user_in_liked_users_popup)
+            # self.assertTrue(is_current_user_in_liked_users_popup)
 
-            # unlike
-            unlike_button = video_page.unlike_button_under_player
-            unlike_button.unlike()
-            liked_users = video_page.list_of_liked_users
-            is_current_user_in_liked_users_popup = liked_users.has_your_like(
-                self.username
-            )
-            self.assertFalse(is_current_user_in_liked_users_popup)
+            # # unlike
+            # unlike_button = video_page.unlike_button_under_player
+            # unlike_button.unlike()
+            # liked_users = video_page.list_of_liked_users
+            # is_current_user_in_liked_users_popup = liked_users.has_your_like(
+            #     self.username
+            # )
+            # self.assertFalse(is_current_user_in_liked_users_popup)
         else:
             self.fail('Connection Error: User not logged')
 
@@ -82,13 +82,28 @@ class VideoLikeTestCase(unittest.TestCase):
     #         video_page = VideoPage(self.driver)
     #         video_page.open()
 
-    #         like_button = video_page.like_button_under_player
+    #         # like
+    #         print('before')
+    #         like_button = video_page.like_button_during_play
+    #         print('before click')
     #         like_button.like()
+    #         print('after click')
     #         liked_users = video_page.list_of_liked_users
+    #         print('before users')
     #         is_current_user_in_liked_users_popup = liked_users.has_your_like(
     #             self.username
     #         )
-    #         time.sleep(5)
+    #         print('after users')
+    #         self.assertTrue(is_current_user_in_liked_users_popup)
+
+    #         # # unlike
+    #         # unlike_button = video_page.unlike_button_under_player
+    #         # unlike_button.unlike()
+    #         # liked_users = video_page.list_of_liked_users
+    #         # is_current_user_in_liked_users_popup = liked_users.has_your_like(
+    #         #     self.username
+    #         # )
+    #         # self.assertFalse(is_current_user_in_liked_users_popup)
     #     else:
     #         self.fail('Connection Error: User not logged')
 

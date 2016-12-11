@@ -7,6 +7,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import ActionChains
 
+from utils import custom_move_to_element
+
 
 # General elements
 class PageElement(object):
@@ -37,7 +39,7 @@ class AuthForm(PageElement):
     @property
     def is_logged(self):
         try:
-            WebDriverWait(self.driver, 5, 0.1).until(
+            WebDriverWait(self.driver, 10, 0.1).until(
                 EC.text_to_be_present_in_element(
                     (By.XPATH, self.LOGGED_USERNAME), self.username
                 )
@@ -82,7 +84,10 @@ class LikeButton(PageElement):
     BUTTON = ''
 
     def like(self):
-        self.driver.find_element_by_xpath(self.BUTTON).click()
+        WebDriverWait(self.driver, 30, 0.1).until(
+            EC.visibility_of_element_located((By.XPATH, self.BUTTON))
+        ).click()
+        # self.driver.find_element_by_xpath(self.BUTTON).click()
 
 
 class UnlikeButton(PageElement):
@@ -107,20 +112,32 @@ class UnlikeVideoButtonUnderPlayer(UnlikeButton):
     # BUTTON = '//button[contains(@class, "widget_cnt controls-list_lk")]'
 
 
+class LikeVideoButtonInPlayerDuringPlay(LikeButton):
+
+    BUTTON = '//a[@class="html5-vpl_ac_i"]'
+
+
 class LikedUsersListButtonUnderPlayer(LikedUsersListPopup):
 
     LINK = '//ul[@class="ucard-mini-list"]/li/descendant::div[@class="ucard-mini_cnt_i ellip"]'
 
     def has_your_like(self, login):
-        login = unicode(login, 'utf8')
-        first_liked_user_in_popup = WebDriverWait(self.driver, 30, 0.1).until(
-            EC.visibility_of_element_located((By.XPATH, self.LINK))
-        )
-        return first_liked_user_in_popup.text == login
+        xpath = '//ul[@class="widget-list"]/descendant::button[last()-1]'
+        # custom_move_to_element(self.driver, xpath)
 
-        # xpath = '//ul[@class="widget-list"]/descendant::button[last()-1]'
-        # element_to_hover_over = self.driver.find_element_by_xpath(xpath)
-        # ActionChains(self.driver).move_to_element(element_to_hover_over).perform()
+        ActionChains(self.driver).move_to_element(
+            self.driver.find_element_by_xpath(xpath)
+        ).perform()
+
+        # login = unicode(login, 'utf8')
+        # first_liked_user_in_popup = WebDriverWait(self.driver, 30, 0.1).until(
+        #     EC.visibility_of_element_located((By.XPATH, self.LINK))
+        # )
+        # print(first_liked_user_in_popup.text, 'GOOD')
+        # return first_liked_user_in_popup.text == login
+
+
+
 
 
 
@@ -156,10 +173,6 @@ class VideoLikedUsersListPopup(VideoLikesController, LikedUsersListPopup):
 
 
 class LikeVideoButtonInPlayerEndOfPlay():
-    pass
-
-
-class LikeVideoButtonInPlayerDuringPlay():
     pass
 
 

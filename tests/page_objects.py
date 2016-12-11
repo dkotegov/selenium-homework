@@ -3,7 +3,8 @@
 import urlparse
 
 from page_elements import AuthForm, LikeVideoButtonUnderPlayer, \
-    LikedUsersListButtonUnderPlayer, UnlikeVideoButtonUnderPlayer
+    LikedUsersListButtonUnderPlayer, UnlikeVideoButtonUnderPlayer, \
+    LikeVideoButtonInPlayerDuringPlay
 
 
 class Page(object):
@@ -48,8 +49,15 @@ class VideoPage(Page):
         return UnlikeVideoButtonUnderPlayer(self.driver)
 
     @property
+    def like_button_during_play(self):
+        return LikeVideoButtonInPlayerDuringPlay(self.driver)
+
+    @property
     def list_of_liked_users(self):
         return LikedUsersListButtonUnderPlayer(self.driver)
+
+    def pause_video(self):
+        pass
 
 
 class PhotoPage(Page):
