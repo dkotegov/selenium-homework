@@ -155,9 +155,24 @@ class FeedPage(selenium.Page):
         self.popular_posts.wait()
         time.sleep(1)
         self.popular_posts.click()
+        time.sleep(2)
         self.browser.execute_script('''$('div.feed_cnt').first().find('button.h-mod.widget_cnt').first().click()''')
         time.sleep(3)
         self.browser.execute_script('''$('div.feed').first().find("div[data-l*='t,now']").first().find('a').click()''')
+        time.sleep(2)
+        val = self.browser.find_elements_by_css_selector("span.tico")
+        for a in val:
+            if a.text == u'Опубликовано!':
+                val = a.text
+        return val
+
+    def makeDoubleClickRepost(self):
+        self.popular_posts.wait()
+        time.sleep(1)
+        self.popular_posts.click()
+        self.browser.execute_script('''$('div.feed_cnt').first().find('button.h-mod.widget_cnt').first().click()''')
+        time.sleep(3)
+        self.browser.execute_script('''$('div.feed').first().find("div[data-l*='t,now']").first().find('a').dbclick()''')
         time.sleep(2)
         val = self.browser.find_elements_by_css_selector("span.tico")[13].text
         return val
