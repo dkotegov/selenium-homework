@@ -143,7 +143,7 @@ suite = selenium.Suite(__name__)
 
 
 @suite.register
-def test_make_someone_like_comment(case, browser):
+def test_make_group_comment(case, browser):
     auth_page = AuthPage(browser)
     auth_page.open()
     auth_page.auth('89260665086',
@@ -153,6 +153,13 @@ def test_make_someone_like_comment(case, browser):
     post_page.open()
     time.sleep(1)
     post_page.makeGroupComment()
+
+=======
+    val =  feed_page.makeRepost()
+    if val == u'Опубликовано!':
+        return True
+    else:
+        return False
 
 
 
