@@ -185,6 +185,8 @@ class VideoPage(selenium.Page):
     STOP = '//div[@al-mousedown="stop()"]'
     VIDEO_WINDOW = '//div[@class="html5-vpl_vid"]'
     MINI_SCREEN_CLASS ='vp-modal_video'
+    VIDEO_COVER = '//div[@class="vid-card_cnt_w invisible"]'
+    PAUSE_XPATH = '//div[@class="html5-vpl_panel_play __pause"]'
 
     channel = utils.query('A', _class ='js-video-album-link')
     unsubscribe_xpath = utils.query('SPAN', _class='vp-layer_subscribe-lbl ic_quit-lg')
@@ -194,7 +196,6 @@ class VideoPage(selenium.Page):
     related_vid = utils.query('A', _class='vp-layer_video js-vp-layer_video')
     next_vid = utils.query('DIV', _class='html5-vpl_next')
     video_time_remained = utils.query('DIV', _class='html5-vpl_time __remained')
-    video_cover = utils.query('DIV', _class='vid-card_cnt_w invisible')
     progress_bar = utils.query('DIV', _class='html5-vpl_progress-bar')
     widescreen_mode = utils.query('DIV', _class='html5-vpl_widescreen')
     fullscreen_mode = utils.query('DIV', _class='html5-vpl_fullscreen')
@@ -241,12 +242,12 @@ class VideoPage(selenium.Page):
             self.play.click()
 
     def play_video_during(self, time):
-        curr_time = utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text
-        curr_time = utils.time_to_int(curr_time)
+        # curr_time = utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text
+        curr_time =  self.get_video_play_time() #utils.time_to_int(curr_time)
         result_time = curr_time + time
         utils.wait(
             self.browser,
-            lambda d: utils.time_to_int(utils.wait_xpath(d, self.VIDEO_PLAY_TIME).text) > result_time
+            lambda d: self.get_video_play_time() > result_time
         )
 
     def play_next_video(self):
@@ -294,7 +295,6 @@ class VideoPage(selenium.Page):
         utils.wait_screen_change(self.browser, self.VIDEO_WINDOW)
         self.is_minimized = False
 
-
     def rollin_video(self):
         self.roll_in_vid.click()
         utils.wait_class(self.browser, self.MINI_SCREEN_CLASS)
@@ -310,7 +310,10 @@ class VideoPage(selenium.Page):
         return url.split('?')[0]
 
     def get_video_play_time(self):
-        return utils.time_to_int(utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text) #.replace(':', '.'))
+        return utils.time_to_int(
+            utils.js_value(self.browser, utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME))
+        )
+        # return utils.time_to_int(utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text) #.replace(':', '.'))
 
     def get_video_time_remained(self):
         return utils.time_to_int(self.video_time_remained.text)#float(self.video_time_remained.text.replace(':', '.'))
@@ -322,18 +325,11 @@ class VideoPage(selenium.Page):
             return utils.wait_class(self.browser,self.MINI_SCREEN_CLASS).size
 
     def is_cover_visible(self):
-        try:
-            self.browser.find_element_by_xpath(self.video_cover)
-            return False
-        except Exception:
-            return True
+        return len( self.browser.find_elements_by_xpath(self.VIDEO_COVER) ) == 0
 
     def is_video_playing(self):
-        try:
-            self.browser.find_element_by_xpath(self.pause)
-            return True
-        except Exception:
-            return False
+        return len(self.browser.find_elements_by_xpath(self.PAUSE_XPATH) )>0
+
 
     def reply_last_comment(self, text):
         self.last_comment.reply_click()

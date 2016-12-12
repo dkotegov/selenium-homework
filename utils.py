@@ -64,10 +64,11 @@ def replace_text(web_element, new_text):
 def js_click(driver, element):
     driver.execute_script('arguments[0].click();', element._wrapped)
 
-
 def js_set_text(driver, element, text):
     driver.execute_script('arguments[0].innerHTML = arguments[1];', element._wrapped, text)
 
+def js_value(driver, element):
+    return driver.execute_script('return arguments[0].innerHTML;', element._wrapped)
 
 def query(tag, **kwargs):
     pe_params = {}
