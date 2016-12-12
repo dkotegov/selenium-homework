@@ -41,11 +41,50 @@ class NewPost(Component):
     SUBMIT = "//input[@value='Поделиться'][@class='button-pro']"
     VISIBLE_BLOCK = "//div[@class='posting-form']/div[@class='posting-form_overlay invisible']"
 
+    MUSIC = "//a[@id='openmusic']"
+    MUSIC_BLOCK = "//div[@id='swtch'][@class='posting-form_controls  posting-form_controls__off']"
+    MUSIC_SEARCH = "//div[@class='it_w search-input']/label/input[@class='search-input_it it'][@type='text']"
+    TRACK = "//div[@class='posting-form_track  m_portal_track']/span[@class='posting-form_track_info_w show-on-hover']" \
+                 "/span[@class='posting-form_track_info ellip']"
+    BUTTON_ADD_TRACK = "//div[@class='modal-new_center']/div[@class='modal-new_cnt']/div[@class='form-actions __center']" \
+                       "/a[@class='button-pro form-actions_yes']"
+
+    ICO_SETTINGS = "//span[@class='tico toggler lp']/i[@class='tico_img ic ic_settings']"
+    MENU_SETTINGS = "//div[@class='jcol-l']/div[@class='iblock-cloud_dropdown h-mod __active']"
+    NO_COMMENT = "//div[@class='nowrap']/input[@name='st.toggleComments']"
+
+
     def set_text(self, text):
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.VISIBLE_BLOCK)
         )
         self.driver.find_element_by_xpath(self.TEXT_POST).send_keys(text)
+
+    def set_music(self, search_text):
+        self.driver.find_element_by_xpath(self.MUSIC).click()
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.MUSIC_BLOCK)
+        )
+        self.driver.find_element_by_xpath(self.MUSIC_SEARCH).send_keys(search_text)
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.TRACK)
+        )
+        self.driver.find_element_by_xpath(self.TRACK).click()
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.BUTTON_ADD_TRACK)
+        )
+        self.driver.find_element_by_xpath(self.BUTTON_ADD_TRACK).click()
+
+    def set_no_comment(self):
+        self.driver.find_element_by_xpath(self.ICO_SETTINGS).click()
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.MENU_SETTINGS)
+        )
+        self.driver.find_element_by_xpath(self.NO_COMMENT).click()
+
+
+
+
 
     def submit(self):
         WebDriverWait(self.driver, 30, 0.1).until(
@@ -65,17 +104,43 @@ class LastPost(Component):
     ICO_X = "//div[@class='media-layer_close']/div[@class='ic media-layer_close_ico']"
     TEXT_POST_DELETED = "//span[@class='delete-stub_info']"
 
+    TRACK_IN_LAST_POST = "//div[@class='groups_post-w __search-enabled'][1]//a[@class='track_song']"
+
+    COMMENT_IN_LAST_POST = "//div[@class='groups_post-w __search-enabled'][1]//a[@class='h-mod widget_cnt']" \
+                           "/span[@class='widget_ico ic12 ic12_comment']"
+    COMMENT_CLOSED = "//div[@class='disc_simple_input_cont'][@style='display: block;']//" \
+                     "input[@class='disc_simple_input disc_simple_input__im']"
+
     def is_last_post_new_post(self, text):
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.LAST_POST)
         )
+        # print self.driver.find_element_by_xpath(self.LAST_POST).text
+        # print text
         if self.driver.find_element_by_xpath(self.LAST_POST).text == text:
             return True
         else:
             return False
 
-    def delete(self):
+    def is_last_post_has_track(self, track):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.LAST_POST)
+        )
+        if self.driver.find_element_by_xpath(self.TRACK_IN_LAST_POST).text == track:
+            return True
+        else:
+            return False
 
+    def is_last_post_without_comments(self):
+        text_lock = u"Комментарии к этой теме закрыты администрацией"
+        self.driver.find_element_by_xpath(self.COMMENT_IN_LAST_POST).click()
+        self.driver.find_element_by_xpath(self.COMMENT_IN_LAST_POST).click()
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.COMMENT_CLOSED)
+        )
+        return self.driver.find_element_by_xpath(self.COMMENT_CLOSED).get_attribute('value') == text_lock
+
+    def delete(self):
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.LAST_POST_A)
         )
@@ -132,13 +197,48 @@ class CreationPostTest(#seismograph.Case):
         self.driver.quit()
 
     def test_simple_post(self):
-        text = "simple post with simple text"
+        text = u"simple post with simple text"
 
         new_post = self.group_page.creating_post
         new_post.set_text(text)
         new_post.submit()
         last_post = self.group_page.get_last_post
         self.assertTrue(last_post.is_last_post_new_post(text))
+        self.group_page.refresh_page()
+        last_post.delete()
+        self.group_page.refresh_page()
+        self.assertFalse(last_post.is_last_post_new_post(text))
+
+    def test_post_with_music(self):
+        text = u"This is post with music"
+        search_text = u"Лабутены"
+
+        new_post = self.group_page.creating_post
+        new_post.set_text(text)
+        new_post.set_music(search_text)
+        new_post.submit()
+
+        last_post = self.group_page.get_last_post
+        self.assertTrue(last_post.is_last_post_new_post(text + u'\n#музыка'))
+        self.assertTrue(last_post.is_last_post_has_track(search_text))
+        self.group_page.refresh_page()
+        last_post.delete()
+        self.group_page.refresh_page()
+        self.assertFalse(last_post.is_last_post_new_post(text))
+
+    def test_post_without_comments(self):
+        text = u"This is post without comments"
+
+        new_post = self.group_page.creating_post
+        new_post.set_text(text)
+        new_post.set_no_comment()
+        new_post.submit()
+
+        last_post = self.group_page.get_last_post
+        self.assertTrue(last_post.is_last_post_new_post(text))
+        self.assertTrue(last_post.is_last_post_without_comments())
+        # last_post.is_last_post_without_comments()
+
         self.group_page.refresh_page()
         last_post.delete()
         self.group_page.refresh_page()

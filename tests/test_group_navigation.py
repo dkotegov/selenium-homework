@@ -49,7 +49,7 @@ class GroupsPage(Page):
             lambda d: d.find_element_by_xpath("//li[сontains(@class,'it')]")
         )
         group = links[randint(0, len(links)-1)]
-        print group
+        # print group
 
     def create_group(self, name):
         self.driver.find_element_by_xpath(self.CREATE_GROUP).click()
@@ -57,7 +57,7 @@ class GroupsPage(Page):
             lambda d: d.find_element_by_xpath("//a[@class='create-group-dialog_i']")
         )
         self.driver.find_element_by_xpath("//div[@class='create-group-dialog_cnt']").click()
-        print("create publci page tapped")
+        # print("create publci page tapped")
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_id('hook_Form_PopLayerCreateAltGroupDialog2Form')
         )
@@ -65,7 +65,7 @@ class GroupsPage(Page):
         self.driver.find_element_by_id("field_description").send_keys(u'...')
         Select(self.driver.find_element_by_id('field_pageMixedCategory')).select_by_value('subcatVal12005')
         self.driver.find_element_by_id("hook_FormButton_button_create").click()
-        print("submit")
+        # print("submit")
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath("//div[@class='posting-form_itx_dec itx_w']")
         )
@@ -177,7 +177,7 @@ class NavigationGroupTest(#seismograph.Case):
             lambda d: d.find_element_by_id('hook_Block_UserGroupsSearch')
         )
         search_result = search.check_result()
-        print(search_result)
+        # print(search_result)
         self.assertEqual(search_result, self.GROUP_NAME)
 
     def test_open_my_group(self):
