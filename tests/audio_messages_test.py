@@ -73,13 +73,19 @@ class AudioMessagesTest(unittest.TestCase):
         self.message_page.open()
         last_audio_msg = self.driver.find_element_by_css_selector('.msg_audio:last-child')
         play_button = last_audio_msg.find_element_by_xpath('//div[@class="msg_audio_play"]')
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: play_button
+        )
         play_button.click()
-        sleep(1)
+        #sleep(1)
         classname_last_audio_msg = last_audio_msg.get_attribute("class")
         #проверяем иконка стоп
         self.assertTrue(classname_last_audio_msg.rfind("st_play") != -1)
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: play_button
+        )
         play_button.click()
-        sleep(1)
+        #sleep(1)
         classname_last_audio_msg2 = last_audio_msg.get_attribute("class")
         #проверяем иконка плей
         self.assertTrue(classname_last_audio_msg2.rfind("st_stop") != -1)
