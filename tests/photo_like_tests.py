@@ -1,41 +1,12 @@
 # -*- coding: utf-8 -*-
-"""Test ability to like video."""
-import os
+"""Test ability to like photo."""
 import unittest
 
-from selenium.webdriver import DesiredCapabilities, Remote
+from base_test_case import BaseTestCase
+from page_objects import PhotoPage
 
-from page_objects import AuthPage, PhotoPage
 
-
-class PhotoLikeTestCase(unittest.TestCase):
-
-    def setUp(self):
-        BROWSER = os.environ.get('BROWSER', 'FIREFOX')
-
-        self.username = os.environ.get('OKRU_USERNAME')
-        self.login = os.environ['OKRU_LOGIN']
-        self.password = os.environ['OKRU_PASSWORD']
-
-        self.driver = Remote(
-            command_executor='http://127.0.0.1:4444/wd/hub',
-            desired_capabilities=getattr(DesiredCapabilities, BROWSER).copy()
-        )
-        self.is_logged = self.auth()
-
-    def tearDown(self):
-        self.driver.quit()
-
-    def auth(self):
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-
-        auth_form = auth_page.auth_form
-        auth_form.set_username(self.username)
-        auth_form.set_login(self.login)
-        auth_form.set_password(self.password)
-        auth_form.submit()
-        return auth_form.is_logged
+class PhotoLikeTestCase(BaseTestCase):
 
     def test_to_like_and_unlike_photo_button_under_photo(self):
         if self.is_logged:
