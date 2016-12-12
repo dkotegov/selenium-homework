@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import random
 import time
 
 from conf.base import OK_URL, STATIC_PATH

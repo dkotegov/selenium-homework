@@ -1,9 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from program import program
+from tests.notes import test_create
+from tests.notes import test_restore
 
-from tests.notes.test_create import *
-from tests.notes.test_restore import *
+import seismograph
+
+
+suites = (
+    test_create.suite,
+    test_restore.suite,
+)
+
+
+program = seismograph.Program(config_path='conf.base', require=['selenium'], suites=suites)
+
 
 if __name__ == '__main__':
     program()
