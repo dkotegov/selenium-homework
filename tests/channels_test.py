@@ -159,5 +159,18 @@ class SubscriptionsCase(BaseCase):
         self.assertion.equal(self.page.subscriptions_count, self.DEFAULT_SUBSCRIPTIONS_COUNT)
         super(SubscriptionsCase, self).teardown()
 
+@suite.register
+class OpenChannelCase(BaseCase):
+    VIDEO_ID = '206523142632'
+
+    def test_open_channel(self):
+        video_page = VideoPage(self.browser)
+        video_page.open(id=self.VIDEO_ID)
+
+        video_channel = video_page.channel.text
+        video_page.channel.click()
+
+        channel_page = ChannelPage(self.browser)
+        self.assertion.equal(channel_page.channel_name, video_channel)
 
 

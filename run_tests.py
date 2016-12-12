@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 import seismograph
 
-import videopreview_test
-import channels
-import tests_for_video_comments.single_video as sv
-import comments_test
-
+from tests import (
+    channels_test,
+    videopreview_test,
+    comments_test
+)
 suites = [
-    #sv.suite,
-    channels.suite,
+    channels_test.suite,
     videopreview_test.suite,
     comments_test.suite
 ]

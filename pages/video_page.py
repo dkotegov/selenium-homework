@@ -178,6 +178,7 @@ class VideoPage(selenium.Page):
     STOP = '//div[@al-mousedown="stop()"]'
     VIDEO_WINDOW = '//div[@class="html5-vpl_vid"]'
 
+    channel = utils.query('A', _class ='js-video-album-link')
     unsubscribe_xpath = utils.query('SPAN', _class='vp-layer_subscribe-lbl ic_quit-lg')
     play = utils.query('DIV', _class='html5-vpl_panel_play')
     pause = utils.query('DIV', _class='html5-vpl_panel_play __pause')
