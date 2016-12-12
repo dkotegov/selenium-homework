@@ -66,7 +66,6 @@ class AudioMessagesTest(unittest.TestCase):
         self.driver.quit()
 
     #def test_audiomessage_window_opens(self):
-         # Go to messages
         #self.message_page.open()
         # self.message_page.messages_menu.get_button_attach()
         #
@@ -76,17 +75,23 @@ class AudioMessagesTest(unittest.TestCase):
         # #проверяем выскочил ли object с флешом
         # self.assertIsNotNone(videomsg_popup)
 
-    def test_audiomessage_play_message(self):
+    def test_audiomessage_play_and_stop_message(self):
         self.message_page.open()
         self.message_page.messages_menu.click_play_button()
         last_audio_msg = self.driver.find_element_by_css_selector('.msg_audio:last-child')
-        dfdf = self.driver.find_elements_by_xpath('//div[@class="msg_audio"]')
-        aaaaaaa = last_audio_msg.find_element_by_xpath('//div[@class="msg_audio_play"]')
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: self.driver.find_elements_by_xpath('//div[@class="msg_audio_play"]')
-        )
-
-        aaaaaaa.click()
-        #sleep(1)
+        play_button = last_audio_msg.find_element_by_xpath('//div[@class="msg_audio_play"]')
+        play_button.click()
+        # WebDriverWait(self.driver, 30, 0.1).until(
+        #     lambda d: self.driver.find_elements_by_xpath('//div[@class="msg_audio_play"]')
+        # )
+        sleep(1)
         classname_last_audio_msg = last_audio_msg.get_attribute("class")
         self.assertTrue(classname_last_audio_msg.rfind("st_play") != -1)
+        play_button.click()
+        sleep(1)
+        classname_last_audio_msg2 = last_audio_msg.get_attribute("class")
+        self.assertTrue(classname_last_audio_msg2.rfind("st_stop") != -1)
+
+    def test_audiomessage_delete(self):
+        self.message_page.open()
+
