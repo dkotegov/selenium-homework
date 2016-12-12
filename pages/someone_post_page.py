@@ -15,7 +15,6 @@ class ElsePostPage(selenium.Page):
         )
     )
 
-
     def makeRepost(self):
         time.sleep(2)
         self.browser.execute_script('''$(':button[tsid=reshareMenu]').last().click()''')

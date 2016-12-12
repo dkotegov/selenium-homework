@@ -1,68 +1,57 @@
 # coding=utf-8
+import seismograph
 from seismograph.ext import selenium
 from pages.auth_page import AuthPage
 from pages.feed_page import FeedPage
+from smth.Auth import AuthManager
 from pages.video_page import VideoPage
 from pages.photo_page import PhotoPage
 from pages.someone_post_page import ElsePostPage
 import time
+
 suite = selenium.Suite(__name__)
 
-@suite.register
-def test_make_repost_Video(case, browser):
+
+def auth(case, browser):
     auth_page = AuthPage(browser)
     auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    auth_page.auth(AuthManager.get_login(),
+                   AuthManager.get_password())
 
+
+@suite.register
+def test_make_repost_video(case, browser):
+    auth(case, browser)
     video_page = VideoPage(browser)
     video_page.open()
     time.sleep(1)
     val = video_page.repostVideo()
-    if val == u'Опубликовано!':
-        return True
-    else:
-        return False
+    return val == u'Опубликовано!'
+
 
 @suite.register
 def test_make_repost_Photo(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
-
+    auth(case, browser)
     photo_page = PhotoPage(browser)
     photo_page.open()
     time.sleep(1)
     val = photo_page.repostPhoto()
-    if val == u'Опубликовано!':
-        return True
-    else:
-        return False
+    return val == u'Опубликовано!'
+
 
 @suite.register
 def test_make_repost_else_post(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
-
+    auth(case, browser)
     else_post_page = ElsePostPage(browser)
     else_post_page.open()
     time.sleep(1)
     val = else_post_page.makeRepost()
-    if val == u'Опубликовано!':
-        return True
-    else:
-        return False
+    return val == u'Опубликовано!'
+
 
 @suite.register
-def test_make_repost_else_post(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
-
+def test_make_double_repost_else_post(case, browser):
+    auth(case, browser)
     else_post_page = ElsePostPage(browser)
     else_post_page.open()
     time.sleep(1)
@@ -77,4 +66,3 @@ def test_make_repost_else_post(case, browser):
             return False
     else:
         return False
-

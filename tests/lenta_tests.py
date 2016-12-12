@@ -9,7 +9,8 @@ from pages.group_post_page import PostPage as GPP
 
 suite = selenium.Suite(__name__)
 
-#ERROR
+
+# ERROR
 @suite.register
 def test_get_author_group(case, browser):
     auth_page = AuthPage(browser)
@@ -26,6 +27,7 @@ def test_get_author_group(case, browser):
         return True
     else:
         return False
+
 
 @suite.register
 def test_get_post(case, browser):
@@ -44,6 +46,7 @@ def test_get_post(case, browser):
         return True
     else:
         return False
+
 
 @suite.register
 def test_get_post(case, browser):
@@ -75,7 +78,8 @@ def test_make_self_comment(case, browser):
     content = feed_page.getPopularContent()
     feed_page.makeSelfComment(content, feed_page)
 
-#ERROR
+
+# ERROR
 @suite.register
 def test_make_comment(case, browser):
     auth_page = AuthPage(browser)
@@ -87,7 +91,9 @@ def test_make_comment(case, browser):
     time.sleep(1)
     content = feed_page.getPopularContent()
     feed_page.makeComment(content, feed_page)
-#Fail
+
+
+# Fail
 @suite.register
 def test_make_like(case, browser):
     auth_page = AuthPage(browser)
@@ -99,7 +105,9 @@ def test_make_like(case, browser):
     time.sleep(1)
     content = feed_page.getPopularContent()
     feed_page.makeLikeOnSelfComment(content, feed_page)
-#OK
+
+
+# OK
 @suite.register
 def test_make_double_like(case, browser):
     auth_page = AuthPage(browser)
@@ -113,7 +121,7 @@ def test_make_double_like(case, browser):
     feed_page.makeDoubleLike(content, feed_page)
 
 
-#ERROR
+# ERROR
 @suite.register
 def test_make_someone_like_comment(case, browser):
     auth_page = AuthPage(browser)
@@ -126,7 +134,8 @@ def test_make_someone_like_comment(case, browser):
     content = feed_page.getPopularContent()
     feed_page.makeLikeForSomemoneComment(content, feed_page)
 
-#ERROR
+
+# ERROR
 @suite.register
 def test_make_group_comment(case, browser):
     auth_page = AuthPage(browser)
@@ -138,6 +147,7 @@ def test_make_group_comment(case, browser):
     post_page.open()
     time.sleep(1)
     post_page.makeGroupComment()
+
 
 @suite.register
 def test_make_repost(case, browser):
@@ -154,6 +164,7 @@ def test_make_repost(case, browser):
     else:
         return False
 
+
 @suite.register
 def test_make_two_likes(case, browser):
     auth_page = AuthPage(browser)
@@ -167,7 +178,8 @@ def test_make_two_likes(case, browser):
     time.sleep(1)
     feed_page.makeLikeTwoLikes()
 
-#FAIL
+
+# FAIL
 @suite.register
 def test_make_one_likes(case, browser):
     auth_page = AuthPage(browser)
@@ -180,13 +192,15 @@ def test_make_one_likes(case, browser):
     content = feed_page.getPopularContent()
     time.sleep(1)
     feed_page.makeOneLike()
-#ERROR
+
+
+# ERROR
 @suite.register
 def test_make_repost_by_double_click(case, browser):
     auth_page = AuthPage(browser)
     auth_page.open()
     auth_page.auth('89260665086',
-    'Gfhjkmlkzjr1488')
+                   'Gfhjkmlkzjr1488')
 
     feed_page = FeedPage(browser)
     time.sleep(1)
@@ -195,6 +209,7 @@ def test_make_repost_by_double_click(case, browser):
         return True
     else:
         return False
+
 
 @suite.register
 def test_make_repost_and_delete(case, browser):
