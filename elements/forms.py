@@ -3,7 +3,7 @@
 import os
 from seismograph.ext import selenium
 from seismograph.ext.selenium import forms
-from utils.items import InStatusCheckbox, NoteCreateFormAddedText, NoteCreateFormControls, NoteCreateFormAddedAudio, \
+from elements.items import InStatusCheckbox, NoteCreateFormAddedText, NoteCreateFormControls, NoteCreateFormAddedAudio, \
     NoteCreateFormAddedPhoto, NoteCreateFormActions, NoteCreateFormPlaceSelect, NoteCreateFormUserSelect
 
 

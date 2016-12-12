@@ -76,6 +76,14 @@ class Note(selenium.PageItem):
         is_list=True
     )
 
+    restore = selenium.PageElement(
+        selenium.query(
+            selenium.query.A,
+            _class=selenium.query.contains('delete-stub_cancel')
+        ),
+        call=lambda btn: btn.click()
+    )
+
     def open(self):
         self.text_content.click()
 

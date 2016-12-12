@@ -5,26 +5,13 @@ import time
 
 from conf.base import OK_URL, STATIC_PATH
 from seismograph.ext import selenium
-from utils.forms import AuthForm, NoteCreateForm
-from utils.items import AddAudioPopup, NotePopup
-from utils.pages import NotesPage
+from elements.forms import AuthForm, NoteCreateForm
+from elements.items import AddAudioPopup, NotePopup
+from elements.pages import NotesPage
+from tests.notes.utils import auth, get_note_text
 
 
 suite = selenium.Suite(__name__)
-
-
-def _auth(browser):
-    browser.go_to(OK_URL)
-
-    auth_form = AuthForm(browser)
-    auth_form.fill()
-    auth_form.submit()
-
-    time.sleep(3)
-
-
-def _get_note_text():
-    return u'TEST NOTE - ТЕСТОВАЯ ЗАМЕТКА - {0}'.format(random.randint(0, 1000))
 
 
 @suite.register
@@ -38,7 +25,7 @@ def test_create_with_text_boxes(case, browser):
 
     note_texts_count = 3
 
-    _auth(browser)
+    auth(browser)
 
     notes_page = NotesPage(browser)
     notes_page.open()
@@ -47,7 +34,7 @@ def test_create_with_text_boxes(case, browser):
 
     note_texts = []
     for i in range(0, note_texts_count + 2):
-        note_texts.append(_get_note_text())
+        note_texts.append(get_note_text())
 
     note_form = NoteCreateForm(browser)
     note_form.send_keys_in_last_text_form(note_texts[0])
@@ -70,8 +57,7 @@ def test_create_with_text_boxes(case, browser):
     notes_page.refresh()
     time.sleep(1)
 
-    with case.assertion.raises(IndexError):
-        notes_page.get_last_note()
+    case.assertion.equal(0, notes_page.get_note_count())
 
 
 @suite.register
@@ -83,7 +69,7 @@ def test_create_with_photo(case, browser):
         Удаляем заметку.
     """
 
-    _auth(browser)
+    auth(browser)
 
     notes_page = NotesPage(browser)
     notes_page.open()
@@ -123,8 +109,7 @@ def test_create_with_photo(case, browser):
     notes_page.refresh()
     time.sleep(1)
 
-    with case.assertion.raises(IndexError):
-        notes_page.get_last_note()
+    case.assertion.equal(0, notes_page.get_note_count())
 
 
 @suite.register
@@ -136,7 +121,7 @@ def test_create_with_audio(case, browser):
         Удаляем заметку.
     """
 
-    _auth(browser)
+    auth(browser)
 
     notes_page = NotesPage(browser)
     notes_page.open()
@@ -176,8 +161,7 @@ def test_create_with_audio(case, browser):
     notes_page.refresh()
     time.sleep(1)
 
-    with case.assertion.raises(IndexError):
-        notes_page.get_last_note()
+    case.assertion.equal(0, notes_page.get_note_count())
 
 
 @suite.register
@@ -188,7 +172,7 @@ def test_create_with_place(case, browser):
         Удаляем заметку.
     """
 
-    _auth(browser)
+    auth(browser)
 
     notes_page = NotesPage(browser)
     notes_page.open()
@@ -229,8 +213,7 @@ def test_create_with_place(case, browser):
     notes_page.refresh()
     time.sleep(1)
 
-    with case.assertion.raises(IndexError):
-        notes_page.get_last_note()
+    case.assertion.equal(0, notes_page.get_note_count())
 
 
 @suite.register
@@ -241,7 +224,7 @@ def test_create_with_user(case, browser):
         Удаляем заметку.
     """
 
-    _auth(browser)
+    auth(browser)
 
     notes_page = NotesPage(browser)
     notes_page.open()
@@ -273,7 +256,7 @@ def test_create_with_user(case, browser):
     note_form.user_select.remove_last_user()
     time.sleep(1)
 
-    note_form.send_keys_in_last_text_form(_get_note_text())
+    note_form.send_keys_in_last_text_form(get_note_text())
     note_form.in_status.unchecked()
     note_form.submit()
     time.sleep(2)
@@ -292,5 +275,4 @@ def test_create_with_user(case, browser):
     notes_page.refresh()
     time.sleep(1)
 
-    with case.assertion.raises(IndexError):
-        notes_page.get_last_note()
+    case.assertion.equal(0, notes_page.get_note_count())

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from seismograph.ext import selenium
-from utils import items
-from utils.items import Note
+from elements import items
+from elements.items import Note
 
 
 class BasePage(selenium.Page):
@@ -36,3 +36,9 @@ class NotesPage(BasePage):
 
     def get_last_note(self):
         return self.notes[0]
+
+    def get_note(self, position):
+        return self.notes[position]
+
+    def get_note_count(self):
+        return len(self.notes)
