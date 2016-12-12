@@ -2,11 +2,6 @@
 """PageObject classes."""
 import urlparse
 
-# from page_elements import AuthForm, LikeVideoButtonUnderPlayer, \
-#     LikedUsersListButtonUnderPlayer, UnlikeVideoButtonUnderPlayer, \
-#     LikeVideoButtonInPlayerDuringPlay, LikedUsersShortMessageInPlayer, \
-#     UnlikeVideoButtonInPlayerDuringPlay
-
 from page_elements import AuthForm
 
 from discussion_page_elements import OpenDiscussionLinksChain, \
@@ -18,7 +13,9 @@ from photo_page_elements import LikePhotoUnderPhoto, UnlikePhotoUnderPhoto, \
     PhotoLikedUsers, LikePhotoInTheRightPhotoCorner, UnlikePhotoInTheRightPhotoCorner, \
     LikeNotOpenedPhotoInAlbum, UnlikeNotOpenedPhotoInAlbum, PhotoLikedUsersInAlbum
 
-from video_page_elements import LikeVideoButtonUnderPlayer, UnlikeVideoButtonUnderPlayer
+from video_page_elements import LikeVideoButtonUnderPlayer, UnlikeVideoButtonUnderPlayer, \
+    VideoLikedUsers, LikeVideoButtonInsidePlayer, UnlikeVideoButtonInsidePlayer, \
+    ButtonInsidePlayerLikesController
 
 
 class Page(object):
@@ -52,7 +49,8 @@ class VideoPage(Page):
 
     PATH_VIDEOS = (
         '/video/192156796190',
-        '/video/219099564753'
+        '/video/219099564753',
+        '/video/193083279874'
     )
 
     def open_video(self, index):
@@ -67,23 +65,21 @@ class VideoPage(Page):
     def unlike_button_under_player(self):
         return UnlikeVideoButtonUnderPlayer(self.driver)
 
-    # @property
-    # def like_button_inside_player(self):
-    #     return LikeVideoButtonInPlayerDuringPlay(self.driver)
+    @property
+    def like_button_inside_player(self):
+        return LikeVideoButtonInsidePlayer(self.driver)
 
-    # @property
-    # def unlike_button_inside_player(self):
-    #     return UnlikeVideoButtonInPlayerDuringPlay(self.driver)
+    @property
+    def unlike_button_inside_player(self):
+        return UnlikeVideoButtonInsidePlayer(self.driver)
 
     @property
     def list_of_liked_users(self):
-        return VideoLikeUsers(self.driver)
+        return VideoLikedUsers(self.driver)
 
-
-
-    # @property
-    # def short_message_about_liked_users(self):
-    #     return LikedUsersShortMessageInPlayer(self.driver)
+    @property
+    def button_inside_player_likes_controller(self):
+        return ButtonInsidePlayerLikesController(self.driver)
 
 
 class PhotoPage(Page):

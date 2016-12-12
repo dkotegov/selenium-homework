@@ -7,10 +7,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import ActionChains
 
-from page_elements import PageElement, LikesController, LikeButton, UnlikeButton, \
+from page_elements import LikesController, LikeButton, UnlikeButton, \
     LikedUsersListPopup
-
-from utils import custom_move_to_element
 
 
 class LikeVideoButtonUnderPlayer(LikeButton):
@@ -23,59 +21,41 @@ class UnlikeVideoButtonUnderPlayer(UnlikeButton):
     BUTTON = '//ul[@class="widget-list"]/descendant::button[last()]'
 
 
-# class LikePhotoInTheRightPhotoCorner(LikeButton):
+class LikeVideoButtonInsidePlayer(LikeButton):
 
-#     BUTTON = '//span[@class="ico_big-klass-white"]'
+    BUTTON = 'html5-vpl_ac_i'
 
-
-# class UnlikePhotoInTheRightPhotoCorner(UnlikeButton):
-
-#     BUTTON = '//span[@class="ico_big-klass-white"]'
-
-
-# class LikeNotOpenedPhotoInAlbum(LikeButton):
-
-#     BUTTON = '(//li[contains(@class, "ugrid_i")])[1]//descendant::li[1]'
+    def like(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            EC.presence_of_element_located((By.CLASS_NAME, self.BUTTON))
+        )
+        self.driver.execute_script('$(".%s")[0].click()' % self.BUTTON)
 
 
-# class UnlikeNotOpenedPhotoInAlbum(UnlikeButton):
+class UnlikeVideoButtonInsidePlayer(LikeButton):
 
-#     BUTTON = '(//li[contains(@class, "ugrid_i")])[1]//descendant::li[1]'
+    BUTTON = 'html5-vpl_ac_i'
+
+    def unlike(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            EC.presence_of_element_located((By.CLASS_NAME, self.BUTTON))
+        )
+        self.driver.execute_script('$(".%s")[0].click()' % self.BUTTON)
 
 
-# class PhotoLikedUsers(LikedUsersListPopup):
+class ButtonInsidePlayerLikesController(LikesController):
 
-#     # LINK_CSS_SELECTOR = 'div.photo-layer_bottom_block ul.widget-list > li:last() > div:nth-child(1) button'
-#     LINK_XPATH = '//div[contains(@class, "photo-layer_bottom_block __actions")]//descendant::li[last()]/descendant::button'
-#     USERNAME_LINK = '(//ul[@class="ucard-mini-list"]/li/descendant::div[@class="ucard-mini_cnt_i ellip"])[1]'
+    LINK = 'html5-vpl_ac_txt'
 
-#     def has_your_like(self, username):
-#         username = unicode(username, 'utf8')
-#         custom_move_to_element(
-#             self.driver, self.LINK_XPATH, click_times=2
-#         )
-
-#         first_user = WebDriverWait(self.driver, 30).until(
-#             EC.visibility_of_element_located((By.XPATH, self.USERNAME_LINK))
-#         )
-#         return first_user.text == username
+    def has_your_like(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            EC.presence_of_element_located((By.CLASS_NAME, self.LINK))
+        )
+        message = self.driver.execute_script('return $(".html5-vpl_ac_txt")[0].textContent')
+        return u'Вы' in message
 
 
 class VideoLikedUsers(LikedUsersListPopup):
 
-    LINK = '//ul[@class="ucard-mini-list"]/li/descendant::div[@class="ucard-mini_cnt_i ellip"]'
-
-    def has_your_like(self, login):
-        xpath = '//ul[@class="widget-list"]/descendant::button[last()]'
-        custom_move_to_element(self.driver, xpath)
-
-        login = unicode(login, 'utf8')
-        first_liked_user_in_popup = WebDriverWait(self.driver, 30, 0.1).until(
-            EC.visibility_of_element_located((By.XPATH, self.LINK))
-        )
-        return first_liked_user_in_popup.text == login
-
-
-# class PhotoLikedUsersInAlbum(PhotoLikedUsers):
-
-#     LINK_XPATH = '(//li[contains(@class, "ugrid_i")])[1]//descendant::li[1]'
+    LINK_XPATH = '//ul[@class="widget-list"]/descendant::button[last()]'
+    USERNAME_LINK = '//ul[@class="ucard-mini-list"]/li/descendant::div[@class="ucard-mini_cnt_i ellip"]'
