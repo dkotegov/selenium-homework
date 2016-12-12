@@ -6,7 +6,7 @@ import time
 from conf.base import OK_URL, STATIC_PATH
 from seismograph.ext import selenium
 from utils.forms import AuthForm, NoteCreateForm
-from utils.items import AddAudioPopup
+from utils.items import AddAudioPopup, NotePopup
 from utils.pages import NotesPage
 
 
@@ -114,7 +114,6 @@ def test_create_with_photo(case, browser):
 
     note_form.in_status.unchecked()
     note_form.submit()
-
     time.sleep(1)
 
     case.assertion.equal(notes_page.get_last_note().get_photo_count(), 3)
@@ -142,26 +141,21 @@ def test_create_with_audio(case, browser):
     notes_page = NotesPage(browser)
     notes_page.open()
     notes_page.open_note_input()
-
     time.sleep(1)
 
     note_form = NoteCreateForm(browser)
     note_form.controls.add_audio()
-
     time.sleep(1)
 
     search_audio_name = u'Билан'
     add_audio_popup = AddAudioPopup(browser)
     add_audio_popup.search(search_audio_name)
-
     time.sleep(3)
 
     records_names = add_audio_popup.select_audio()
-
     time.sleep(1)
 
     add_audio_popup.add_audio()
-
     time.sleep(1)
 
     for _ in range(2):
@@ -171,7 +165,6 @@ def test_create_with_audio(case, browser):
 
     note_form.in_status.unchecked()
     note_form.submit()
-
     time.sleep(1)
 
     expected_names = notes_page.get_last_note().get_audio_names()
@@ -200,12 +193,10 @@ def test_create_with_place(case, browser):
     notes_page = NotesPage(browser)
     notes_page.open()
     notes_page.open_note_input()
-
     time.sleep(1)
 
     note_form = NoteCreateForm(browser)
     note_form.actions.add_place()
-
     time.sleep(1)
 
     expected_place_name = note_form.place_select.select_random_place()
@@ -232,6 +223,69 @@ def test_create_with_place(case, browser):
     case.assertion.is_in(place_name, expected_place_names)
 
     case.assertion.equal(notes_page.get_last_note().get_map_count(), 1)
+
+    notes_page.get_last_note().delete()
+
+    notes_page.refresh()
+    time.sleep(1)
+
+    with case.assertion.raises(IndexError):
+        notes_page.get_last_note()
+
+
+@suite.register
+def test_create_with_user(case, browser):
+    """
+        Добавляем заметку и отмечаем пользователей, удаляем некоторых из них.
+        Проверяем отмеченных пользователей.
+        Удаляем заметку.
+    """
+
+    _auth(browser)
+
+    notes_page = NotesPage(browser)
+    notes_page.open()
+    notes_page.open_note_input()
+    time.sleep(1)
+
+    note_form = NoteCreateForm(browser)
+    note_form.actions.add_user()
+    time.sleep(1)
+
+    user_names = [
+        u'Владислав', u'Кадыр', u'Александр', u'Евдакия', u'Илья'
+    ]
+    for name in user_names[:-1]:
+        note_form.user_select.search(name)
+        time.sleep(1)
+        note_form.user_select.select_user(0)
+
+    not_exist_user = 'error_name'
+    note_form.user_select.search(not_exist_user)
+    time.sleep(1)
+    note_form.user_select.return_to_friend_list()
+
+    note_form.user_select.search(user_names[-1])
+    time.sleep(1)
+    note_form.user_select.select_user(0)
+
+    note_form.user_select.remove_last_user()
+    note_form.user_select.remove_last_user()
+    time.sleep(1)
+
+    note_form.send_keys_in_last_text_form(_get_note_text())
+    note_form.in_status.unchecked()
+    note_form.submit()
+    time.sleep(2)
+
+    notes_page.get_last_note().open()
+    time.sleep(1)
+    note_popup = NotePopup(browser)
+    for name in user_names[:-2]:
+        case.assertion.is_in(name, note_popup.get_friends_names())
+
+    note_popup.close()
+    time.sleep(1)
 
     notes_page.get_last_note().delete()
 

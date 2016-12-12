@@ -76,6 +76,9 @@ class Note(selenium.PageItem):
         is_list=True
     )
 
+    def open(self):
+        self.text_content.click()
+
     def get_text(self):
         return self.text_content.text
 
@@ -153,6 +156,14 @@ class NoteCreateFormActions(selenium.PageItem):
         selenium.query(
             selenium.query.DIV,
             uid='plBtn'
+        ),
+        call=lambda btn: btn.click()
+    )
+
+    add_user = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            uid='wfBtn'
         ),
         call=lambda btn: btn.click()
     )
@@ -379,3 +390,106 @@ class NoteCreateFormPlaceSelect(selenium.PageItem):
 
     def remove_selected_place(self):
         self.selected_place.remove()
+
+
+class NoteCreateFormUserSelect(selenium.PageItem):
+
+    class User(selenium.PageItem):
+        __area__ = selenium.query(
+            selenium.query.DIV,
+            _class=selenium.query.contains('ucard-mini')
+        )
+
+        get_name = selenium.PageElement(
+            selenium.query(
+                selenium.query.DIV,
+                _class='ucard-mini_cnt_i ellip'
+            ),
+            call=lambda field: field.text
+        )
+
+    class SelectUser(selenium.PageItem):
+
+        get_name = selenium.PageElement(
+            selenium.query(
+                selenium.query.ANY,
+                dir='ltr'
+            ),
+            call=lambda tag: tag.text
+        )
+
+        remove = selenium.PageElement(
+            selenium.query(
+                selenium.query.ANY,
+                uid='rm'
+            ),
+            call=lambda btn: btn.click()
+        )
+
+
+    search = selenium.PageElement(
+        selenium.query(
+            selenium.query.INPUT,
+            id=selenium.query.contains('wfid-input')
+        ),
+        call=lambda input, text: input.send_keys(text)
+    )
+
+    return_to_friend_list = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            uid='sl'
+        ),
+        call=lambda link: link.click()
+    )
+
+    user_list = selenium.PageElement(
+        selenium.query(
+            selenium.query.LI,
+            _class='suggest_li'
+        ),
+        is_list=True,
+        we_class=User
+    )
+
+    selected_users = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class='tag'
+        ),
+        is_list=True,
+        we_class=SelectUser
+    )
+
+    def remove_last_user(self):
+        self.selected_users[-1].remove()
+
+    def select_user(self, position):
+        user = self.user_list[position]
+        user_name = user.get_name()
+        user.click()
+        return user_name
+
+
+class NotePopup(selenium.PageItem):
+
+    __area__ = selenium.query(
+        selenium.query.DIV,
+        _class='media-layer_hld'
+    )
+
+    close = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class=selenium.query.contains('media-layer_close_ico')
+        ),
+        call=lambda btn: btn.click()
+    )
+
+    get_friends_names = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class='media_company textWrap'
+        ),
+        call=lambda field: field.text
+    )
