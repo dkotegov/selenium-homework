@@ -1,7 +1,4 @@
-# from .base import Component, Page
 from seismograph.ext import selenium
-from seismograph.ext.selenium import PageElement as PE
-from seismograph.ext.selenium import query as _
 from utils import query
 
 class AuthPage(selenium.Page):
