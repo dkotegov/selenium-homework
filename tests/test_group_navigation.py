@@ -42,6 +42,13 @@ class GroupsPage(Page):
                     "//*[contains(@class,'stream-items')]/li[contains(@class,'stream-item')]["+str(31)+"]"))
             except:
                 break
+        try:
+            toTopButton = WebDriverWait(self.driver, 30, 0.1).until(
+                lambda d: d.find_element_by_id("scrollToTop")
+            )
+            return True
+        except:
+            return False
 
     @property
     def open_group(self):
@@ -69,6 +76,11 @@ class GroupsPage(Page):
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath("//div[@class='posting-form_itx_dec itx_w']")
         )
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath("//span[@class='mctc_name_holder']/h1")
+        )
+        return self.driver.find_element_by_xpath("//span[@class='mctc_name_holder']/h1").text
+
 
     def my_groups(self):
         WebDriverWait(self.driver, 30, 0.1).until(
@@ -97,8 +109,17 @@ class SearchGroup(Component):
         return WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.SEARCH_RESULT).text
         )
+    def search_placeholder(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.SEARCH_BLOCK)
+        )
+        return self.driver.find_element_by_xpath(self.SEARCH_BLOCK).get_attribute("placeholder")
     def open_group(self):
         self.driver.find_element_by_xpath(self.SEARCH_RESULT).click()
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath("//span[@class='mctc_name_holder']/h1")
+        )
+        return self.driver.find_element_by_xpath("//span[@class='mctc_name_holder']/h1").text
         # self.driver.execute_script("window.scrollTo(0, 200);")
 
         # elem = WebDriverWait(self.driver, 30, 0.1).until(
@@ -160,14 +181,20 @@ class NavigationGroupTest(#seismograph.Case):
 
     def test_scroll(self):
         self.groups_page.open()
-        self.groups_page.scroll_to_bottom
+        scrolled = self.groups_page.scroll_to_bottom
+        self.assertEqual(scrolled, True)
 
     def test_groups_open(self):
         self.groups_page.open()
+        search = self.groups_page.form
+        placeholder = search.search_placeholder()
+        self.assertEqual(placeholder, u'поиск по группам')
+
 
     def test_create_group(self):
         self.groups_page.open()
-        self.groups_page.create_group(self.GROUP_NAME)
+        name = self.groups_page.create_group(self.GROUP_NAME)
+        self.assertEqual(name, self.GROUP_NAME)
 
     def test_search_created_group(self):
         self.groups_page.open()
@@ -188,4 +215,5 @@ class NavigationGroupTest(#seismograph.Case):
             lambda d: d.find_element_by_id('hook_Block_UserGroupsSearch')
         )
         search_result = search.check_result()
-        search.open_group()
+        name = search.open_group()
+        self.assertEqual(name, self.GROUP_NAME)
