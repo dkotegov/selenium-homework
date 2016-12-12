@@ -3,6 +3,7 @@ from seismograph.ext import selenium
 from pages.auth_page import AuthPage
 from pages.feed_page import FeedPage
 from pages.profile_page import ProfilePage
+from smth.Auth import AuthManager
 import time
 
 from pages.group_post_page import PostPage as GPP
@@ -10,31 +11,31 @@ from pages.group_post_page import PostPage as GPP
 suite = selenium.Suite(__name__)
 
 
+def auth(case, browser):
+    auth_page = AuthPage(browser)
+    auth_page.open()
+    auth_page.auth(AuthManager.get_login(),
+                   AuthManager.get_password())
+
+
 # ERROR
 @suite.register
 def test_get_author_group(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    auth(case, browser)
 
     feed_page = FeedPage(browser)
+    time.sleep(3)
     content = feed_page.getPopularContent()
+    time.sleep(3)
     element, url = feed_page.getAuthor(content)
     element.click()
     time.sleep(3)
-    if url in browser.current_url:
-        return True
-    else:
-        return False
+    return url in browser.current_url
 
 
 @suite.register
 def test_get_post(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    auth(case, browser)
 
     feed_page = FeedPage(browser)
     time.sleep(1)
@@ -42,36 +43,24 @@ def test_get_post(case, browser):
     content.click()
     time.sleep(3)
     url = browser.current_url
-    if "/topic/" in url:
-        return True
-    else:
-        return False
+    return "/topic/" in url
 
 
 @suite.register
 def test_get_post(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    auth(case, browser)
 
     feed_page = FeedPage(browser)
     time.sleep(1)
     before = feed_page.getStatusLikes()
     feed_page.makeLikeOnOwnPost()
     after = feed_page.getStatusLikes()
-    if before != after:
-        return True
-    else:
-        return False
+    return before != after
 
 
 @suite.register
 def test_make_self_comment(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    auth(case, browser)
 
     feed_page = FeedPage(browser)
     time.sleep(1)
@@ -82,10 +71,7 @@ def test_make_self_comment(case, browser):
 # ERROR
 @suite.register
 def test_make_comment(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    auth(case, browser)
 
     feed_page = FeedPage(browser)
     time.sleep(1)
@@ -96,10 +82,7 @@ def test_make_comment(case, browser):
 # Fail
 @suite.register
 def test_make_like(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    auth(case, browser)
 
     feed_page = FeedPage(browser)
     time.sleep(1)
@@ -110,10 +93,7 @@ def test_make_like(case, browser):
 # OK
 @suite.register
 def test_make_double_like(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    auth(case, browser)
 
     feed_page = FeedPage(browser)
     time.sleep(1)
@@ -124,10 +104,7 @@ def test_make_double_like(case, browser):
 # ERROR
 @suite.register
 def test_make_someone_like_comment(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    auth(case, browser)
 
     feed_page = FeedPage(browser)
     time.sleep(1)
@@ -138,10 +115,7 @@ def test_make_someone_like_comment(case, browser):
 # ERROR
 @suite.register
 def test_make_group_comment(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    auth(case, browser)
 
     post_page = GPP(browser)
     post_page.open()
@@ -151,26 +125,17 @@ def test_make_group_comment(case, browser):
 
 @suite.register
 def test_make_repost(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    auth(case, browser)
 
     feed_page = FeedPage(browser)
     time.sleep(1)
     val = feed_page.makeRepost()
-    if val == u'Опубликовано!':
-        return True
-    else:
-        return False
+    return val == u'Опубликовано!'
 
 
 @suite.register
 def test_make_two_likes(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    auth(case, browser)
 
     feed_page = FeedPage(browser)
     time.sleep(1)
@@ -182,10 +147,7 @@ def test_make_two_likes(case, browser):
 # FAIL
 @suite.register
 def test_make_one_likes(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    auth(case, browser)
 
     feed_page = FeedPage(browser)
     time.sleep(1)
@@ -197,26 +159,17 @@ def test_make_one_likes(case, browser):
 # ERROR
 @suite.register
 def test_make_repost_by_double_click(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    auth(case, browser)
 
     feed_page = FeedPage(browser)
     time.sleep(1)
     val = feed_page.makeDoubleClickRepost()
-    if val == u'Опубликовано!':
-        return True
-    else:
-        return False
+    return val == u'Опубликовано!'
 
 
 @suite.register
 def test_make_repost_and_delete(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth('89260665086',
-                   'Gfhjkmlkzjr1488')
+    auth(case, browser)
 
     feed_page = FeedPage(browser)
     time.sleep(1)
@@ -224,9 +177,6 @@ def test_make_repost_and_delete(case, browser):
     if val == u'Опубликовано!':
         profile_page = ProfilePage(browser)
         profile_page.open()
-        if profile_page.delete_my_post():
-            return True
-        else:
-            return False
+        return profile_page.delete_my_post()
     else:
         return False

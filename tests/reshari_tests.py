@@ -1,8 +1,6 @@
 # coding=utf-8
-import seismograph
 from seismograph.ext import selenium
 from pages.auth_page import AuthPage
-from pages.feed_page import FeedPage
 from smth.Auth import AuthManager
 from pages.video_page import VideoPage
 from pages.photo_page import PhotoPage

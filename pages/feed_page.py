@@ -54,8 +54,8 @@ class FeedPage(selenium.Page):
         return content
 
     def getAuthor(self,content):
-        return content.find_elements_by_css_selector('span.shortcut-wrap')[0].find_elements_by_css_selector('a.o')[0],\
-               content.find_elements_by_css_selector('span.shortcut-wrap')[0].find_elements_by_css_selector('a.o')[0].get_attribute('href')
+        return content.find_elements_by_css_selector('span.shortcut-wrap')[0].find_elements_by_css_selector('a.o'), \
+               content.find_elements_by_css_selector('span.shortcut-wrap')[0].find_elements_by_css_selector('a.o').get_attribute('href')
 
     def getPost(self):
         return 1

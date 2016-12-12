@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import seismograph
-from tests import lenta_tests
-from tests import auth_tests
 from tests import post_tests
 from tests import lenta_tests
 from tests import reshari_tests
