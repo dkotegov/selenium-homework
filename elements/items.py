@@ -29,6 +29,39 @@ class InStatusCheckbox(selenium.PageItem):
     )
 
 
+class NoteActions(selenium.PageItem):
+    class LikeButton(selenium.PageItem):
+        __area__ = selenium.query(
+            selenium.query.BUTTON,
+            _class=selenium.query.contains('controls-list_lk')
+        )
+
+        get_like_count = selenium.PageElement(
+            selenium.query(
+                selenium.query.SPAN,
+                _class='widget_count'
+            ),
+            call=lambda field: int(field.text)
+        )
+
+
+    __area__ = selenium.query(
+        selenium.query.UL,
+        _class='widget-list'
+    )
+
+    like_btn = selenium.PageElement(LikeButton)
+
+    def like(self):
+        self.like_btn.click()
+
+    def unlike(self):
+        self.like_btn.click()
+
+    def get_like_count(self):
+        return self.like_btn.get_like_count()
+
+
 class Note(selenium.PageItem):
 
     delete_btn = selenium.PageElement(
@@ -90,6 +123,8 @@ class Note(selenium.PageItem):
             _class='tico'
         )
     )
+
+    actions = selenium.PageElement(NoteActions)
 
     def open(self):
         self.text_content.click()
@@ -514,3 +549,5 @@ class NotePopup(selenium.PageItem):
         ),
         call=lambda field: field.text
     )
+
+    actions = selenium.PageElement(NoteActions)
