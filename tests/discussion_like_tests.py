@@ -8,24 +8,24 @@ from page_objects import DiscussionPage
 
 class DiscussionLikeTestCase(BaseTestCase):
 
-    # def test_to_like_and_unlike_comment_in_discussion(self):
-    #     if self.is_logged:
-    #         discussion_page = DiscussionPage(self.driver)
-    #         discussion_page.open()
+    def test_to_like_and_unlike_comment_in_discussion(self):
+        if self.is_logged:
+            discussion_page = DiscussionPage(self.driver)
+            discussion_page.open()
 
-    #         like_button = discussion_page.like_button_under_comment
-    #         like_button.like()
-    #         like_controller = discussion_page.like_button_under_comment_controller
-    #         has_your_like = like_controller.has_your_like()
-    #         self.assertTrue(has_your_like)
+            like_button = discussion_page.like_button_under_comment
+            like_button.like()
+            like_controller = discussion_page.like_button_under_comment_controller
+            has_your_like = like_controller.has_your_like()
+            self.assertTrue(has_your_like)
 
-    #         unlike_button = discussion_page.unlike_button_under_comment
-    #         unlike_button.unlike()
-    #         like_controller = discussion_page.like_button_under_comment_controller
-    #         has_your_like = like_controller.has_your_like()
-    #         self.assertFalse(has_your_like)
-    #     else:
-    #         self.fail('Connection Error: User not logged')
+            unlike_button = discussion_page.unlike_button_under_comment
+            unlike_button.unlike()
+            like_controller = discussion_page.like_button_under_comment_controller
+            has_your_like = like_controller.has_your_like()
+            self.assertFalse(has_your_like)
+        else:
+            self.fail('Connection Error: User not logged')
 
     def test_to_find_yourself_in_liked_users(self):
         if self.is_logged:
