@@ -53,7 +53,7 @@ class NotesPage(BasePage):
     notes = selenium.PageElement(
         selenium.query(
             selenium.query.DIV,
-            _tsid='userStatusShares'
+            tsid='userStatusShares'
         ),
         is_list=True,
         we_class=Note

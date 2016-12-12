@@ -100,7 +100,7 @@ class Note(selenium.PageItem):
     text_content = selenium.PageElement(
         selenium.query(
             selenium.query.DIV,
-            _class='media-text_cnt_tx textWrap'
+            _class=selenium.query.contains('media-text_cnt_tx')
         )
     )
 
@@ -580,7 +580,6 @@ class NotePopup(selenium.PageItem):
             self.comment_input.send_keys(text)
             self.add_comment_button.click()
 
-
     class Comment(selenium.PageItem):
 
         remove_btn = selenium.PageElement(
@@ -604,6 +603,21 @@ class NotePopup(selenium.PageItem):
                 action.click(self.remove_btn)
                 action.perform()
 
+    class ActionsMenu(selenium.PageItem):
+
+        def edit(self):
+            self.browser.execute_script('$(".ic_edit").click();')
+
+        # TODO: Неуловимое выпадающее меню
+        """
+        edit = selenium.PageElement(
+            selenium.query(
+                selenium.query.ANY,
+                _class=selenium.query.contains('ic_edit')
+            ),
+            call=lambda btn: btn.click()
+        )
+        """
 
     __area__ = selenium.query(
         selenium.query.DIV,
@@ -638,6 +652,43 @@ class NotePopup(selenium.PageItem):
         is_list=True,
         we_class=Comment
     )
+
+    actions_menu_dropdown = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class=selenium.query.contains('ic12_arrow-down')
+        )
+    )
+
+    actions_menu = selenium.PageElement(ActionsMenu)
+
+    text_input = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            id='0#0.posting_form_text_field'
+        )
+    )
+
+    submit = selenium.PageElement(
+        selenium.query(
+            selenium.query.INPUT,
+            type='submit'
+        ),
+        call=lambda btn: btn.click()
+    )
+
+    def edit_note(self, text):
+        import time
+        self.actions_menu_dropdown.click()
+        self.actions_menu.edit()
+        time.sleep(1)
+        with self.browser.action_chains as action:
+            action.move_to_element(self.text_input)
+            action.click(self.text_input)
+            action.perform()
+        self.text_input.send_keys(text)
+        time.sleep(1)
+        self.submit()
 
     def get_last_comment(self):
         return self.comments[-1]
