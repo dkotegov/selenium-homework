@@ -37,12 +37,13 @@ class GroupMessagesTest(unittest.TestCase):
             desired_capabilities=getattr(DesiredCapabilities, browser).copy()
         )
 
+        auth_page = AuthPage(self.driver)  # Auth here
+        auth_page.authorize()
+
     def tearDown(self):
         self.driver.quit()
 
     def test(self):
-
-
         message_page = GroupMessagesPage(self.driver)  # Go to messages
         message_page.open()
 

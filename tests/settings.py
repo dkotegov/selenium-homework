@@ -1,8 +1,7 @@
 import os
 
 BROWSER = 'FIREFOX'
-LOGIN = 'technopark16'
-PASSWORD = 'testQA1'
+
 
 class Settings:
 
@@ -18,8 +17,18 @@ class Settings:
 
     @staticmethod
     def get_login():
-        return LOGIN
+        print os.environ
+        try:
+            LOGIN = os.environ['LOGIN']
+            return LOGIN
+        except KeyError:
+            raise Exception('No login provided')
 
     @staticmethod
     def get_password():
-        return PASSWORD
+        try:
+            PASSWORD = os.environ['PASSWORD']
+            return PASSWORD
+        except KeyError:
+            raise Exception('No password provided')
+

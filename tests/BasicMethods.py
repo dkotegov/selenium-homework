@@ -5,6 +5,7 @@ import unittest
 import urlparse
 
 import time
+import settings
 from selenium.webdriver import DesiredCapabilities, Remote
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -37,8 +38,8 @@ class AuthPage(Page):
         self.open()
 
         auth_form = self.form
-        auth_form.set_login('technopark16')
-        auth_form.set_password('testQA1')
+        auth_form.set_login(settings.Settings.get_login())
+        auth_form.set_password(settings.Settings.get_password())
         auth_form.submit()
         self.top_menu.get_username() # wait for loading
 
