@@ -10,7 +10,6 @@ from selenium.webdriver import ActionChains
 from utils import custom_move_to_element
 
 
-# General elements
 class PageElement(object):
 
     def __init__(self, driver):
@@ -77,6 +76,18 @@ class LikedUsersListPopup(PageElement):
         pass
 
 
+class LikedUsersShortMessage(PageElement):
+    """The page element to show  message kind of `Вы и 99+` users liked it.
+
+    """
+    def has_your_like(self):
+        # TODO: internationalization
+        """Check presence `Вы` in message after you liked it.
+
+        """
+        pass
+
+
 class LikeButton(PageElement):
     """The page element to like item.
 
@@ -87,7 +98,6 @@ class LikeButton(PageElement):
         WebDriverWait(self.driver, 30, 0.1).until(
             EC.visibility_of_element_located((By.XPATH, self.BUTTON))
         ).click()
-        # self.driver.find_element_by_xpath(self.BUTTON).click()
 
 
 class UnlikeButton(PageElement):
@@ -103,18 +113,33 @@ class UnlikeButton(PageElement):
 class LikeVideoButtonUnderPlayer(LikeButton):
 
     BUTTON = '//ul[@class="widget-list"]/descendant::button[last()]'
-    # BUTTON = '//button[contains(@class, "widget_cnt controls-list_lk")]'
 
 
 class UnlikeVideoButtonUnderPlayer(UnlikeButton):
 
     BUTTON = '//ul[@class="widget-list"]/descendant::button[last()]'
-    # BUTTON = '//button[contains(@class, "widget_cnt controls-list_lk")]'
 
 
 class LikeVideoButtonInPlayerDuringPlay(LikeButton):
 
-    BUTTON = '//a[@class="html5-vpl_ac_i"]'
+    BUTTON = 'html5-vpl_ac_i'
+
+    def like(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            EC.presence_of_element_located((By.CLASS_NAME, self.BUTTON))
+        )
+        self.driver.execute_script('$(".%s")[0].click()' % self.BUTTON)
+
+
+class UnlikeVideoButtonInPlayerDuringPlay(UnlikeButton):
+
+    BUTTON = 'html5-vpl_ac_i'
+
+    def unlike(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            EC.presence_of_element_located((By.CLASS_NAME, self.BUTTON))
+        )
+        self.driver.execute_script('$(".%s")[0].click()' % self.BUTTON)
 
 
 class LikedUsersListButtonUnderPlayer(LikedUsersListPopup):
@@ -122,19 +147,41 @@ class LikedUsersListButtonUnderPlayer(LikedUsersListPopup):
     LINK = '//ul[@class="ucard-mini-list"]/li/descendant::div[@class="ucard-mini_cnt_i ellip"]'
 
     def has_your_like(self, login):
-        xpath = '//ul[@class="widget-list"]/descendant::button[last()-1]'
-        # custom_move_to_element(self.driver, xpath)
+        xpath = '//ul[@class="widget-list"]/descendant::button[last()]'
+        custom_move_to_element(self.driver, xpath)
 
-        ActionChains(self.driver).move_to_element(
-            self.driver.find_element_by_xpath(xpath)
-        ).perform()
+        login = unicode(login, 'utf8')
+        first_liked_user_in_popup = WebDriverWait(self.driver, 30, 0.1).until(
+            EC.visibility_of_element_located((By.XPATH, self.LINK))
+        )
+        return first_liked_user_in_popup.text == login
 
-        # login = unicode(login, 'utf8')
-        # first_liked_user_in_popup = WebDriverWait(self.driver, 30, 0.1).until(
-        #     EC.visibility_of_element_located((By.XPATH, self.LINK))
-        # )
-        # print(first_liked_user_in_popup.text, 'GOOD')
-        # return first_liked_user_in_popup.text == login
+
+class LikedUsersShortMessageInPlayer(LikedUsersShortMessage):
+
+    # LINK = 'a div.html5-vpl_ac_txt'
+
+    # def has_your_like(self):
+    #     print('WAIT SHORT')
+    #     WebDriverWait(self.driver, 30, 0.1).until(
+    #         EC.presence_of_element_located((By.CSS_SELECTOR, self.LINK))
+    #     )
+    #     message = self.driver.execute_script('$("a div.html5-vpl_ac_txt")[0].innerText')
+    #     print(message, 'RTTTT')
+
+    LINK = 'html5-vpl_ac_txt'
+
+    def has_your_like(self):
+        print('WAIT SHORT')
+        m = WebDriverWait(self.driver, 30, 0.1).until(
+            EC.presence_of_element_located((By.CLASS_NAME, self.LINK))
+        )
+        message = self.driver.execute_script('$(".html5-vpl_ac_txt")[0].innerText')
+        print(message, 'RTTTT')
+
+
+
+
 
 
 

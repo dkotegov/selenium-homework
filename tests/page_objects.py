@@ -4,7 +4,8 @@ import urlparse
 
 from page_elements import AuthForm, LikeVideoButtonUnderPlayer, \
     LikedUsersListButtonUnderPlayer, UnlikeVideoButtonUnderPlayer, \
-    LikeVideoButtonInPlayerDuringPlay
+    LikeVideoButtonInPlayerDuringPlay, LikedUsersShortMessageInPlayer, \
+    UnlikeVideoButtonInPlayerDuringPlay
 
 
 class Page(object):
@@ -20,7 +21,7 @@ class Page(object):
     def open(self):
         url = urlparse.urljoin(self.BASE_URL, self.PATH)
         self.driver.get(url)
-        self.driver.maximize_window()
+        # self.driver.maximize_window()
 
 
 class AuthPage(Page):
@@ -53,11 +54,16 @@ class VideoPage(Page):
         return LikeVideoButtonInPlayerDuringPlay(self.driver)
 
     @property
+    def unlike_button_during_play(self):
+        return UnlikeVideoButtonInPlayerDuringPlay(self.driver)
+
+    @property
     def list_of_liked_users(self):
         return LikedUsersListButtonUnderPlayer(self.driver)
 
-    def pause_video(self):
-        pass
+    @property
+    def short_message_about_liked_users(self):
+        return LikedUsersShortMessageInPlayer(self.driver)
 
 
 class PhotoPage(Page):
