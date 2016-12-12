@@ -8,7 +8,7 @@ SELENIUM_EX = {
     'DEFAULT_BROWSER': browser,
     'PROJECT_URL': 'https://www.ok.ru/',
     'PAGE_LOAD_TIMEOUT': 60,
-
+    #'WAIT_TIMEOUT':20,
     'REMOTE': {
         'command_executor': 'http://127.0.0.1:4444/wd/hub',
     }

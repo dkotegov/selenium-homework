@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from seismograph.ext import selenium
 from selenium.webdriver.support.ui import WebDriverWait
-
+from selenium.common.exceptions import StaleElementReferenceException
+import time
 DEFAULT_TIMEOUT = 30
 MICRO_TIMEOUT = 0.1
 SHORT_TIMEOUT = 5
@@ -10,6 +11,15 @@ DEFAULT_SLEEP_TIME = 0.1
 
 def wait(driver, condition, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
     return WebDriverWait(driver, timeout, sleeptime).until(condition)
+
+def repeat_on_error(func):
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except StaleElementReferenceException:
+            time.sleep(DEFAULT_SLEEP_TIME)
+            wrapper(*args, **kwargs)
+    return wrapper
 
 
 def wait_xpath(driver, xpath, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
@@ -41,6 +51,7 @@ def wait_change_url(driver, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIM
 def wait_value(driver, xpath, value, timeout = DEFAULT_TIMEOUT, sleeptime = DEFAULT_SLEEP_TIME):
     return wait(driver, lambda d: d.find_element_by_xpath(xpath).text == value, timeout, sleeptime)
 
+@repeat_on_error
 def wait_screen_change(driver, xpath, timeout = DEFAULT_TIMEOUT, sleeptime = DEFAULT_SLEEP_TIME):
     size = driver.find_element_by_xpath(xpath).size['width']
     return wait(driver, lambda d: d.find_element_by_xpath(xpath).size['width'] != size, timeout, sleeptime)
@@ -109,5 +120,4 @@ def int_to_time(x):
         result += '0'
     result += str(seconds)
     return result
-
 

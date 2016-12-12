@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-from .base import Component, Page
 import utils
-from urlparse import urlsplit
-from channel_page import ChannelPage
 from seismograph.ext import selenium
 from utils import query
 

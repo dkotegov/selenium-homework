@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 import seismograph
 
-from base_case import BaseCase
 from pages.channel_page import ChannelPage
 from pages.myvideos_page import MyVideosPage
 from pages.video_page import VideoPage
+from tests.base_case import BaseCase
 
 suite = seismograph.Suite(__name__, require=['selenium'])
 
 
-# @suite.register
+@suite.register
 class CreateChannelCase(BaseCase):
     TEST_CHANNEL1 = 'TEST_CHANNEL1'
     TEST_CHANNEL2 = 'TEST_CHANNEL2'
@@ -22,7 +22,7 @@ class CreateChannelCase(BaseCase):
 
     def test_create(self):
         self.video_page.create_channel(self.TEST_CHANNEL1)
-        self.assertion.is_in(self.TEST_CHANNEL1, self.browser.page_source)  # TODO использовать список каналов
+        self.assertion.is_in(self.TEST_CHANNEL1, self.browser.page_source)
         self.channel_page.delete_channel()
         self.assertion.is_not_in(self.TEST_CHANNEL1, self.browser.page_source)
 
@@ -32,7 +32,7 @@ class CreateChannelCase(BaseCase):
         self.channel_page.delete_channel()
         self.assertion.is_not_in(self.TEST_CHANNEL2, self.browser.page_source)
 
-# @suite.register
+@suite.register
 class AddVideoCase(BaseCase):
     FIRST_CHANNEL_ID = '1533672'
     SECOND_CHANNEL_ID = '1566696'
@@ -62,7 +62,7 @@ class AddVideoCase(BaseCase):
 
 
 
-# @suite.register
+@suite.register
 class ChangeChannelCase(BaseCase):
 
     def test_move_video(self):
@@ -136,7 +136,7 @@ class ChangeChannelCase(BaseCase):
         channel_page.open(id=CHANNEL_ID)
         channel_page.edit_video(VIDEO_NAME, description=OLD_DESCRIPTION)
 
-# @suite.register
+@suite.register
 class SubscriptionsCase(BaseCase):
     CHANNEL_ID = '1100320'
     VIDEO_ID = '203665445152'
@@ -155,7 +155,7 @@ class SubscriptionsCase(BaseCase):
         self.assertion.true(self.page.is_subscribe())
         self.assertion.equal(self.page.subscriptions_count, self.DEFAULT_SUBSCRIPTIONS_COUNT + 1)
         self.page.unsubscribe()
-        self.assertion.false(self.page.is_subscribe())  # TODO
+        self.assertion.true(self.page.is_not_subscribe())
         self.assertion.equal(self.page.subscriptions_count, self.DEFAULT_SUBSCRIPTIONS_COUNT)
         super(SubscriptionsCase, self).teardown()
 

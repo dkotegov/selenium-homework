@@ -97,6 +97,8 @@ class ChannelPage(selenium.Page):
     VIDEO_LINK_CLASS = 'vid-card_img__link'
     VIDEO_LINK_XPATH = '//a[@title="{}"]'
     IS_SUBSCRIBE_XPATH = '//a[starts-with(@id,"vv_btn_album_subscribe") and @class="vl_btn invisible"]'
+    NOT_SUBSCRIBE_XPATH = '//a[contains(@class,"invisible") and contains(@class , "__unsubscribe")]'
+
 
     delete_button = utils.query('SPAN', _class='tico_img vl_ic_delete')
     edit_video_buttons = utils.query('A', _class='vid-card_ac_i ic vl_ic_edit')
@@ -120,10 +122,12 @@ class ChannelPage(selenium.Page):
 
     @property
     def videos_count(self):
+        self.browser.refresh()
         return self.counters.videos_count
 
     @property
     def subscriptions_count(self):
+        self.browser.refresh()
         return self.counters.subscriptions_count
 
     def click_add_video(self):
@@ -145,12 +149,14 @@ class ChannelPage(selenium.Page):
         self.edit_channel_dialog.set_channel_name(new_name)
         self.browser.refresh()
 
+    @utils.repeat_on_error
     def delete_video(self, name):
         delete_button = utils.wait_xpath(self.browser, self.DELETE_VIDEO_XPATH_TEMPLATE.format(name))
         utils.js_click(self.browser, delete_button)
         self.delete_dialog.submit_button.click()
         self.browser.refresh()
 
+    @utils.repeat_on_error
     def click_edit_video(self, name):
         edit_button = utils.wait_xpath(self.browser, self.EDIT_VIDEO_XPATH_TEMPLATE.format(name))
         utils.js_click(self.browser, edit_button)
@@ -196,8 +202,10 @@ class ChannelPage(selenium.Page):
         utils.wait_change_url(self.browser)
 
     def is_subscribe(self):
-        self.browser.refresh()
-        return len(self.browser.find_elements_by_xpath(self.IS_SUBSCRIBE_XPATH)) > 0
+        return len( utils.wait_many_xpath(self.browser, self.IS_SUBSCRIBE_XPATH)) > 0
+
+    def is_not_subscribe(self):
+        return len( utils.wait_many_xpath(self.browser, self.NOT_SUBSCRIBE_XPATH)) > 0
 
     def get_videos_titles(self):
         return [v.get_attribute('title') for v in self.get_videos_elements()]

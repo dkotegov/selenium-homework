@@ -1,9 +1,9 @@
 # coding=utf-8
 import seismograph
 
-from base_case import BaseCase
 from pages.channel_page import ChannelPage
 from pages.video_page import VideoPage
+from tests.base_case import BaseCase
 
 suite = seismograph.Suite(__name__, require=['selenium'])
 
@@ -55,11 +55,13 @@ class VideoPreviewTest(BaseCase):
         self.assertion.not_equal(next_video_url, self.browser.current_url)
 
     def test_video_rewind(self):
+        VIDEO_MIDDLE = 50
+
         videoplayer_page = VideoPage(self.browser)
         videoplayer_page.rewind_video(0)
         videoplayer_page.pause_video()
         begin_time = videoplayer_page.get_video_play_time()
-        videoplayer_page.rewind_video(50)
+        videoplayer_page.rewind_video(VIDEO_MIDDLE)
         self.assertion.not_equal(videoplayer_page.get_video_play_time(), begin_time)
 
     def test_video_fullscreen(self):

@@ -6,11 +6,6 @@ import utils
 from pages.auth_page import AuthPage
 
 
-# selenium = suite.ext('selenium')
-
-
-
-
 class BaseCase(seismograph.Case):
 
     def setup(self):
@@ -24,4 +19,3 @@ class BaseCase(seismograph.Case):
 
     def teardown(self):
         self.browser.quit()
-        # self.driver.quit()
