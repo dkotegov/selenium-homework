@@ -46,16 +46,15 @@ class FeedPage(selenium.Page):
     )
 
     def getPopularContent(self):
-
         self.popular_posts.wait()
-
         self.popular_posts.click()
+        time.sleep(2)
         content = self.browser.find_elements_by_css_selector('div.feed')[0]
         return content
 
     def getAuthor(self,content):
-        return content.find_elements_by_css_selector('span.shortcut-wrap')[0].find_elements_by_css_selector('a.o'), \
-               content.find_elements_by_css_selector('span.shortcut-wrap')[0].find_elements_by_css_selector('a.o').get_attribute('href')
+        return content.find_elements_by_css_selector('span.shortcut-wrap')[0].find_elements_by_css_selector('a.o')[0], \
+               content.find_elements_by_css_selector('span.shortcut-wrap')[0].find_elements_by_css_selector('a.o')[0].get_attribute('href')
 
     def getPost(self):
         return 1
@@ -172,9 +171,12 @@ class FeedPage(selenium.Page):
         self.popular_posts.click()
         self.browser.execute_script('''$('div.feed_cnt').first().find('button.h-mod.widget_cnt').first().click()''')
         time.sleep(3)
-        self.browser.execute_script('''$('div.feed').first().find("div[data-l*='t,now']").first().find('a').dbclick()''')
+        self.browser.execute_script('''$('div.feed').first().find("div[data-l*='t,now']").first().find('a').dblclick()''')
         time.sleep(2)
-        val = self.browser.find_elements_by_css_selector("span.tico")[13].text
+        val = self.browser.find_elements_by_css_selector("span.tico")
+        for a in val:
+            if a.text == u'Опубликовано!':
+                val = a.text
         return val
 
     def repostDoubleClick(self):

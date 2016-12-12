@@ -18,7 +18,6 @@ def auth(case, browser):
                    AuthManager.get_password())
 
 
-# ERROR
 @suite.register
 def test_get_author_group(case, browser):
     auth(case, browser)
@@ -143,8 +142,6 @@ def test_make_two_likes(case, browser):
     time.sleep(1)
     feed_page.makeLikeTwoLikes()
 
-
-# FAIL
 @suite.register
 def test_make_one_likes(case, browser):
     auth(case, browser)
@@ -156,7 +153,6 @@ def test_make_one_likes(case, browser):
     feed_page.makeOneLike()
 
 
-# ERROR
 @suite.register
 def test_make_repost_by_double_click(case, browser):
     auth(case, browser)
