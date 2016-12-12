@@ -113,3 +113,9 @@ fabric.properties
 *.iml
 modules.xml
 .idea/misc.xml
+.idea/
+
+#selenium webdrivers
+geckodriver
+chromedriver
+selenium-server-standalone*
