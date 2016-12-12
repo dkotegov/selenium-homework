@@ -10,7 +10,7 @@ suite = seismograph.Suite(__name__, require=['selenium'])
 TEST_CHANNEL_ID = '1567208'
 TEST_VIDEO_ID = '206523142632'
 
-#@suite.register
+@suite.register
 class VideoPreviewTest(BaseCase):
 
     def setup(self):
@@ -81,7 +81,6 @@ class VideoPreviewTest(BaseCase):
         videoplayer_page.open_widescreen()
         width_widescreen = videoplayer_page.get_video_window_size()['width']
         self.assertion.greater(width_widescreen, width_original)
-        videoplayer_page.open_widescreen()
 
     def test_video_miniscreen(self):
         videoplayer_page = VideoPage(self.browser)

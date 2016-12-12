@@ -133,7 +133,7 @@ class LastComment(selenium.PageItem):
     @property
     def is_deleted(self):
         self.we.wait()
-        return len(self.we.find_elements_by_class_name(self.IS_DELETED_CLASS)) > 0
+        return len(utils.wait_many_class(self.we, self.IS_DELETED_CLASS)) > 0
 
     def remove(self):
         utils.js_click(self.browser, self.remove_button)
@@ -231,8 +231,11 @@ class VideoPage(selenium.Page):
     def play_video_during(self, time):
         curr_time = utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text
         curr_time = utils.time_to_int(curr_time)
-        result_time = utils.int_to_time(curr_time + time)
-        utils.wait_value(self.browser, self.VIDEO_PLAY_TIME, result_time)
+        result_time = curr_time + time
+        utils.wait(
+            self.browser,
+            lambda d: utils.time_to_int(utils.wait_xpath(d, self.VIDEO_PLAY_TIME).text) >= result_time
+        )
 
     def play_next_video(self):
         elem = self.next_vid
@@ -242,7 +245,10 @@ class VideoPage(selenium.Page):
         return next_video_url
 
     def pause_video(self):
-        self.pause.click()
+        # action_chains = ActionChains(self.browser)
+        # action_chains.move_to_element(self.pause).click().perform()
+        # self.pause.click()
+        utils.js_click(self.browser, self.pause)
 
     def rewind_video(self, percent):
         progress_bar = self.progress_bar
@@ -270,7 +276,7 @@ class VideoPage(selenium.Page):
     def close_fullscreen(self):
         utils.js_click(
              self.browser,
-             utils.wait_xpath(self.browser,  self.fullscreen_mode)
+             self.fullscreen_mode
         )
 
     def open_widescreen(self):
@@ -291,10 +297,10 @@ class VideoPage(selenium.Page):
         return url.split('?')[0]
 
     def get_video_play_time(self):
-        return float(utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text.replace(':', '.'))
+        return utils.time_to_int(utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text) #.replace(':', '.'))
 
     def get_video_time_remained(self):
-        return float(self.video_time_remained.text.replace(':', '.'))
+        return utils.time_to_int(self.video_time_remained.text)#float(self.video_time_remained.text.replace(':', '.'))
 
     def get_video_window_size(self):
         return utils.wait_xpath(self.browser, self.VIDEO_WINDOW).size
@@ -306,6 +312,13 @@ class VideoPage(selenium.Page):
         except Exception:
             return True
 
+    def is_video_playing(self):
+        try:
+            self.browser.find_element_by_xpath(self.pause)
+            return True
+        except Exception:
+            return False
+
     def reply_last_comment(self, text):
         self.last_comment.reply_click()
         self.send_comment_form.add_comment(text)
@@ -313,9 +326,4 @@ class VideoPage(selenium.Page):
     def add_comment(self, text=None, video = None, photo = None, photo_pc = None ):
         self.send_comment_form.add_comment(text, video, photo, photo_pc)
 
-    def is_video_playing(self):
-        try:
-            self.browser.find_element_by_xpath(self.pause)
-            return True
-        except Exception:
-            return False
+

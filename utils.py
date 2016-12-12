@@ -27,6 +27,8 @@ def wait_id(driver, id, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
 def wait_name(driver, name, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
     return wait(driver, lambda d: d.find_element_by_name(name), timeout, sleeptime)
 
+def wait_many_class(driver, cls, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
+    return wait(driver, lambda d: d.find_elements_by_class_name(cls), timeout, sleeptime)
 
 def wait_class(driver, cls, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
     return wait(driver, lambda d: d.find_element_by_class_name(cls), timeout, sleeptime)
@@ -85,7 +87,7 @@ def time_to_int(time):
     if len(time) == 2:
         result = int(time[0])*60 + int(time[1])
     if len(time) == 1:
-        result = int(time[0])
+        result = int(time[0] or 0)
 
     return result
 

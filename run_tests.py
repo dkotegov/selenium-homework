@@ -8,8 +8,8 @@ import comments_test
 
 suites = [
     #sv.suite,
-    #channels.suite,
-    #videopreview_test.suite,
+    channels.suite,
+    videopreview_test.suite,
     comments_test.suite
 ]
 
