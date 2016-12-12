@@ -24,9 +24,9 @@ class PostPage(selenium.Page):
     )
 
     def create_post(self,text):
-        time.sleep(3)
+        self.post_text.wait()
         self.post_text.set(text)
-        time.sleep(3)
+        self.post_button.wait()
         self.post_button.click()
         time.sleep(3)
 
