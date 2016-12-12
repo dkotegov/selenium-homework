@@ -18,6 +18,34 @@ class BasePage(selenium.Page):
 
 class NotesPage(BasePage):
 
+    class StatusNote(selenium.PageItem):
+
+        __area__ = selenium.query(
+            selenium.query.DIV,
+            _class=selenium.query.contains('media_feed_status')
+        )
+
+        get_text = selenium.PageElement(
+            selenium.query(
+                selenium.query.DIV,
+                _class='media-text_cnt_tx'
+            ),
+            call=lambda field: field.text
+        )
+
+        remove_from_status_link = selenium.PageElement(
+            selenium.query(
+                selenium.query.A,
+                _class='mst_close'
+            )
+        )
+
+        def remove_from_status(self):
+            with self.browser.action_chains as action:
+                action.move_to_element(self)
+                action.click(self.remove_from_status_link)
+                action.perform()
+
     __url_path__ = '/statuses'
 
     note_input = selenium.PageElement(items.NoteInput)
@@ -31,6 +59,8 @@ class NotesPage(BasePage):
         we_class=Note
     )
 
+    status_note = selenium.PageElement(StatusNote, wait_timeout=2)
+
     def open_note_input(self):
         self.note_input.click()
 
@@ -42,3 +72,24 @@ class NotesPage(BasePage):
 
     def get_note_count(self):
         return len(self.notes)
+
+    def get_status_note(self):
+        return self.status_note
+
+    def remove_all_notes(self):
+        [note.delete() for note in self.notes]
+
+
+class RemoveStatusPopup(selenium.PageItem):
+    __area__ = selenium.query(
+        selenium.query.DIV,
+        _class='modal-new_hld'
+    )
+
+    submit = selenium.PageElement(
+        selenium.query(
+            selenium.query.INPUT,
+            type='submit'
+        ),
+        call=lambda btn: btn.click()
+    )

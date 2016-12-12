@@ -2,6 +2,7 @@
 
 from tests.notes import test_create
 from tests.notes import test_restore
+from tests.notes import test_in_status
 
 import seismograph
 
@@ -9,6 +10,7 @@ import seismograph
 suites = (
     test_create.suite,
     test_restore.suite,
+    test_in_status.suite
 )
 
 

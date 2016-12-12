@@ -84,6 +84,13 @@ class Note(selenium.PageItem):
         call=lambda btn: btn.click()
     )
 
+    in_status_link = selenium.PageElement(
+        selenium.query(
+            selenium.query.SPAN,
+            _class='tico'
+        )
+    )
+
     def open(self):
         self.text_content.click()
 
@@ -106,6 +113,12 @@ class Note(selenium.PageItem):
         with self.browser.action_chains as action:
             action.move_to_element(self)
             action.click(self.delete_btn)
+            action.perform()
+
+    def in_status(self):
+        with self.browser.action_chains as action:
+            action.move_to_element(self)
+            action.click(self.in_status_link)
             action.perform()
 
 
