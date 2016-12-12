@@ -52,6 +52,7 @@ def test_create_with_text_boxes(case, browser):
     case.assertion.equal(notes_page.get_last_note().get_text(), note_final_text)
 
     notes_page.get_last_note().delete()
+    time.sleep(1)
 
     notes_page.refresh()
     time.sleep(1)
@@ -104,6 +105,7 @@ def test_create_with_photo(case, browser):
     case.assertion.equal(notes_page.get_last_note().get_photo_count(), 3)
 
     notes_page.get_last_note().delete()
+    time.sleep(1)
 
     notes_page.refresh()
     time.sleep(1)
@@ -156,6 +158,7 @@ def test_create_with_audio(case, browser):
         case.assertion.is_in(name, expected_name)
 
     notes_page.get_last_note().delete()
+    time.sleep(1)
 
     notes_page.refresh()
     time.sleep(1)
@@ -208,6 +211,7 @@ def test_create_with_place(case, browser):
     case.assertion.equal(notes_page.get_last_note().get_map_count(), 1)
 
     notes_page.get_last_note().delete()
+    time.sleep(1)
 
     notes_page.refresh()
     time.sleep(1)
@@ -270,6 +274,7 @@ def test_create_with_user(case, browser):
     time.sleep(1)
 
     notes_page.get_last_note().delete()
+    time.sleep(1)
 
     notes_page.refresh()
     time.sleep(1)

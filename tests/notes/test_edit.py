@@ -55,6 +55,7 @@ def test_edit(case, browser):
     case.assertion.equal(expected_text, final_text)
 
     last_note.delete()
+    time.sleep(1)
 
     notes_page.refresh()
     time.sleep(1)

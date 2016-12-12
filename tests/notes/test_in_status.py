@@ -69,6 +69,7 @@ def test_in_status(case, browser):
     time.sleep(1)
 
     notes_page.remove_all_notes()
+    time.sleep(1)
 
     notes_page.refresh()
     time.sleep(1)

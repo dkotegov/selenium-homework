@@ -46,18 +46,13 @@ def test_remove_and_restore(case, browser):
         text_after = note.get_text()
         case.assertion.equal(text_before, text_after)
 
-    for i in range(note_count):
-        notes_page.get_note(i).delete()
-        time.sleep(1)
+    notes_page.remove_all_notes()
 
-    for i in range(note_count):
-        notes_page.get_note(i).restore()
-        time.sleep(1)
+    notes_page.restore_all_notes()
 
     case.assertion.equal(note_count, notes_page.get_note_count())
 
-    for i in range(note_count):
-        notes_page.get_note(i).delete()
+    notes_page.remove_all_notes()
 
     notes_page.refresh()
     time.sleep(1)

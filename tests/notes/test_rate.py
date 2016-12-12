@@ -57,6 +57,7 @@ def test_rate(case, browser):
     case.assertion.equal(1, last_note.actions.get_like_count())
 
     last_note.delete()
+    time.sleep(1)
 
     notes_page.refresh()
     time.sleep(1)

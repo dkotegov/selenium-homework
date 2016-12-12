@@ -77,7 +77,16 @@ class NotesPage(BasePage):
         return self.status_note
 
     def remove_all_notes(self):
-        [note.delete() for note in self.notes]
+        import time
+        for note in self.notes:
+            note.delete()
+            time.sleep(1)
+
+    def restore_all_notes(self):
+        import time
+        for note in self.notes:
+            note.restore()
+            time.sleep(1)
 
 
 class RemoveStatusPopup(selenium.PageItem):

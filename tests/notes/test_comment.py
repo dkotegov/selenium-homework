@@ -54,6 +54,7 @@ def test_comment(case, browser):
     case.assertion.equal(comment_count - 1, last_note.actions.get_comment_count())
 
     last_note.delete()
+    time.sleep(1)
 
     notes_page.refresh()
     time.sleep(1)
