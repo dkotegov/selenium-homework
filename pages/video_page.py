@@ -3,17 +3,182 @@
 from selenium.webdriver.common.action_chains import ActionChains
 
 import utils
-from base import Page
 from seismograph.ext import selenium
 
+class AttachVideoDialog(selenium.PageItem):
+
+    __area__ = selenium.query(
+        selenium.query.DIV,
+        _id='hook_Block_AttachShareVideoContent'
+    )
+
+    # VIDEO = '(.//a[contains(@class,"attachInput")])'
+    # @property
+    # def video(self):
+    #     return utils.wait_xpath(self.browser, self.VIDEO)
+    video = utils.query( 'A',_class = selenium.query.contains('attachInput') )
+
+    #video = utils.wait_xpath(self.browser, '(//a[contains(@class,"ttachInput")])[0]')
+    #video = utils.query( 'A' ,_class= selenium.query.contains('attachInput') )
+
+
+class AttachPhotoDialog(selenium.PageItem):
+
+    __area__ = selenium.query(
+        selenium.query.DIV,
+        _class=selenium.query.contains('modal-new_center')
+    )
+
+    photo = utils.query('DIV', _class= selenium.query.contains('photo-crop_cnt selectable-card'))
+    add_btn =utils.query('INPUT', _id= selenium.query.contains('hook_FormButton_button_attach'))
+
+    def add_photo(self):
+        x_path = "//span[@class='comments_attach_trigger']//ul[@class='u-menu']/li[2]/a/span"
+        #driver = self.browser._wrapped
+        lst = utils.wait_many_xpath(self.browser, x_path)
+        elem = lst[-1]
+        utils.js_click(self.browser, elem)
+        self.photo.click()
+        self.add_btn.click()
+
+class SendCommentForm(selenium.PageItem):
+    INPUT_XPATH = '(.//div[contains(@class, "js-comments_add")])[last()]'
+    SUBMIT_XPATH = '(.//button[@class="button-pro form-actions_yes"])[last()]'
+    ATTACHMENT_UPLOADED_CLASS = 'attach-photo_del'
+
+    _area__ = selenium.query(
+        selenium.query.DIV,
+        _class=selenium.query.contains('comments_form')
+    )
+
+    @property
+    def input(self):
+        return utils.wait_xpath(self.browser, self.INPUT_XPATH)
+
+    @property
+    def submit(self):
+        return utils.wait_xpath(self.browser, self.SUBMIT_XPATH)
+
+    def add_comment(self, text=None,video = None, photo = None, photo_pc = None):
+        if text:
+            utils.js_set_text(self.browser, self.input, text)
+        if video:
+            self.attach_video()
+        if photo:
+            self.attach_photo()
+        if photo_pc:
+            self.attach_photo_from_pc(photo_pc)
+        utils.js_click(self.browser, self.submit)
+
+    attach_button = utils.query('DIV', _class = selenium.query.contains('comments_attach_trigger_ic'))
+    attach_video_button= utils.query('ANY', _class = selenium.query.contains('ic_videoattach') )
+    attach_photo_button = utils.query(
+            'ANY',
+            _class= selenium.query.contains('ic_okphotoattach')
+    )
+
+    attach_photo_from_pc_button = utils.query('INPUT', _class= selenium.query.contains('h-mod html5-upload-link') )
+    photo_dialog = selenium.PageElement(AttachPhotoDialog)
+    video_dialog = selenium.PageElement(AttachVideoDialog)
+
+    #TODO
+    def attach_video(self):
+        #utils.js_click(self.browser, self.attach_button)
+        x_path = "//span[@class='comments_attach_trigger']//ul[@class='u-menu']/li[1]/a"
+        utils.js_click(self.browser, self.attach_video_button)
+        lst = utils.wait_many_xpath(self.browser, x_path)
+        elem = lst[-1]
+        utils.js_click(self.browser, elem)
+        utils.js_click(self.browser, self.video_dialog.video.first())
+
+
+    def attach_photo(self):
+        utils.js_click(self.browser, self.attach_photo_button)
+        self.photo_dialog.add_photo()
+        self.input.click()
+
+
+    def attach_photo_from_pc(self, path):
+        x_path = "//span[@class='comments_attach_trigger']//ul[@class='u-menu']/li[3]/span/input"
+        lst = utils.wait_many_xpath(self.browser, x_path)
+        elem = lst[-1]
+        elem.send_keys(path)
+        utils.wait_class(self.browser, self.ATTACHMENT_UPLOADED_CLASS)
+
+
+class LastComment(selenium.PageItem):
+
+
+    #__area__ = utils.query('DIV', _class= selenium.query.contains('last-comment') )
+
+    IS_DELETED_CLASS = 'delete-stub_info'
+    IS_KLASSED_XPATH = ".//span[contains(text(), 'Вы')]"
+    VIDEO_ATTACHED_XPATH = './/a[contains(@class,"video-card_lk")]'
+    PHOTO_ATTACHED_XPATH = './/a[contains(@class,"collage_cnt")]'
+
+    remove_button  = utils.query('A', _class= selenium.query.contains('comments_remove'))
+    author  = utils.query('A', _href= selenium.query.startswith('/profile') )
+    recover_button = utils.query('A', _class= selenium.query.contains('delete-stub_cancel'))
+    klass   = utils.query('SPAN', _id= selenium.query.contains('hook_VoteHook') )
+    content = utils.text_field('DIV', _class= selenium.query.contains('comments_text'))
+    reply_button = utils.query('A', _class= selenium.query.contains('comments_reply'))
+
+    def is_klassed(self):
+        self.we.wait()
+        return len(self.we.find_elements_by_xpath(self.IS_KLASSED_XPATH)) > 0
+
+    def switch_class(self):
+        utils.js_click(self.browser, self.klass)
+
+    @property
+    def is_deleted(self):
+        self.we.wait()
+        return len(utils.wait_many_class(self.we, self.IS_DELETED_CLASS)) > 0
+
+    def remove(self):
+        utils.js_click(self.browser, self.remove_button)
+
+    def recover(self):
+        utils.js_click(self.browser, self.recover_button)
+
+    def to_author_page(self):
+        utils.js_click(self.browser, self.author)
+
+    def reply_click(self):
+        utils.js_click(self.browser, self.author)
+
+    def check_photo_attachment(self):
+        photo_lst = self.we.find_elements_by_xpath(self.PHOTO_ATTACHED_XPATH)
+        return len(photo_lst) > 0
+
+    def check_video_attachment(self):
+        video_lst = self.we.find_elements_by_xpath(self.VIDEO_ATTACHED_XPATH)
+        return len(video_lst) > 0
+
+
+
+class DescriptionItem(selenium.PageItem):
+
+    __area__ = selenium.query(
+        selenium.query.DIV,
+        _class='vp-layer-description'
+    )
+    expand = utils.query('DIV', _class= selenium.query.contains('js-vp-layer-description_more') )
+
+    def check_expanded(self):
+        #el_expand = self.browser.span(_class=query.contains(self.css_expand))
+        css_cls = self.expand.attr._class
+        return 'invisible' in css_cls
 
 class VideoPage(selenium.Page):
 
     SUBSCRIBE_XPATH = '//a[text()="Подписаться"]'
+    UNSUBSCRIBE_XPATH = '//span[@class="vp-layer_subscribe-lbl ic_quit-lg"]'
     VIDEO_PLAY_TIME = '//div[@class="html5-vpl_time"]'
     STOP = '//div[@al-mousedown="stop()"]'
     VIDEO_WINDOW = '//div[@class="html5-vpl_vid"]'
 
+    channel = utils.query('A', _class ='js-video-album-link')
     unsubscribe_xpath = utils.query('SPAN', _class='vp-layer_subscribe-lbl ic_quit-lg')
     play = utils.query('DIV', _class='html5-vpl_panel_play')
     pause = utils.query('DIV', _class='html5-vpl_panel_play __pause')
@@ -36,6 +201,15 @@ class VideoPage(selenium.Page):
     close_video_button = utils.query("DIV", _class="ic media-layer_close_ico")
     unsubscribe_button = utils.query('SPAN', _class='vp-layer_subscribe-lbl ic_quit-lg')
     subscriptions_count_elem = utils.query('DIV', _class='vp-layer-channel_ac_count')
+    send_comment_form = selenium.PageElement(SendCommentForm)
+    description_item  = selenium.PageElement(DescriptionItem)
+    last_comment = selenium.PageElement(
+       selenium.query(
+           selenium.query.DIV,
+           _class= selenium.query.contains('last-comment')
+       ),
+       we_class =  LastComment
+    )
 
     @property
     def subscriptions_count(self):
@@ -49,7 +223,7 @@ class VideoPage(selenium.Page):
 
     def is_subscribe(self):
         self.browser.refresh()
-        return len(utils.wait_many_xpath(self.browser, self.unsubscribe_xpath)) > 0
+        return len(utils.wait_many_xpath(self.browser, self.UNSUBSCRIBE_XPATH)) > 0
 
     def play_video(self):
         if not self.is_video_playing():
@@ -58,8 +232,11 @@ class VideoPage(selenium.Page):
     def play_video_during(self, time):
         curr_time = utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text
         curr_time = utils.time_to_int(curr_time)
-        result_time = utils.int_to_time(curr_time + time)
-        utils.wait_value(self.browser, self.VIDEO_PLAY_TIME, result_time)
+        result_time = curr_time + time
+        utils.wait(
+            self.browser,
+            lambda d: utils.time_to_int(utils.wait_xpath(d, self.VIDEO_PLAY_TIME).text) >= result_time
+        )
 
     def play_next_video(self):
         elem = self.next_vid
@@ -69,7 +246,10 @@ class VideoPage(selenium.Page):
         return next_video_url
 
     def pause_video(self):
-        self.pause.click()
+        # action_chains = ActionChains(self.browser)
+        # action_chains.move_to_element(self.pause).click().perform()
+        # self.pause.click()
+        utils.js_click(self.browser, self.pause)
 
     def rewind_video(self, percent):
         progress_bar = self.progress_bar
@@ -95,9 +275,9 @@ class VideoPage(selenium.Page):
         self.fullscreen_mode.click()
 
     def close_fullscreen(self):
-        self.browser.execute_script(
-            "$(arguments[0]).click();",
-             self.fullscreen_mode._wrapped
+        utils.js_click(
+             self.browser,
+             self.fullscreen_mode
         )
 
     def open_widescreen(self):
@@ -118,10 +298,10 @@ class VideoPage(selenium.Page):
         return url.split('?')[0]
 
     def get_video_play_time(self):
-        return float(utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text.replace(':', '.'))
+        return utils.time_to_int(utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text) #.replace(':', '.'))
 
     def get_video_time_remained(self):
-        return float(self.video_time_remained.text.replace(':', '.'))
+        return utils.time_to_int(self.video_time_remained.text)#float(self.video_time_remained.text.replace(':', '.'))
 
     def get_video_window_size(self):
         return utils.wait_xpath(self.browser, self.VIDEO_WINDOW).size
@@ -139,3 +319,12 @@ class VideoPage(selenium.Page):
             return True
         except Exception:
             return False
+
+    def reply_last_comment(self, text):
+        self.last_comment.reply_click()
+        self.send_comment_form.add_comment(text)
+
+    def add_comment(self, text=None, video = None, photo = None, photo_pc = None ):
+        self.send_comment_form.add_comment(text, video, photo, photo_pc)
+
+

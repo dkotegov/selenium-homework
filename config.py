@@ -1,6 +1,6 @@
 import os
 
-browser = os.environ.get('BROWSER', 'FIREFOX')
+browser = os.environ.get('BROWSER', 'CHROME')
 
 SELENIUM_EX = {
     'USE_REMOTE': True,
