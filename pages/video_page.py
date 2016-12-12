@@ -12,18 +12,12 @@ class AttachVideoDialog(selenium.PageItem):
         _id='hook_Block_AttachShareVideoContent'
     )
 
-    # VIDEO = '(.//a[contains(@class,"attachInput")])'
-    # @property
-    # def video(self):
-    #     return utils.wait_xpath(self.browser, self.VIDEO)
     videos = utils.query( 'A',_class = selenium.query.contains('attachInput') )
 
     @utils.repeat_on_error
     def click_first(self):
         utils.js_click(self.browser, self.videos.first())
-    #video = utils.wait_xpath(self.browser, '(//a[contains(@class,"ttachInput")])[0]')
-    #video = utils.query( 'A' ,_class= selenium.query.contains('attachInput') )
-
+    
 
 class AttachPhotoDialog(selenium.PageItem):
 
@@ -42,7 +36,6 @@ class AttachPhotoDialog(selenium.PageItem):
 
     def add_photo(self):
         x_path = "(//span[@class='comments_attach_trigger']//ul[@class='u-menu']/li[2]/a/span)[last()]"
-        #driver = self.browser._wrapped
         lst = utils.wait_many_xpath(self.browser, x_path)
         elem = lst[-1]
         utils.js_click(self.browser, elem)
@@ -94,7 +87,6 @@ class SendCommentForm(selenium.PageItem):
     video_dialog = selenium.PageElement(AttachVideoDialog)
 
     def attach_video(self):
-        #utils.js_click(self.browser, self.attach_button)
         x_path = "(//span[@class='comments_attach_trigger']//ul[@class='u-menu']/li[1]/a)[last()]"
         utils.js_click(self.browser, self.attach_video_button)
         elem = utils.wait_xpath(self.browser, x_path)
@@ -102,9 +94,7 @@ class SendCommentForm(selenium.PageItem):
         self.video_dialog.click_first()
 
     def attach_photo(self):
-        #utils.js_click(self.browser, self.attach_photo_button)
         self.photo_dialog.add_photo()
-        #self.input.click()
 
 
     def attach_photo_from_pc(self, path):
@@ -116,8 +106,6 @@ class SendCommentForm(selenium.PageItem):
 
 class LastComment(selenium.PageItem):
 
-
-    #__area__ = utils.query('DIV', _class= selenium.query.contains('last-comment') )
 
     IS_DELETED_CLASS = 'delete-stub_info'
     IS_KLASSED_XPATH = ".//span[contains(text(), 'Вы')]"
@@ -313,10 +301,9 @@ class VideoPage(selenium.Page):
         return utils.time_to_int(
             utils.js_value(self.browser, utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME))
         )
-        # return utils.time_to_int(utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text) #.replace(':', '.'))
 
     def get_video_time_remained(self):
-        return utils.time_to_int(self.video_time_remained.text)#float(self.video_time_remained.text.replace(':', '.'))
+        return utils.time_to_int(self.video_time_remained.text)
 
     def get_video_window_size(self):
         if not self.is_minimized:
@@ -328,7 +315,7 @@ class VideoPage(selenium.Page):
         return len( self.browser.find_elements_by_xpath(self.VIDEO_COVER) ) == 0
 
     def is_video_playing(self):
-        return len(self.browser.find_elements_by_xpath(self.PAUSE_XPATH) )>0
+        return len(self.browser.find_elements_by_xpath(self.PAUSE_XPATH) ) > 0
 
 
     def reply_last_comment(self, text):
