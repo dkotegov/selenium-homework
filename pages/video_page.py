@@ -153,7 +153,7 @@ class LastComment(selenium.PageItem):
         utils.js_click(self.browser, self.author)
 
     def reply_click(self):
-        utils.js_click(self.browser, self.author)
+        utils.js_click(self.browser, self.reply_button)
 
     def check_photo_attachment(self):
         photo_lst = self.we.find_elements_by_xpath(self.PHOTO_ATTACHED_XPATH)
