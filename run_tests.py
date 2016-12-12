@@ -4,6 +4,7 @@ from tests.notes import test_create
 from tests.notes import test_restore
 from tests.notes import test_in_status
 from tests.notes import test_rate
+from tests.notes import test_comment
 
 import seismograph
 
@@ -12,7 +13,8 @@ suites = (
     test_create.suite,
     test_restore.suite,
     test_in_status.suite,
-    test_rate.suite
+    test_rate.suite,
+    test_comment.suite
 )
 
 

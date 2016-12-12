@@ -13,10 +13,10 @@ suite = selenium.Suite(__name__)
 
 
 @suite.register
-def test_rate(case, browser):
+def test_comment(case, browser):
     """
         Добавляем заметку.
-        Проверяем, что можно поставить и снять "Класс" несколькими вариантами.
+        Комментируем, проверяем возможность удаления / восстановления комментариев.
         Удаляем заметку.
     """
 
@@ -33,28 +33,25 @@ def test_rate(case, browser):
     note_form.submit()
     time.sleep(2)
 
+    comment_count = 3
     last_note = notes_page.get_last_note()
-    last_note.actions.like()
-    time.sleep(1)
-    case.assertion.equal(1, last_note.actions.get_like_count())
-
-    last_note.actions.unlike()
-    time.sleep(1)
-    case.assertion.equal(0, last_note.actions.get_like_count())
-
     last_note.open()
     time.sleep(1)
     note_popup = NotePopup(browser)
-    case.assertion.equal(0, note_popup.actions.get_like_count())
+    for _ in range(comment_count):
+        note_popup.comment_form.add_comment(get_note_text())
+        time.sleep(1)
+    case.assertion.equal(comment_count, note_popup.actions.get_comment_count())
 
-    note_popup.actions.like()
+    last_comment = note_popup.get_last_comment()
+    last_comment.remove()
     time.sleep(1)
-    case.assertion.equal(1, last_note.actions.get_like_count())
+    case.assertion.equal(comment_count - 1, note_popup.actions.get_comment_count())
 
     note_popup.close()
     time.sleep(1)
-
-    case.assertion.equal(1, last_note.actions.get_like_count())
+    last_note = notes_page.get_last_note()
+    case.assertion.equal(comment_count - 1, last_note.actions.get_comment_count())
 
     last_note.delete()
 

@@ -30,7 +30,9 @@ class InStatusCheckbox(selenium.PageItem):
 
 
 class NoteActions(selenium.PageItem):
+
     class LikeButton(selenium.PageItem):
+
         __area__ = selenium.query(
             selenium.query.BUTTON,
             _class=selenium.query.contains('controls-list_lk')
@@ -44,6 +46,15 @@ class NoteActions(selenium.PageItem):
             call=lambda field: int(field.text)
         )
 
+    class CommentButton(selenium.PageItem):
+
+        get_comment_count = selenium.PageElement(
+            selenium.query(
+                selenium.query.SPAN,
+                _class=selenium.query.contains('widget_count')
+            ),
+            call=lambda field: int(field.text)
+        )
 
     __area__ = selenium.query(
         selenium.query.UL,
@@ -51,6 +62,15 @@ class NoteActions(selenium.PageItem):
     )
 
     like_btn = selenium.PageElement(LikeButton)
+
+    comment_btn = selenium.PageElement(
+        selenium.query(
+            selenium.query.LI,
+            _class='widget-list_i'
+        ),
+        index=0,
+        we_class=CommentButton
+    )
 
     def like(self):
         self.like_btn.click()
@@ -60,6 +80,12 @@ class NoteActions(selenium.PageItem):
 
     def get_like_count(self):
         return self.like_btn.get_like_count()
+
+    def comment(self):
+        self.comment_btn.click()
+
+    def get_comment_count(self):
+        return self.comment_btn.get_comment_count()
 
 
 class Note(selenium.PageItem):
@@ -529,6 +555,56 @@ class NoteCreateFormUserSelect(selenium.PageItem):
 
 class NotePopup(selenium.PageItem):
 
+    class CommentForm(selenium.PageItem):
+
+        __area__ = selenium.query(
+            selenium.query.DIV,
+            _class=selenium.query.contains('comments_form')
+        )
+
+        add_comment_button = selenium.PageElement(
+            selenium.query(
+                selenium.query.BUTTON,
+                _class=selenium.query.contains('form-actions_yes')
+            )
+        )
+
+        comment_input = selenium.PageElement(
+            selenium.query(
+                selenium.query.DIV,
+                _class=selenium.query.contains('comments_add-ceditable')
+            )
+        )
+
+        def add_comment(self, text):
+            self.comment_input.send_keys(text)
+            self.add_comment_button.click()
+
+
+    class Comment(selenium.PageItem):
+
+        remove_btn = selenium.PageElement(
+            selenium.query(
+                selenium.query.A,
+                _class=selenium.query.contains('comments_remove')
+            )
+        )
+
+        restore = selenium.PageElement(
+            selenium.query(
+                selenium.query.A,
+                _class=selenium.query.contains('delete-stub_cancel')    # TODO: Почему-то не видит :(
+            ),
+            call=lambda btn: btn.click()
+        )
+
+        def remove(self):
+            with self.browser.action_chains as action:
+                action.move_to_element(self)
+                action.click(self.remove_btn)
+                action.perform()
+
+
     __area__ = selenium.query(
         selenium.query.DIV,
         _class='media-layer_hld'
@@ -551,3 +627,17 @@ class NotePopup(selenium.PageItem):
     )
 
     actions = selenium.PageElement(NoteActions)
+
+    comment_form = selenium.PageElement(CommentForm)
+
+    comments = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class=selenium.query.contains('comments_current')
+        ),
+        is_list=True,
+        we_class=Comment
+    )
+
+    def get_last_comment(self):
+        return self.comments[-1]
