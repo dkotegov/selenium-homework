@@ -52,10 +52,7 @@ class LikesController(PageElement):
     """The page element to show visually your like or not if you didn't like it.
 
     """
-    def is_visible_your_like(self):
-        pass
-
-    def is_not_visible_your_unlike(self):
+    def has_your_like(self):
         pass
 
 
@@ -71,18 +68,6 @@ class LikedUsersListPopup(PageElement):
         Note:
             Your login must be on the top in list of users if you liked it.
             In the other case your login shouldn't be there.
-
-        """
-        pass
-
-
-class LikedUsersShortMessage(PageElement):
-    """The page element to show  message kind of `Вы и 99+` users liked it.
-
-    """
-    def has_your_like(self):
-        # TODO: internationalization
-        """Check presence `Вы` in message after you liked it.
 
         """
         pass
@@ -108,6 +93,38 @@ class UnlikeButton(PageElement):
 
     def unlike(self):
         self.driver.find_element_by_xpath(self.BUTTON).click()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class LikedUsersShortMessage(PageElement):
+    """The page element to show  message kind of `Вы и 99+` users liked it.
+
+    """
+    def has_your_like(self):
+        # TODO: internationalization
+        """Check presence `Вы` in message after you liked it.
+
+        """
+        pass
+
+
+
 
 
 class LikeVideoButtonUnderPlayer(LikeButton):
@@ -157,6 +174,7 @@ class LikedUsersListButtonUnderPlayer(LikedUsersListPopup):
         return first_liked_user_in_popup.text == login
 
 
+# TODO
 class LikedUsersShortMessageInPlayer(LikedUsersShortMessage):
 
     # LINK = 'a div.html5-vpl_ac_txt'
@@ -180,6 +198,82 @@ class LikedUsersShortMessageInPlayer(LikedUsersShortMessage):
         print(message, 'RTTTT')
 
 
+
+
+
+
+
+
+
+
+
+
+
+# Discussion
+class OpenDiscussionLinksChain(PageElement):
+
+    OPEN_ALL_DISCUSSIONS = '//li[contains(@class, "toolbar_nav_i")][2]'
+    OPEN_MY_DISCUSSIONS = '//div[@id="d-f-tab-fM"]'
+    OPEN_DISCUSSION = '//div[contains(@id, "d-item-MOVIE-")][1]'
+
+    def open(self):
+        discussions_list = WebDriverWait(self.driver, 30).until(
+            EC.element_to_be_clickable((By.XPATH, self.OPEN_ALL_DISCUSSIONS))
+        )
+        discussions_list.click()
+
+        my_discussions_list = WebDriverWait(self.driver, 30).until(
+            EC.element_to_be_clickable((By.XPATH, self.OPEN_MY_DISCUSSIONS))
+        )
+        my_discussions_list.click()
+
+        discussion_chat = WebDriverWait(self.driver, 30).until(
+            EC.element_to_be_clickable((By.XPATH, self.OPEN_DISCUSSION))
+        )
+        discussion_chat.click()
+
+
+class LikeCommentInDisscussion(LikeButton):
+
+    BUTTON_WRAPPER = '(//div[contains(@id, "d-id-cmnt-")])[last()]'
+    BUTTON = 'ul.controls-list:last span:eq(1)'
+
+    def like(self):
+        # wait for By.CSS_SELECTOR and BUTTON throughs error and so I've decided to
+        # wait for BUTTON_WRAPPER
+        WebDriverWait(self.driver, 30).until(
+            EC.presence_of_element_located((By.XPATH, self.BUTTON_WRAPPER))
+        )
+        self.driver.execute_script('$("%s").click()' % self.BUTTON)
+
+
+class UnlikeCommentInDisscussion(UnlikeButton):
+
+    BUTTON_WRAPPER = '(//div[contains(@id, "d-id-cmnt-")])[last()]'
+    BUTTON = 'ul.controls-list:last span:eq(1)'
+
+    def unlike(self):
+        # wait for By.CSS_SELECTOR and BUTTON didn't work and so I've decided to
+        # wait for BUTTON_WRAPPER
+        WebDriverWait(self.driver, 30).until(
+            EC.presence_of_element_located((By.XPATH, self.BUTTON_WRAPPER))
+        )
+        self.driver.execute_script('$("%s").click()' % self.BUTTON)
+
+
+class DiscussionCommentLikesController(LikesController):
+    """If you liked item you will get `Вы` else `Класс`
+
+    """
+    BUTTON_WRAPPER = '(//div[contains(@id, "d-id-cmnt-")])[last()]'
+    BUTTON = 'ul.controls-list:last span:eq(1)'
+
+    def has_your_like(self, ):
+        WebDriverWait(self.driver, 30).until(
+            EC.presence_of_element_located((By.XPATH, self.BUTTON_WRAPPER))
+        )
+        like_label = self.driver.execute_script('return $("%s")[0].textContent' % self.BUTTON)
+        return like_label == u'Вы'
 
 
 

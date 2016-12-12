@@ -7,6 +7,11 @@ from page_elements import AuthForm, LikeVideoButtonUnderPlayer, \
     LikeVideoButtonInPlayerDuringPlay, LikedUsersShortMessageInPlayer, \
     UnlikeVideoButtonInPlayerDuringPlay
 
+from discussion_page_elements import OpenDiscussionLinksChain, \
+    LikeCommentInDisscussion, UnlikeCommentInDisscussion, \
+    DiscussionCommentLikesController, DiscussionCommentLikedUsers, \
+    LikeLikedByOtherUsersCommentInDisscussion, UnlikeLikedByOtherUsersCommentInDisscussion
+
 
 class Page(object):
     """Main `PageObject` class.
@@ -70,5 +75,40 @@ class PhotoPage(Page):
     pass
 
 
+
+
+
+
 class DiscussionPage(Page):
-    pass
+
+    def open(self):
+        super(DiscussionPage, self).open()
+        self.links_to_discussion_chat.open()
+
+    @property
+    def links_to_discussion_chat(self):
+        return OpenDiscussionLinksChain(self.driver)
+
+    @property
+    def like_button_under_comment(self):
+        return LikeCommentInDisscussion(self.driver)
+
+    @property
+    def unlike_button_under_comment(self):
+        return UnlikeCommentInDisscussion(self.driver)
+
+    @property
+    def like_button_under_comment_controller(self):
+        return DiscussionCommentLikesController(self.driver)
+
+    @property
+    def list_liked_users(self):
+        return DiscussionCommentLikedUsers(self.driver)
+
+    @property
+    def like_liked_by_other_users_button_under_comment(self):
+        return LikeLikedByOtherUsersCommentInDisscussion(self.driver)
+
+    @property
+    def unlike_liked_by_other_users_button_under_comment(self):
+        return UnlikeLikedByOtherUsersCommentInDisscussion(self.driver)
