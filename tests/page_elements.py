@@ -60,17 +60,26 @@ class LikedUsersListPopup(PageElement):
     """The page element to show users who liked item.
 
     """
-    LINK = ''
+    LINK_XPATH = '//div[contains(@class, "photo-layer_bottom_block __actions")]//descendant::li[last()]/descendant::button'
+    USERNAME_LINK = '(//ul[@class="ucard-mini-list"]/li/descendant::div[@class="ucard-mini_cnt_i ellip"])[1]'
 
-    def has_your_like(self, login):
-        """Check presence your login in liked users.
+    def has_your_like(self, username):
+        """Check presence your `username` in liked users.
 
         Note:
             Your login must be on the top in list of users if you liked it.
             In the other case your login shouldn't be there.
 
         """
-        pass
+        username = unicode(username, 'utf8')
+        custom_move_to_element(
+            self.driver, self.LINK_XPATH, click_times=2
+        )
+
+        first_user = WebDriverWait(self.driver, 30).until(
+            EC.visibility_of_element_located((By.XPATH, self.USERNAME_LINK))
+        )
+        return first_user.text == username
 
 
 class LikeButton(PageElement):

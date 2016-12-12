@@ -81,8 +81,8 @@ class DiscussionCommentLikedUsers(LikedUsersListPopup):
     USERNAME_LINK = '(//div[@class="userCard"])[1]/descendant::a[2]'
     CLOSE = '//input[@name="button_close"]'
 
-    def has_your_like(self, login):
-        login = unicode(login, 'utf8')
+    def has_your_like(self, username):
+        username = unicode(username, 'utf8')
         users_list = WebDriverWait(self.driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, self.LINK))
         )
@@ -91,7 +91,7 @@ class DiscussionCommentLikedUsers(LikedUsersListPopup):
         first_username = WebDriverWait(self.driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, self.USERNAME_LINK))
         )
-        return first_username.text == login
+        return first_username.text == username
 
     def close_popup(self):
         close_button = WebDriverWait(self.driver, 30).until(

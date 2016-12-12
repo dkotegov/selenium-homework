@@ -2,10 +2,12 @@
 """PageObject classes."""
 import urlparse
 
-from page_elements import AuthForm, LikeVideoButtonUnderPlayer, \
-    LikedUsersListButtonUnderPlayer, UnlikeVideoButtonUnderPlayer, \
-    LikeVideoButtonInPlayerDuringPlay, LikedUsersShortMessageInPlayer, \
-    UnlikeVideoButtonInPlayerDuringPlay
+# from page_elements import AuthForm, LikeVideoButtonUnderPlayer, \
+#     LikedUsersListButtonUnderPlayer, UnlikeVideoButtonUnderPlayer, \
+#     LikeVideoButtonInPlayerDuringPlay, LikedUsersShortMessageInPlayer, \
+#     UnlikeVideoButtonInPlayerDuringPlay
+
+from page_elements import AuthForm
 
 from discussion_page_elements import OpenDiscussionLinksChain, \
     LikeCommentInDisscussion, UnlikeCommentInDisscussion, \
@@ -15,6 +17,8 @@ from discussion_page_elements import OpenDiscussionLinksChain, \
 from photo_page_elements import LikePhotoUnderPhoto, UnlikePhotoUnderPhoto, \
     PhotoLikedUsers, LikePhotoInTheRightPhotoCorner, UnlikePhotoInTheRightPhotoCorner, \
     LikeNotOpenedPhotoInAlbum, UnlikeNotOpenedPhotoInAlbum, PhotoLikedUsersInAlbum
+
+from video_page_elements import LikeVideoButtonUnderPlayer, UnlikeVideoButtonUnderPlayer
 
 
 class Page(object):
@@ -45,10 +49,15 @@ class AuthPage(Page):
 
 
 class VideoPage(Page):
-    # TODO: add doc
-    """
-    """
-    PATH = '/video/192156796190'
+
+    PATH_VIDEOS = (
+        '/video/192156796190',
+        '/video/219099564753'
+    )
+
+    def open_video(self, index):
+        self.PATH = self.PATH_VIDEOS[index]
+        super(VideoPage, self).open()
 
     @property
     def like_button_under_player(self):
@@ -58,21 +67,23 @@ class VideoPage(Page):
     def unlike_button_under_player(self):
         return UnlikeVideoButtonUnderPlayer(self.driver)
 
-    @property
-    def like_button_during_play(self):
-        return LikeVideoButtonInPlayerDuringPlay(self.driver)
+    # @property
+    # def like_button_inside_player(self):
+    #     return LikeVideoButtonInPlayerDuringPlay(self.driver)
 
-    @property
-    def unlike_button_during_play(self):
-        return UnlikeVideoButtonInPlayerDuringPlay(self.driver)
+    # @property
+    # def unlike_button_inside_player(self):
+    #     return UnlikeVideoButtonInPlayerDuringPlay(self.driver)
 
     @property
     def list_of_liked_users(self):
-        return LikedUsersListButtonUnderPlayer(self.driver)
+        return VideoLikeUsers(self.driver)
 
-    @property
-    def short_message_about_liked_users(self):
-        return LikedUsersShortMessageInPlayer(self.driver)
+
+
+    # @property
+    # def short_message_about_liked_users(self):
+    #     return LikedUsersShortMessageInPlayer(self.driver)
 
 
 class PhotoPage(Page):
