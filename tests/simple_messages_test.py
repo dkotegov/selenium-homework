@@ -1,5 +1,6 @@
 import os
 import random
+import time
 
 import unittest
 import settings
@@ -20,8 +21,8 @@ class SimpleMessagesPage(Page):
 
 class MessagesMenu(Component):
     SEND_MSG_BTN = '//button[@class="button-pro comments_add-controls_save"]'
+    # MESSAGE = '//div[@class="itx js-comments_add comments_add-ceditable add-caret"]'
     MESSAGE = '//div[@name="st.txt"]'
-
     # ATTACH_BUTTON_TRIG = '//span[@class="comments_attach_trigger"]'
     # ATTACH_AUDIO_MSG_BUTTON = '//span[@class="comments_attach_trigger"]/div[2]/div/div/ul/li[1]'
     # AUDIO_MSG_POPUP = '//object[@class="vchat_flash_app"]'
@@ -35,6 +36,9 @@ class MessagesMenu(Component):
 
     def set_message(self, message):
         self.driver.find_element_by_xpath(self.MESSAGE).send_keys(message)
+
+    def get_message(self):
+        return self.driver.find_element_by_xpath(self.MESSAGE)
 
 class SimpleMessagesTest(unittest.TestCase):
 
@@ -55,10 +59,12 @@ class SimpleMessagesTest(unittest.TestCase):
         self.driver.quit()
 
     def test_send_simple_message(self):
-        rand = random.random() * 10**10
-        message = str(rand)
+        message = 'test'
         self.message_page.open()
         self.message_page.messages_menu.set_message(message)
         self.message_page.messages_menu.get_button_send()
+        input_pole = self.message_page.messages_menu.get_message().text
+        # print "nagib0ter %s AAAA" % (input_pole)
+        self.assertTrue(input_pole == '')
 
 
