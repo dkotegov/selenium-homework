@@ -12,6 +12,10 @@ from discussion_page_elements import OpenDiscussionLinksChain, \
     DiscussionCommentLikesController, DiscussionCommentLikedUsers, \
     LikeLikedByOtherUsersCommentInDisscussion, UnlikeLikedByOtherUsersCommentInDisscussion
 
+from photo_page_elements import LikePhotoUnderPhoto, UnlikePhotoUnderPhoto, \
+    PhotoLikedUsers, LikePhotoInTheRightPhotoCorner, UnlikePhotoInTheRightPhotoCorner, \
+    LikeNotOpenedPhotoInAlbum, UnlikeNotOpenedPhotoInAlbum, PhotoLikedUsersInAlbum
+
 
 class Page(object):
     """Main `PageObject` class.
@@ -72,11 +76,52 @@ class VideoPage(Page):
 
 
 class PhotoPage(Page):
-    pass
 
+    PATH_PHOTOS = (
+        '/redbull/album/57789917888573/836118479933',
+        '/redbull/album/57789917888573/836626874429'
+    )
+    PATH_ALBUM = '/redbull/album/57789917888573'
 
+    def open_photo(self, index):
+        self.PATH = self.PATH_PHOTOS[index]
+        super(PhotoPage, self).open()
 
+    def open_album(self):
+        self.PATH = self.PATH_ALBUM
+        super(PhotoPage, self).open()
 
+    @property
+    def like_button_under_photo(self):
+        return LikePhotoUnderPhoto(self.driver)
+
+    @property
+    def unlike_button_under_photo(self):
+        return UnlikePhotoUnderPhoto(self.driver)
+
+    @property
+    def like_button_right_photo_corner(self):
+        return LikePhotoInTheRightPhotoCorner(self.driver)
+
+    @property
+    def unlike_button_right_photo_corner(self):
+        return UnlikePhotoInTheRightPhotoCorner(self.driver)
+
+    @property
+    def like_button_in_album(self):
+        return LikeNotOpenedPhotoInAlbum(self.driver)
+
+    @property
+    def unlike_button_in_album(self):
+        return UnlikeNotOpenedPhotoInAlbum(self.driver)
+
+    @property
+    def list_liked_users(self):
+        return PhotoLikedUsers(self.driver)
+
+    @property
+    def list_liked_users_in_album(self):
+        return PhotoLikedUsersInAlbum(self.driver)
 
 
 class DiscussionPage(Page):

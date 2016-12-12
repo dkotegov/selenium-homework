@@ -92,7 +92,9 @@ class UnlikeButton(PageElement):
     BUTTON = ''
 
     def unlike(self):
-        self.driver.find_element_by_xpath(self.BUTTON).click()
+        WebDriverWait(self.driver, 30, 0.1).until(
+            EC.visibility_of_element_located((By.XPATH, self.BUTTON))
+        ).click()
 
 
 
