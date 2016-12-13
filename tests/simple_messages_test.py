@@ -23,6 +23,7 @@ class MessagesMenu(Component):
     SEND_MSG_BTN = '//button[@class="button-pro comments_add-controls_save"]'
     # MESSAGE = '//div[@class="itx js-comments_add comments_add-ceditable add-caret"]'
     MESSAGE = '//div[@name="st.txt"]'
+    EDITTED = '//a[@class="msg_ac_i ic10 ic10_edit foh-s js-msg-edit"]'
     # ATTACH_BUTTON_TRIG = '//span[@class="comments_attach_trigger"]'
     # ATTACH_AUDIO_MSG_BUTTON = '//span[@class="comments_attach_trigger"]/div[2]/div/div/ul/li[1]'
     # AUDIO_MSG_POPUP = '//object[@class="vchat_flash_app"]'
@@ -39,6 +40,12 @@ class MessagesMenu(Component):
 
     def get_message(self):
         return self.driver.find_element_by_xpath(self.MESSAGE)
+
+    def edit_message(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.EDITTED)
+        )
+        self.driver.find_element_by_xpath(self.EDITTED).click()
 
 class SimpleMessagesTest(unittest.TestCase):
 
@@ -64,7 +71,13 @@ class SimpleMessagesTest(unittest.TestCase):
         self.message_page.messages_menu.set_message(message)
         self.message_page.messages_menu.get_button_send()
         input_pole = self.message_page.messages_menu.get_message().text
-        # print "nagib0ter %s AAAA" % (input_pole)
         self.assertTrue(input_pole == '')
 
-
+    def test_edit_simple_message(self):
+        message = 'testEdit'
+        self.message_page.open()
+        self.message_page.messages_menu.edit_message()
+        self.message_page.messages_menu.set_message(message)
+        self.message_page.messages_menu.get_button_send()
+        input_pole = self.message_page.messages_menu.get_message().text
+        self.assertTrue(input_pole == '')
