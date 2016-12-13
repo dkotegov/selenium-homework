@@ -8,20 +8,19 @@ from tests.base_case import BaseCase
 suite = seismograph.Suite(__name__, require=['selenium'])
 
 TEST_CHANNEL_ID = '1567208'
-# TEST_VIDEO_ID = '206523142632'
 TEST_VIDEO_ID = '218249104011'
 
-# @suite.register
-# class VideoOpenCase(BaseCase):
-#
-#     def test_openclose(self):
-#         videos_page = ChannelPage(self.browser)
-#         videos_page.open(id=TEST_CHANNEL_ID)
-#         videos_page.open_video_by_id(TEST_VIDEO_ID)
-#         self.assertion.is_in(TEST_VIDEO_ID, self.browser.current_url)
-#         videoplayer_page = VideoPage(self.browser)
-#         videoplayer_page.close_video()
-#         self.assertion.is_not_in(TEST_VIDEO_ID, self.browser.current_url)
+@suite.register
+class VideoOpenCase(BaseCase):
+
+    def test_openclose(self):
+        videos_page = ChannelPage(self.browser)
+        videos_page.open(id=TEST_CHANNEL_ID)
+        videos_page.open_video_by_id(TEST_VIDEO_ID)
+        self.assertion.is_in(TEST_VIDEO_ID, self.browser.current_url)
+        videoplayer_page = VideoPage(self.browser)
+        videoplayer_page.close_video()
+        self.assertion.is_not_in(TEST_VIDEO_ID, self.browser.current_url)
 
 @suite.register
 class VideoPreviewCase(BaseCase):
