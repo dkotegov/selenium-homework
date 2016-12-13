@@ -176,7 +176,7 @@ class VideoPage(selenium.Page):
     VIDEO_COVER = '//div[@class="vid-card_cnt_w invisible"]'
     PAUSE_XPATH = '//div[@class="html5-vpl_panel_play __pause"]'
 
-    channel = utils.query('A', _class ='js-video-album-link')
+    channel = utils.query('A', _class='js-video-album-link')
     unsubscribe_xpath = utils.query('SPAN', _class='vp-layer_subscribe-lbl ic_quit-lg')
     play = utils.query('DIV', _class='html5-vpl_panel_play')
     pause = utils.query('DIV', _class='html5-vpl_panel_play __pause')
@@ -231,7 +231,7 @@ class VideoPage(selenium.Page):
 
     def play_video_during(self, time):
         # curr_time = utils.wait_xpath(self.browser, self.VIDEO_PLAY_TIME).text
-        curr_time =  self.get_video_play_time() #utils.time_to_int(curr_time)
+        curr_time = self.get_video_play_time() #utils.time_to_int(curr_time)
         result_time = curr_time + time
         utils.wait(
             self.browser,
@@ -241,23 +241,18 @@ class VideoPage(selenium.Page):
     def play_next_video(self):
         elem = self.next_vid
         next_video_url = elem.get_attribute("href")
-        elem.click()
+        utils.js_click(self.browser, elem)
         utils.wait_change_url(self.browser)
         return next_video_url
 
     def pause_video(self):
         utils.js_click(self.browser, self.pause)
 
-    def rewind_video(self, percent):
+    def rewind_video(self):
         progress_bar = self.progress_bar
-        progress_bar_width = progress_bar.size['width']
-        action_chains = ActionChains(self.browser)
-        action_chains.move_to_element(progress_bar).move_by_offset((progress_bar_width/100)*(percent-50), 0).click().perform()
-
-    def stop_video(self):
-        action_chains = ActionChains(self.browser)
-        action_chains.context_click(utils.wait_xpath(self.browser, self.VIDEO_WINDOW)).perform()
-        utils.wait_xpath(self.browser, self.STOP).click()
+        # progress_bar_width = progress_bar.size['width']
+        progress_bar.click()
+        # ActionChains(self.browser).move_to_element(progress_bar).move_by_offset((progress_bar_width/100)*(percent-50), 0).click().perform()
 
     def close_video(self):
         self.close_vid.click()
@@ -267,16 +262,6 @@ class VideoPage(selenium.Page):
         self.browser.execute_script("window.open('about:blank', '_blank');")
         self.browser.switch_to_window(self.browser.window_handles[1])
         self.browser.get(link)
-
-    def open_fullscreen(self):
-        self.fullscreen_mode.click()
-        self.is_minimized = False
-
-    def close_fullscreen(self):
-        utils.js_click(
-             self.browser,
-             self.fullscreen_mode
-        )
 
     def open_widescreen(self):
         self.widescreen_mode.click()
