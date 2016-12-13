@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 java -Dwebdriver.chrome.driver="./chromedriver" \
-    -Dwebdriver.gecko.driver="./geckodriver" \
+    -Dwebdriver.gecko.driver="./geckodriver.exe" \
     -jar selenium-server-standalone-3.0.1.jar \
     -role node \
     -hub http://localhost:4444/grid/register \
