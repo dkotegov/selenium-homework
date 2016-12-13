@@ -17,7 +17,6 @@ class Settings:
 
     @staticmethod
     def get_login():
-        print os.environ
         try:
             LOGIN = os.environ['LOGIN']
             return LOGIN
