@@ -1,14 +1,7 @@
 # -*- coding: utf-8 -*-
 """Page element classes."""
 
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver import ActionChains
-
-from page_elements import PageElement, LikesController, LikeButton, UnlikeButton, \
-    LikedUsersListPopup
+from page_elements import LikeButton, UnlikeButton, LikedUsersListPopup
 
 
 class LikePhotoUnderPhoto(LikeButton):

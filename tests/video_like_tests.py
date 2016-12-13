@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """Test ability to like video."""
-import unittest
-
 from base_test_case import BaseTestCase
 from page_objects import VideoPage
 
@@ -80,9 +78,9 @@ class VideoLikeTestCase(BaseTestCase):
             self.fail('Connection Error: User not logged')
 
 
-def main():
-    unittest.main()
+# def main():
+#     unittest.main()
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

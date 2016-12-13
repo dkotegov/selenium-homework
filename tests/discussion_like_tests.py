@@ -49,9 +49,9 @@ class DiscussionLikeTestCase(BaseTestCase):
             self.fail('Connection Error: User not logged')
 
 
-def main():
-    unittest.main()
+# def main():
+#     unittest.main()
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
