@@ -28,6 +28,9 @@ def test_create_with_text_boxes(case, browser):
 
     notes_page = NotesPage(browser)
     notes_page.open()
+    time.sleep(1)
+    notes_page.remove_all_notes()
+
     notes_page.open_note_input()
     time.sleep(1)
 
@@ -73,6 +76,9 @@ def test_create_with_photo(case, browser):
 
     notes_page = NotesPage(browser)
     notes_page.open()
+    time.sleep(1)
+    notes_page.remove_all_notes()
+
     notes_page.open_note_input()
     time.sleep(1)
 
@@ -126,6 +132,9 @@ def test_create_with_audio(case, browser):
 
     notes_page = NotesPage(browser)
     notes_page.open()
+    time.sleep(1)
+    notes_page.remove_all_notes()
+
     notes_page.open_note_input()
     time.sleep(1)
 
@@ -178,6 +187,9 @@ def test_create_with_place(case, browser):
 
     notes_page = NotesPage(browser)
     notes_page.open()
+    time.sleep(1)
+    notes_page.remove_all_notes()
+
     notes_page.open_note_input()
     time.sleep(1)
 
@@ -231,6 +243,9 @@ def test_create_with_user(case, browser):
 
     notes_page = NotesPage(browser)
     notes_page.open()
+    time.sleep(1)
+    notes_page.remove_all_notes()
+
     notes_page.open_note_input()
     time.sleep(1)
 

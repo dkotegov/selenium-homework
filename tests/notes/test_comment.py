@@ -24,6 +24,8 @@ def test_comment(case, browser):
 
     notes_page = NotesPage(browser)
     notes_page.open()
+    time.sleep(1)
+    notes_page.remove_all_notes()
 
     notes_page.open_note_input()
     time.sleep(1)

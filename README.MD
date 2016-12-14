@@ -9,7 +9,15 @@ Run -> Edit Configurations -> Environment variables:
 
 * USERNAME=
 * PASSWORD=
+Опционально:
+* BROWSER=CHROME
+* USE_REMOTE=FALSE
 
+
+```
+./drivers/grid.sh
+./drivers/node.sh
+```
 
 ```
 (env) python run_tests.py

@@ -23,6 +23,8 @@ def test_remove_and_restore(case, browser):
 
     notes_page = NotesPage(browser)
     notes_page.open()
+    time.sleep(1)
+    notes_page.remove_all_notes()
 
     note_count = 2
     for _ in range(note_count):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os
+from conf.base import USERNAME, PASSWORD
 from seismograph.ext import selenium
 from seismograph.ext.selenium import forms
 from elements.items import InStatusCheckbox, NoteCreateFormAddedText, NoteCreateFormControls, NoteCreateFormAddedAudio, \
@@ -11,13 +11,13 @@ class AuthForm(forms.UIForm):
 
     login_field = forms.fields.Input(
         'Login',
-        value=os.environ['USERNAME'],
+        value=USERNAME,
         selector=forms.fields.selector(id='field_email'),
     )
 
     password_field = forms.fields.Input(
         'Password',
-        value=os.environ['PASSWORD'],
+        value=PASSWORD,
         selector=forms.fields.selector(id='field_password'),
     )
 
