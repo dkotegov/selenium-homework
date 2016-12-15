@@ -1,24 +1,20 @@
 # -*- coding: utf-8 -*-
+import os
 
-import sys
+import seismograph
 
-from tests.car_showrooms.add_showroom_test import AddShowroomFormTest
-from tests.car_showrooms.list_showroom_test import ShowroomListTest
-from tests.car_showrooms.list_special_offers_test import SpecialOffersListTest
-from tests.car_showrooms.search_showroom_tests import *
+from tests import test_gifts_sections_list
+
+os.environ['LOGIN'] = 'technopark1'
+os.environ['PASSWORD'] = 'passw0rd'
+
+print os.environ['LOGIN']
+print os.environ['PASSWORD']
+
+
+suites = [
+    test_gifts_sections_list.suite
+]
 
 if __name__ == '__main__':
-
-    suite = unittest.TestSuite((
-        unittest.makeSuite(RegionSelectFormTest),
-        unittest.makeSuite(SelectCarModelTest),
-        unittest.makeSuite(SelectStationTest),
-        unittest.makeSuite(IsOfficialCheckboxTest),
-        unittest.makeSuite(SearchFormTest),
-        unittest.makeSuite(ShowroomListTest),
-        unittest.makeSuite(SpecialOffersListTest),
-        unittest.makeSuite(AddShowroomFormTest),
-    ))
-    result = unittest.TextTestRunner().run(suite)
-
-    sys.exit(not result.wasSuccessful())
+    seismograph.main(config_path='config.py', suites=suites)
