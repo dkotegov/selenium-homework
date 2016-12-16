@@ -6,12 +6,20 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 from page_elements import LikesController, LikeButton, UnlikeButton, \
-    LikedUsersListPopup
+    LikedUsersListPopup, PageElement
 
 
 class LikeVideoButtonUnderPlayer(LikeButton):
 
     BUTTON = '//ul[@class="widget-list"]/descendant::button[last()]'
+
+    HIGHLIGHTED_ELEMENT = '//ul[@class="widget-list"]/descendant::button[last()]/parent::*'
+
+    def like_highlighted(self):
+        class_name = WebDriverWait(self.driver, 30, 0.1).until(
+            EC.presence_of_element_located((By.XPATH, self.HIGHLIGHTED_ELEMENT))
+        ).get_attribute('class')
+        return 'active' in class_name
 
 
 class UnlikeVideoButtonUnderPlayer(UnlikeButton):
@@ -57,3 +65,13 @@ class VideoLikedUsers(LikedUsersListPopup):
 
     LINK_XPATH = '//ul[@class="widget-list"]/descendant::button[last()]'
     USERNAME_LINK = '//ul[@class="ucard-mini-list"]/li/descendant::div[@class="ucard-mini_cnt_i ellip"]'
+
+
+class CloseVideoButton(PageElement):
+
+    BUTTON = '(//div[@class="ic media-layer_close_ico"])[1]'
+
+    def click(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            EC.element_to_be_clickable((By.XPATH, self.BUTTON))
+        ).click()

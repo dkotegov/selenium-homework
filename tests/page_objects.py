@@ -15,7 +15,7 @@ from photo_page_elements import LikePhotoUnderPhoto, UnlikePhotoUnderPhoto, \
 
 from video_page_elements import LikeVideoButtonUnderPlayer, UnlikeVideoButtonUnderPlayer, \
     VideoLikedUsers, LikeVideoButtonInsidePlayer, UnlikeVideoButtonInsidePlayer, \
-    ButtonInsidePlayerLikesController
+    ButtonInsidePlayerLikesController, CloseVideoButton
 
 
 class Page(object):
@@ -31,7 +31,7 @@ class Page(object):
     def open(self):
         url = urlparse.urljoin(self.BASE_URL, self.PATH)
         self.driver.get(url)
-        # self.driver.maximize_window()
+        self.driver.maximize_window()
 
 
 class AuthPage(Page):
@@ -50,7 +50,8 @@ class VideoPage(Page):
     PATH_VIDEOS = (
         '/video/192156796190',
         '/video/219099564753',
-        '/video/193083279874'
+        '/video/193083279874',
+        '/video/214043462216'
     )
 
     def open_video(self, index):
@@ -80,6 +81,10 @@ class VideoPage(Page):
     @property
     def button_inside_player_likes_controller(self):
         return ButtonInsidePlayerLikesController(self.driver)
+
+    @property
+    def close_video_button(self):
+        return CloseVideoButton(self.driver)
 
 
 class PhotoPage(Page):
