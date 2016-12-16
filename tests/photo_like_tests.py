@@ -61,7 +61,7 @@ class PhotoLikeTestCase(BaseTestCase):
     #     else:
     #         self.fail('Connection Error: User not logged')
 
-    def test_like_avatar_in_profile_page(self):
+    def test_like_and_unlike_avatar_in_profile_page(self):
         if self.is_logged:
             user_profile_page = UserProfilePage(self.driver)
             user_profile_page.open()
