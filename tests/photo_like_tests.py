@@ -70,11 +70,13 @@ class PhotoLikeTestCase(BaseTestCase):
 
             like_button = photo_page.like_button_avatar_in_profile
             like_button.like()
-            self.assertTrue(photo_page.list_liked_avatar_liked_users.has_your_like())
+            liked_users = photo_page.list_liked_avatar_liked_users
+            self.assertTrue(liked_users.has_your_like())
 
             unlike_button = photo_page.unlike_button_avatar_in_profile
             unlike_button.unlike()
-            self.assertFalse(photo_page.list_liked_avatar_liked_users.has_your_like())
+            liked_users = photo_page.list_liked_avatar_liked_users
+            self.assertFalse(liked_users.has_your_like())
         else:
             self.fail('Connection Error: User not logged')
 

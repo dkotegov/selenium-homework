@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Page element classes."""
+import time
 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -63,10 +64,12 @@ class UnlikeButtonAvatarPhoto(UnlikeButton):
 
 class ListAvatarPhotoLikedUsers(LikesController):
 
-    BUTTON = '(//div[contains(@class, "lcTc_avatar __l")]/descendant::span)[last()]'
+    LINK = "li.controls-list_item"
 
     def has_your_like(self):
-        element = WebDriverWait(self.driver, 30, 0.1).until(
-            EC.visibility_of_element_located((By.XPATH, self.BUTTON))
+        WebDriverWait(self.driver, 30, 0.1).until(
+            EC.visibility_of_element_located((By.CSS_SELECTOR, self.LINK))
         )
-        return u'Вы'in element.text
+        time.sleep(2)
+        message = self.driver.execute_script('return $("%s")[1].textContent' % self.LINK)
+        return u'Вы' in message
