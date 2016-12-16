@@ -96,10 +96,10 @@ class VideoLikeTestCase(BaseTestCase):
             self.fail('Connection Error: User not logged')
 
 
-# def main():
-#     import unittest
-#     unittest.main()
+def main():
+    import unittest
+    unittest.main()
 
 
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    main()
