@@ -11,7 +11,8 @@ from discussion_page_elements import OpenDiscussionLinksChain, \
 
 from photo_page_elements import LikePhotoUnderPhoto, UnlikePhotoUnderPhoto, \
     PhotoLikedUsers, LikePhotoInTheRightPhotoCorner, UnlikePhotoInTheRightPhotoCorner, \
-    LikeNotOpenedPhotoInAlbum, UnlikeNotOpenedPhotoInAlbum, PhotoLikedUsersInAlbum
+    LikeNotOpenedPhotoInAlbum, UnlikeNotOpenedPhotoInAlbum, PhotoLikedUsersInAlbum, \
+    LikeButtonAvatarPhoto, UnlikeButtonAvatarPhoto, ListAvatarPhotoLikedUsers
 
 from video_page_elements import LikeVideoButtonUnderPlayer, UnlikeVideoButtonUnderPlayer, \
     VideoLikedUsers, LikeVideoButtonInsidePlayer, UnlikeVideoButtonInsidePlayer, \
@@ -135,6 +136,18 @@ class PhotoPage(Page):
     def list_liked_users_in_album(self):
         return PhotoLikedUsersInAlbum(self.driver)
 
+    @property
+    def like_button_avatar_in_profile(self):
+        return LikeButtonAvatarPhoto(self.driver)
+
+    @property
+    def unlike_button_avatar_in_profile(self):
+        return UnlikeButtonAvatarPhoto(self.driver)
+
+    @property
+    def list_liked_avatar_liked_users(self):
+        return ListAvatarPhotoLikedUsers(self.driver)
+
 
 class DiscussionPage(Page):
 
@@ -169,3 +182,8 @@ class DiscussionPage(Page):
     @property
     def unlike_liked_by_other_users_button_under_comment(self):
         return UnlikeLikedByOtherUsersCommentInDisscussion(self.driver)
+
+
+class UserProfilePage(Page):
+
+    PATH = '/profile/575705241837'
