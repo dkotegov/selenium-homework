@@ -7,6 +7,8 @@ SELENIUM_EX = {
     'MAXIMIZE_WINDOW': True,
     'DEFAULT_BROWSER': browser,
     'PROJECT_URL': 'https://www.ok.ru/',
+    'POLLING_TIMEOUT': 30,
+    'POLLING_DELAY': 0.1,
     'PAGE_LOAD_TIMEOUT': 60,
     'REMOTE': {
         'command_executor': 'http://127.0.0.1:4444/wd/hub',

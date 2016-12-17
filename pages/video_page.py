@@ -225,9 +225,8 @@ class VideoPage(selenium.Page):
     def play_video_during(self, time):
         curr_time = self.get_video_play_time()
         result_time = curr_time + time
-        utils.wait(
-            self.browser,
-            lambda d: self.get_video_play_time() > result_time
+        self.browser.waiting_for(
+            lambda: self.get_video_play_time() > result_time
         )
 
     def play_next_video(self):

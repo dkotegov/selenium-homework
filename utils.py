@@ -9,10 +9,6 @@ SHORT_TIMEOUT = 5
 DEFAULT_SLEEP_TIME = 0.1
 
 
-def wait(driver, condition, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
-    return WebDriverWait(driver, timeout, sleeptime).until(condition)
-
-
 def raises_stale_element_reference_exception(func, *args, **kwargs):
     try:
         func(*args, **kwargs)
@@ -23,52 +19,50 @@ def raises_stale_element_reference_exception(func, *args, **kwargs):
 
 def repeat_on_error(func):
     def wrapper(*args, **kwargs):
-        return wait(
-            args[0].browser,
-            lambda d: not raises_stale_element_reference_exception(func, *args, **kwargs),
-            SHORT_TIMEOUT
+        return args[0].browser.waiting_for(
+            lambda: not raises_stale_element_reference_exception(func, *args, **kwargs)
         )
 
     return wrapper
 
 
-def wait_xpath(driver, xpath, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
-    return wait(driver, lambda d: d.find_element_by_xpath(xpath), timeout, sleeptime)
+def wait_xpath(driver, xpath, timeout=None):
+    return driver.waiting_for(lambda : driver.find_element_by_xpath(xpath), timeout)
 
 
-def wait_many_xpath(driver, xpath, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
-    return wait(driver, lambda d: d.find_elements_by_xpath(xpath), timeout, sleeptime)
+def wait_many_xpath(driver, xpath, timeout=None):
+    return driver.waiting_for(lambda: driver.find_elements_by_xpath(xpath), timeout)
 
 
-def wait_id(driver, id, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
-    return wait(driver, lambda d: d.find_element_by_id(id), timeout, sleeptime)
+def wait_id(driver, id, timeout=None):
+    return driver.waiting_for(lambda: driver.find_element_by_id(id), timeout)
 
 
-def wait_name(driver, name, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
-    return wait(driver, lambda d: d.find_element_by_name(name), timeout, sleeptime)
+def wait_name(driver, name, timeout=None):
+    return driver.waiting_for(lambda: driver.find_element_by_name(name), timeout)
 
 
-def wait_many_class(driver, cls, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
-    return wait(driver, lambda d: d.find_elements_by_class_name(cls), timeout, sleeptime)
+def wait_many_class(driver, cls, timeout=None):
+    return driver.waiting_for(lambda: driver.find_elements_by_class_name(cls), timeout)
 
 
-def wait_class(driver, cls, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
-    return wait(driver, lambda d: d.find_element_by_class_name(cls), timeout, sleeptime)
+def wait_class(driver, cls, timeout=None):
+    return driver.waiting_for(lambda: driver.find_element_by_class_name(cls), timeout)
 
 
-def wait_change_url(driver, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
+def wait_change_url(driver, timeout=None):
     current_url = driver.current_url
-    return wait(driver, lambda d: d.current_url != current_url, timeout, sleeptime)
+    return driver.waiting_for(lambda: driver.current_url != current_url, timeout)
 
 
-def wait_value(driver, xpath, value, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
-    return wait(driver, lambda d: d.find_element_by_xpath(xpath).text == value, timeout, sleeptime)
+def wait_value(driver, xpath, value, timeout=None):
+    return driver.waiting_for(lambda: driver.find_element_by_xpath(xpath).text == value, timeout)
 
 
 @repeat_on_error
-def wait_screen_change(driver, xpath, timeout=DEFAULT_TIMEOUT, sleeptime=DEFAULT_SLEEP_TIME):
+def wait_screen_change(driver, xpath, timeout=None):
     size = driver.find_element_by_xpath(xpath).size['width']
-    return wait(driver, lambda d: d.find_element_by_xpath(xpath).size['width'] != size, timeout, sleeptime)
+    return driver.waiting_for(lambda: driver.find_element_by_xpath(xpath).size['width'] != size, timeout)
 
 
 def replace_text(web_element, new_text):
