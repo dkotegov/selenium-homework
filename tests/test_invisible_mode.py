@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-from time import sleep
-
 import seismograph
 from seismograph.ext import selenium
-from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.wait import WebDriverWait
 
+from tests.common_steps import AuthStep
 from utils.auth_manager import AuthManager
 
 suite = seismograph.Suite(__name__, require=['selenium'])
@@ -87,6 +85,11 @@ class LeftColumnTopCardUser(selenium.Page):
         ),
     )
 
+    def wait_for_invisible_toggler(self):
+        WebDriverWait(selenium.Page.browser, 3).until(
+            lambda br: self.invisible_toggler.first()
+        )
+
 
 class LeftColumnTopCardUserMobile(selenium.Page):
     check_invisible_mode = \
@@ -99,6 +102,11 @@ class LeftColumnTopCardUserMobile(selenium.Page):
         ),
     )
 
+    def wait_for_invisible_toggler(self):
+        WebDriverWait(selenium.Page.browser, 5).until(
+            lambda br: self.invisible_toggler.first()
+        )
+
 
 class UpperNavbar(selenium.Page):
     click_user_settings_icon = \
@@ -110,86 +118,43 @@ class UpperNavbar(selenium.Page):
         '.getElementsByTagName("a")[0]'
 
 
-class WebOkSuite(selenium.Case):
-    @seismograph.step(1, 'Login to ok.ru')
+class WebOkSuite(AuthStep):
+    @seismograph.step(2, 'Setup invisible mode')
     def go_to_ok_registered(self, browser):
-        browser.go_to('http://ok.ru/')
-        morda = OkMorda(browser)
-        morda.email_input.send_keys(AuthManager.get_login())
-        morda.password_input.send_keys(AuthManager.get_password())
-        morda.submit_btn.first().click()
-
-
-@suite.register
-class BuyInvisibleMode(WebOkSuite, selenium.Case):
-    @seismograph.step(2, 'Buy invisible function')
-    def check_text(self, browser):
-        user_card = LeftColumnTopCardUser()
-        WebDriverWait(browser, 3).until(
-            lambda br: LeftColumnTopCardUser(br).invisible_toggler.first()
-        )
-        try:
-            browser.execute_script(click_element(user_card.check_invisible_mode))
-            browser.execute_script(click_element(user_card.choose_month_subscr))
-            browser.execute_script(click_element(user_card.click_buy_btn))
-            browser.execute_script(click_element(user_card.close_modal_window))
-        except (AttributeError, WebDriverException):
-            assert True
-            print "Invisible mode already bought"
-        except Exception:
-            assert False
-
-
-@suite.register
-class CheckInvisibleModeFromNavbar(WebOkSuite, selenium.Case):
-    @seismograph.step(2, 'Check invisible mode from navbar')
-    def check_text(self, browser):
         user_card = LeftColumnTopCardUser(browser)
-        WebDriverWait(browser, 3).until(
-            lambda br: LeftColumnTopCardUser(br).invisible_toggler.first()
-        )
+        user_card.wait_for_invisible_toggler()
         if user_card.invisible_toggler.first().is_selected():
             browser.execute_script(click_element(user_card.check_invisible_mode))
+            browser.refresh()
+
+
+@suite.register
+class CheckInvisibleModeFromNavbar(WebOkSuite):
+    @seismograph.step(3, 'Check invisible mode from navbar')
+    def check_text(self, browser):
+        user_card = LeftColumnTopCardUser(browser)
+        user_card.wait_for_invisible_toggler()
         browser.execute_script(click_element(UpperNavbar.click_user_settings_icon))
-        sleep(2)
         browser.execute_script(click_element(UpperNavbar.check_invisible_mode))
-        sleep(2)
-        browser.refresh()
-        WebDriverWait(browser, 3).until(
-            lambda br: LeftColumnTopCardUser(br).invisible_toggler.first()
-        )
+        user_card.wait_for_invisible_toggler()
         assert user_card.invisible_toggler.first().is_selected()
 
 
 @suite.register
-class CheckInvisibleModeFromMainPage(WebOkSuite, selenium.Case):
-    @seismograph.step(2, 'Check invisible from main page')
+class CheckInvisibleModeFromMainPage(WebOkSuite):
+    @seismograph.step(3, 'Check invisible from main page')
     def check_text(self, browser):
         user_card = LeftColumnTopCardUser(browser)
-        WebDriverWait(browser, 3).until(
-            lambda br: LeftColumnTopCardUser(br).invisible_toggler.first()
-        )
-        if user_card.invisible_toggler.first().is_selected():
-            browser.execute_script(click_element(user_card.check_invisible_mode))
-            sleep(2)
-            browser.refresh()
-            WebDriverWait(browser, 3).until(
-                lambda br: LeftColumnTopCardUser(br).invisible_toggler.first()
-            )
-            assert not user_card.invisible_toggler.first().is_selected()
-        else:
-            browser.execute_script(click_element(user_card.check_invisible_mode))
-            sleep(2)
-            browser.refresh()
-            WebDriverWait(browser, 3).until(
-                lambda br: LeftColumnTopCardUser(br).invisible_toggler.first()
-            )
-            assert user_card.invisible_toggler.first().is_selected()
+        user_card.wait_for_invisible_toggler()
+        browser.execute_script(click_element(user_card.check_invisible_mode))
+        browser.refresh()
+        user_card.wait_for_invisible_toggler()
+        assert user_card.invisible_toggler.first().is_selected()
 
 
 @suite.register
 class CheckInvisibleModeFromMobileVersion(selenium.Case):
-    @seismograph.step(1, 'Login to m.ok.ru')
+    @seismograph.step(1, 'Login to m.ok.ru and setup invisible mode')
     def go_to_ok_registered(self, browser):
         browser.go_to('http://m.ok.ru/')
         morda = OkMobileMorda(browser)
@@ -197,15 +162,17 @@ class CheckInvisibleModeFromMobileVersion(selenium.Case):
         morda.password_input.send_keys(AuthManager.get_password())
         morda.submit_btn.first().click()
 
+        user_card = LeftColumnTopCardUserMobile(browser)
+        user_card.wait_for_invisible_toggler()
+        if user_card.invisible_toggler.first().is_selected():
+            browser.execute_script(click_element(user_card.check_invisible_mode))
+            browser.refresh()
+
     @seismograph.step(2, 'Check invisible mode for mobile version')
     def check_text(self, browser):
         user_card = LeftColumnTopCardUserMobile(browser)
-        WebDriverWait(browser, 3).until(
-            lambda br: LeftColumnTopCardUserMobile(br).invisible_toggler.first()
-        )
-        if not user_card.invisible_toggler.first().is_selected():
-            browser.execute_script(click_element(user_card.check_invisible_mode))
-            assert user_card.invisible_toggler.first().is_selected()
-        else:
-            browser.execute_script(click_element(user_card.check_invisible_mode))
-            assert not user_card.invisible_toggler.first().is_selected()
+        browser.execute_script(click_element(user_card.check_invisible_mode))
+        browser.refresh()
+        user_card.wait_for_invisible_toggler()
+        browser.refresh()
+        assert user_card.invisible_toggler.first().is_selected()
