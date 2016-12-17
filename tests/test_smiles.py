@@ -41,9 +41,11 @@ class TestSmilesChangeCost(AuthStep, selenium.Case):
         cost = feed_page.get_smiles_cost()
         assert cost == DEFAULT_COST
         feed_page.click_smiles_checkbox_by_index(1, COST_1)
+        feed_page.switch_to_last_frame()
         cost = feed_page.get_smiles_cost()
         assert cost == COST_1
         feed_page.click_smiles_checkbox_by_index(3, COST_2)
+        feed_page.switch_to_last_frame()
         cost = feed_page.get_smiles_cost()
         assert cost == COST_2
 

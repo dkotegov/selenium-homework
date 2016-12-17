@@ -143,16 +143,24 @@ class FeedPage(selenium.Page):
         self.browser.switch_to_default_content()
 
     def get_five_plus_cost(self):
-        WebDriverWait(self.browser, 3).until(
-            lambda br: br.find_element_by_css_selector(self.five_plus_cost_locator)
-        )
-        return self.browser.find_element_by_css_selector(self.five_plus_cost_locator).text
+        try:
+            WebDriverWait(self.browser, 3).until(
+                lambda br: br.find_element_by_css_selector(self.five_plus_cost_locator)
+            )
+            return self.browser.find_element_by_css_selector(self.five_plus_cost_locator).text
+        except StaleElementReferenceException:
+            self.switch_to_last_frame()
+            return self.browser.find_element_by_css_selector(self.five_plus_cost_locator).text
 
     def get_smiles_cost(self):
-        WebDriverWait(self.browser, 3).until(
-            lambda br: br.find_element_by_css_selector(self.smiles_cost_locator)
-        )
-        return self.browser.find_element_by_css_selector(self.smiles_cost_locator).text
+        try:
+            WebDriverWait(self.browser, 3).until(
+                lambda br: br.find_element_by_css_selector(self.smiles_cost_locator)
+            )
+            return self.browser.find_element_by_css_selector(self.smiles_cost_locator).text
+        except StaleElementReferenceException:
+            self.switch_to_last_frame()
+            return self.browser.find_element_by_css_selector(self.smiles_cost_locator).text
 
     def click_five_plus_checkbox_by_index(self, index, expected_cost):
         locator = ''
