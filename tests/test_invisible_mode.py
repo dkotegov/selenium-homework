@@ -60,29 +60,27 @@ class OkMobileMorda(selenium.Page):
 
 
 class LeftColumnTopCardUser(selenium.Page):
-    check_all_included = \
-        'document.getElementById("hook_Block_LeftColumnTopCardUser")' \
-        '.getElementsByTagName("ul")[1].getElementsByTagName("li")[7]' \
-        '.getElementsByTagName("a")[0]'
+    text_turn_down_invisible = u"Выключить невидимку"
 
     check_invisible_mode = \
         'document.getElementById("hook_Block_LeftColumnTopCardUser")' \
         '.getElementsByTagName("ul")[1].getElementsByTagName("li")[8]' \
         '.getElementsByTagName("a")[0]'
 
-    choose_month_subscr = 'document.getElementById("val_-1")'
-
-    click_buy_btn = \
-        'document.getElementsByClassName("form-actions __center")[0]' \
-        '.getElementsByClassName("button-pro form-actions__yes")[0]'
-
-    close_modal_window = 'document.getElementById("nohook_modal_close")'
+    invisible_text = selenium.PageElement(
+        selenium.query(
+            selenium.query.SPAN,
+            _class="tico ",
+        )
+    )
 
     invisible_toggler = selenium.PageElement(
         selenium.query(
             selenium.query.INPUT,
             id="invisibleToggler",
+            type="checkbox"
         ),
+        action=lambda button: button.click(),
     )
 
     def wait_for_invisible_toggler(self):
@@ -92,13 +90,12 @@ class LeftColumnTopCardUser(selenium.Page):
 
 
 class LeftColumnTopCardUserMobile(selenium.Page):
-    check_invisible_mode = \
-        'document.getElementById("userInvisibleSettingItemCheckBox")'
+    check_invisible_mode = 'document.getElementById("userInvisibleSettingItemCheckBox")'
 
     invisible_toggler = selenium.PageElement(
         selenium.query(
             selenium.query.INPUT,
-            id="userInvisibleSettingItemCheckBox",
+            _class="tumbler_target nofasttouch js-ajax-checkbox",
         ),
     )
 
@@ -123,7 +120,7 @@ class WebOkSuite(AuthStep):
     def go_to_ok_registered(self, browser):
         user_card = LeftColumnTopCardUser(browser)
         user_card.wait_for_invisible_toggler()
-        if user_card.invisible_toggler.first().is_selected():
+        if user_card.invisible_toggler.is_selected():
             browser.execute_script(click_element(user_card.check_invisible_mode))
             browser.refresh()
 
@@ -137,8 +134,7 @@ class CheckInvisibleModeFromNavbar(WebOkSuite):
         browser.execute_script(click_element(UpperNavbar.click_user_settings_icon))
         browser.execute_script(click_element(UpperNavbar.check_invisible_mode))
         user_card.wait_for_invisible_toggler()
-        assert user_card.invisible_toggler.first().is_selected()
-
+        self.assertion.text_exist(browser, user_card.text_turn_down_invisible)
 
 @suite.register
 class CheckInvisibleModeFromMainPage(WebOkSuite):
@@ -149,7 +145,7 @@ class CheckInvisibleModeFromMainPage(WebOkSuite):
         browser.execute_script(click_element(user_card.check_invisible_mode))
         browser.refresh()
         user_card.wait_for_invisible_toggler()
-        assert user_card.invisible_toggler.first().is_selected()
+        self.assertion.text_exist(browser, user_card.text_turn_down_invisible)
 
 
 @suite.register
@@ -172,7 +168,6 @@ class CheckInvisibleModeFromMobileVersion(selenium.Case):
     def check_text(self, browser):
         user_card = LeftColumnTopCardUserMobile(browser)
         browser.execute_script(click_element(user_card.check_invisible_mode))
-        browser.refresh()
         user_card.wait_for_invisible_toggler()
         browser.refresh()
         assert user_card.invisible_toggler.first().is_selected()
