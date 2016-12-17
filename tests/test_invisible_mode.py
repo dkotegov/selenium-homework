@@ -64,12 +64,12 @@ class OkMobileMorda(selenium.Page):
 class LeftColumnTopCardUser(selenium.Page):
     check_all_included = \
         'document.getElementById("hook_Block_LeftColumnTopCardUser")' \
-        '.getElementsByTagName("ul")[1].getElementsByTagName("li")[6]' \
+        '.getElementsByTagName("ul")[1].getElementsByTagName("li")[7]' \
         '.getElementsByTagName("a")[0]'
 
     check_invisible_mode = \
         'document.getElementById("hook_Block_LeftColumnTopCardUser")' \
-        '.getElementsByTagName("ul")[1].getElementsByTagName("li")[7]' \
+        '.getElementsByTagName("ul")[1].getElementsByTagName("li")[8]' \
         '.getElementsByTagName("a")[0]'
 
     choose_month_subscr = 'document.getElementById("val_-1")'
@@ -154,6 +154,10 @@ class CheckInvisibleModeFromNavbar(WebOkSuite, selenium.Case):
         sleep(2)
         browser.execute_script(click_element(UpperNavbar.check_invisible_mode))
         sleep(2)
+        browser.refresh()
+        WebDriverWait(browser, 3).until(
+            lambda br: LeftColumnTopCardUser(br).invisible_toggler.first()
+        )
         assert user_card.invisible_toggler.first().is_selected()
 
 
@@ -169,11 +173,17 @@ class CheckInvisibleModeFromMainPage(WebOkSuite, selenium.Case):
             browser.execute_script(click_element(user_card.check_invisible_mode))
             sleep(2)
             browser.refresh()
+            WebDriverWait(browser, 3).until(
+                lambda br: LeftColumnTopCardUser(br).invisible_toggler.first()
+            )
             assert not user_card.invisible_toggler.first().is_selected()
         else:
             browser.execute_script(click_element(user_card.check_invisible_mode))
             sleep(2)
             browser.refresh()
+            WebDriverWait(browser, 3).until(
+                lambda br: LeftColumnTopCardUser(br).invisible_toggler.first()
+            )
             assert user_card.invisible_toggler.first().is_selected()
 
 
