@@ -16,21 +16,6 @@ class CommonCommentsCase(BaseCase):
         super(CommonCommentsCase, self).setup()
         self.video_page = VideoPage(self.browser)
 
-    def test_add_comment(self):
-        VIDEO_ID = '206460097000'
-        COMMENT = 'TESTCOMMENT__TESTCOMMENT'
-
-        self.video_page.open(id=VIDEO_ID)
-
-        self.video_page.add_comment(COMMENT)
-        self.browser.refresh()
-
-        last_comment = self.video_page.last_comment
-        self.assertion.equal(COMMENT, last_comment.content)
-
-        last_comment.remove()
-        self.assertion.true(last_comment.is_deleted)
-
     def test_recover_comment(self):
         VIDEO_ID = '206459769320'
         COMMENT = 'COMMENT_TO_TEST_RECOVER'
@@ -123,6 +108,19 @@ class AddCommentCase(BaseCase):
         self.assertion.equal(COMMENT, self.video_page.last_comment.content)
         self.video_page.last_comment.remove()
 
+    def test_add_comment(self):
+        VIDEO_ID = '206460097000'
+        COMMENT = 'TESTCOMMENT__TESTCOMMENT'
+
+        self.video_page.open(id=VIDEO_ID)
+
+        self.video_page.add_comment(COMMENT)
+        self.browser.refresh()
+
+        last_comment = self.video_page.last_comment
+        self.assertion.equal(COMMENT, last_comment.content)
+
     def teardown(self):
         self.video_page.last_comment.remove()
+        self.assertion.true(self.last_comment.is_deleted)
         super(AddCommentCase, self).teardown()
