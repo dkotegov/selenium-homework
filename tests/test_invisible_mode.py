@@ -9,34 +9,9 @@ from utils.auth_manager import AuthManager
 suite = seismograph.Suite(__name__, require=['selenium'])
 
 
-def click_element(element):
-    return element + '.click()'
-
-
-class OkMorda(selenium.Page):
-    email_input = selenium.PageElement(
-        selenium.query(
-            selenium.query.INPUT,
-            id='field_email',
-        ),
-    )
-
-    password_input = selenium.PageElement(
-        selenium.query(
-            selenium.query.INPUT,
-            id='field_password',
-        ),
-    )
-
-    submit_btn = selenium.PageElement(
-        selenium.query(
-            selenium.query.INPUT,
-            _class='button-pro form-actions_yes',
-        ),
-    )
-
-
 class OkMobileMorda(selenium.Page):
+    link = 'http://m.ok.ru/'
+
     email_input = selenium.PageElement(
         selenium.query(
             selenium.query.INPUT,
@@ -65,14 +40,7 @@ class LeftColumnTopCardUser(selenium.Page):
     check_invisible_mode = \
         'document.getElementById("hook_Block_LeftColumnTopCardUser")' \
         '.getElementsByTagName("ul")[1].getElementsByTagName("li")[8]' \
-        '.getElementsByTagName("a")[0]'
-
-    invisible_text = selenium.PageElement(
-        selenium.query(
-            selenium.query.SPAN,
-            _class="tico ",
-        )
-    )
+        '.getElementsByTagName("a")[0].click()'
 
     invisible_toggler = selenium.PageElement(
         selenium.query(
@@ -80,7 +48,6 @@ class LeftColumnTopCardUser(selenium.Page):
             id="invisibleToggler",
             type="checkbox"
         ),
-        action=lambda button: button.click(),
     )
 
     def wait_for_invisible_toggler(self):
@@ -90,7 +57,7 @@ class LeftColumnTopCardUser(selenium.Page):
 
 
 class LeftColumnTopCardUserMobile(selenium.Page):
-    check_invisible_mode = 'document.getElementById("userInvisibleSettingItemCheckBox")'
+    invisible_mode = 'document.getElementById("userInvisibleSettingItemCheckBox").click()'
 
     invisible_toggler = selenium.PageElement(
         selenium.query(
@@ -100,19 +67,28 @@ class LeftColumnTopCardUserMobile(selenium.Page):
     )
 
     def wait_for_invisible_toggler(self):
-        WebDriverWait(selenium.Page.browser, 5).until(
+        WebDriverWait(selenium.Page.browser, 3).until(
             lambda br: self.invisible_toggler.first()
         )
 
 
 class UpperNavbar(selenium.Page):
-    click_user_settings_icon = \
-        'document.getElementsByClassName("ucard-mini toolbar_ucard")[0]'
+    click_user_settings_icon = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class='ucard-mini toolbar_ucard',
+        )
+    )
 
-    check_invisible_mode = \
-        'document.getElementsByClassName("toolbar_dropdown")[0]' \
-        '.getElementsByTagName("ul")[0].getElementsByTagName("li")[3]' \
-        '.getElementsByTagName("a")[0]'
+    invisible_mode = selenium.PageElement(
+        selenium.query(
+            selenium.query.SPAN,
+            _class="u-menu_tx ellip-i"
+        )
+    )
+
+    def check_invisible_mode(self):
+        return self.invisible_mode.all()[3]
 
 
 class WebOkSuite(AuthStep):
@@ -120,8 +96,8 @@ class WebOkSuite(AuthStep):
     def go_to_ok_registered(self, browser):
         user_card = LeftColumnTopCardUser(browser)
         user_card.wait_for_invisible_toggler()
-        if user_card.invisible_toggler.is_selected():
-            browser.execute_script(click_element(user_card.check_invisible_mode))
+        if user_card.invisible_toggler.first().is_selected():
+            browser.execute_script(user_card.check_invisible_mode)
             browser.refresh()
 
 
@@ -130,11 +106,11 @@ class CheckInvisibleModeFromNavbar(WebOkSuite):
     @seismograph.step(3, 'Check invisible mode from navbar')
     def check_text(self, browser):
         user_card = LeftColumnTopCardUser(browser)
-        user_card.wait_for_invisible_toggler()
-        browser.execute_script(click_element(UpperNavbar.click_user_settings_icon))
-        browser.execute_script(click_element(UpperNavbar.check_invisible_mode))
-        user_card.wait_for_invisible_toggler()
+        navbar = UpperNavbar(browser)
+        navbar.click_user_settings_icon.click()
+        navbar.check_invisible_mode().click()
         self.assertion.text_exist(browser, user_card.text_turn_down_invisible)
+
 
 @suite.register
 class CheckInvisibleModeFromMainPage(WebOkSuite):
@@ -142,9 +118,9 @@ class CheckInvisibleModeFromMainPage(WebOkSuite):
     def check_text(self, browser):
         user_card = LeftColumnTopCardUser(browser)
         user_card.wait_for_invisible_toggler()
-        browser.execute_script(click_element(user_card.check_invisible_mode))
-        browser.refresh()
+        browser.execute_script(user_card.check_invisible_mode)
         user_card.wait_for_invisible_toggler()
+        browser.refresh()
         self.assertion.text_exist(browser, user_card.text_turn_down_invisible)
 
 
@@ -152,8 +128,8 @@ class CheckInvisibleModeFromMainPage(WebOkSuite):
 class CheckInvisibleModeFromMobileVersion(selenium.Case):
     @seismograph.step(1, 'Login to m.ok.ru and setup invisible mode')
     def go_to_ok_registered(self, browser):
-        browser.go_to('http://m.ok.ru/')
         morda = OkMobileMorda(browser)
+        browser.go_to(morda.link)
         morda.email_input.send_keys(AuthManager.get_login())
         morda.password_input.send_keys(AuthManager.get_password())
         morda.submit_btn.first().click()
@@ -161,13 +137,13 @@ class CheckInvisibleModeFromMobileVersion(selenium.Case):
         user_card = LeftColumnTopCardUserMobile(browser)
         user_card.wait_for_invisible_toggler()
         if user_card.invisible_toggler.first().is_selected():
-            browser.execute_script(click_element(user_card.check_invisible_mode))
+            browser.execute_script(user_card.invisible_mode)
             browser.refresh()
 
     @seismograph.step(2, 'Check invisible mode for mobile version')
     def check_text(self, browser):
         user_card = LeftColumnTopCardUserMobile(browser)
-        browser.execute_script(click_element(user_card.check_invisible_mode))
+        browser.execute_script(user_card.invisible_mode)
         user_card.wait_for_invisible_toggler()
         browser.refresh()
         assert user_card.invisible_toggler.first().is_selected()
