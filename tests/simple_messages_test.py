@@ -21,13 +21,8 @@ class SimpleMessagesPage(Page):
 
 class MessagesMenu(Component):
     SEND_MSG_BTN = '//button[@class="button-pro comments_add-controls_save"]'
-    # MESSAGE = '//div[@class="itx js-comments_add comments_add-ceditable add-caret"]'
     MESSAGE = '//div[@name="st.txt"]'
     EDITTED = '//a[@class="msg_ac_i ic10 ic10_edit foh-s js-msg-edit"]'
-    # ATTACH_BUTTON_TRIG = '//span[@class="comments_attach_trigger"]'
-    # ATTACH_AUDIO_MSG_BUTTON = '//span[@class="comments_attach_trigger"]/div[2]/div/div/ul/li[1]'
-    # AUDIO_MSG_POPUP = '//object[@class="vchat_flash_app"]'
-    # PLAY_BUTTON = '//div[@class="msg_audio"]/div[@class="msg_audio_play"]/'#/div[last()]/div[@class="msg_cnt"]'#/div[]/div[@class="js-msg-attach"]/div/div'
 
     def get_button_send(self):
         WebDriverWait(self.driver, 30, 0.1).until(
@@ -71,7 +66,7 @@ class SimpleMessagesTest(unittest.TestCase):
         self.message_page.messages_menu.set_message(message)
         self.message_page.messages_menu.get_button_send()
         input_pole = self.message_page.messages_menu.get_message().text
-        self.assertTrue(input_pole == '')
+        self.assertEqual(input_pole, '')
 
     def test_edit_simple_message(self):
         message = 'testEdit'
@@ -80,4 +75,4 @@ class SimpleMessagesTest(unittest.TestCase):
         self.message_page.messages_menu.set_message(message)
         self.message_page.messages_menu.get_button_send()
         input_pole = self.message_page.messages_menu.get_message().text
-        self.assertTrue(input_pole == '')
+        self.assertEqual(input_pole, '')

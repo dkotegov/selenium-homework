@@ -70,22 +70,20 @@ class AudioMessagesTest(unittest.TestCase):
         self.assertIsNotNone(audio_msg_popup)
 
     def test_audiomessage_play_and_stop_message(self):
+        PLAY_STOP_BUTTON = '//div[@class="msg_audio_play"]'
         self.message_page.open()
         last_audio_msg = self.driver.find_element_by_css_selector('.msg_audio:last-child')
-        play_button = last_audio_msg.find_element_by_xpath('//div[@class="msg_audio_play"]')
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: play_button
+        play_button = last_audio_msg.find_element_by_xpath(PLAY_STOP_BUTTON)
+        WebDriverWait(last_audio_msg, 60, 0.1).until(
+            lambda d: d.find_element_by_xpath(PLAY_STOP_BUTTON)
         )
         play_button.click()
-        #sleep(1)
-        classname_last_audio_msg = last_audio_msg.get_attribute("class")
-        #проверяем иконка стоп
-        self.assertTrue(classname_last_audio_msg.rfind("st_play") != -1)
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: play_button
+        # проверяем иконка стоп
+        self.assertNotEqual(last_audio_msg.get_attribute("class").rfind("st_play"), -1)
+        stop_button = last_audio_msg.find_element_by_xpath(PLAY_STOP_BUTTON)
+        WebDriverWait(last_audio_msg, 60, 0.1).until(
+            lambda d: d.find_element_by_xpath(PLAY_STOP_BUTTON)
         )
-        play_button.click()
-        #sleep(1)
-        classname_last_audio_msg2 = last_audio_msg.get_attribute("class")
-        #проверяем иконка плей
-        self.assertTrue(classname_last_audio_msg2.rfind("st_stop") != -1)
+        stop_button.click()
+        # проверяем иконка плей
+        self.assertNotEqual(last_audio_msg.get_attribute("class").rfind("st_stop"), -1)
