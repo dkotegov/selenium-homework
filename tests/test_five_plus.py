@@ -43,10 +43,10 @@ class TestFivePlusChangeCost(AuthStep, selenium.Case):
         feed_page.switch_to_last_frame()
         cost = feed_page.get_five_plus_cost()
         assert cost == DEFAULT_COST
-        feed_page.click_five_plus_checkbox_by_index(1)
+        feed_page.click_five_plus_checkbox_by_index(1, COST_1)
         cost = feed_page.get_five_plus_cost()
         assert cost == COST_1
-        feed_page.click_five_plus_checkbox_by_index(2)
+        feed_page.click_five_plus_checkbox_by_index(2, COST_2)
         cost = feed_page.get_five_plus_cost()
         assert cost == COST_2
 
