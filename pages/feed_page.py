@@ -71,7 +71,7 @@ class FeedPage(selenium.Page):
         )
     )
 
-    frame_wrapper = 'modal-new_cnt'
+    frame_wrapper = 'modal-new_ctn'
 
     smiles_payment_button_locator = '.portlet.__toolbar-pmnt .u-menu .u-menu_li:nth-child(8)'
 
@@ -116,9 +116,9 @@ class FeedPage(selenium.Page):
             WebDriverWait(self.browser, 3).until(
                 lambda br: br.find_element_by_css_selector(self.five_plus_payment_button_locator)
             )
-            five_plus_payment_button = self.browser.find_element_by_css_selector(self.five_plus_payment_button_locator)
-            five_plus_payment_button.click()
-            self.payment_iframe.wait(timeout=3)
+        five_plus_payment_button = self.browser.find_element_by_css_selector(self.five_plus_payment_button_locator)
+        five_plus_payment_button.click()
+        self.payment_iframe.wait(timeout=3)
 
     def open_smiles_payment_from_dropdown(self):
         try:
@@ -127,9 +127,9 @@ class FeedPage(selenium.Page):
             WebDriverWait(self.browser, 3).until(
                 lambda br: br.find_element_by_css_selector(self.smiles_payment_button_locator)
             )
-            smiles_payment_button = self.browser.find_element_by_css_selector(self.smiles_payment_button_locator)
-            smiles_payment_button.click()
-            self.payment_iframe.wait(timeout=3)
+        smiles_payment_button = self.browser.find_element_by_css_selector(self.smiles_payment_button_locator)
+        smiles_payment_button.click()
+        self.payment_iframe.wait(timeout=3)
 
     def open_toolbar_dropdown(self):
         self.toolbar_dropdown_button.click()
