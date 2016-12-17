@@ -2,6 +2,7 @@
 from seismograph.ext import selenium
 from seismograph.ext.selenium.exceptions import PollingTimeoutExceeded
 from seismograph.ext.selenium.query import Contains
+from seismograph.utils.common import waiting_for
 from selenium.common.exceptions import NoSuchFrameException
 
 from utils.xpath_query import XPathQueryObject
@@ -81,13 +82,18 @@ class PaymentModal(selenium.Page):
             self.switch_to_iframe('a.nav-side_i')
             return self.browser.find_elements_by_css_selector('a.nav-side_i')
 
-        tab_links = []
+        def wait_for_tab_link():
+            return index < len(get_tab_links())
 
-        tries = 0
-        while tries < 5 and index >= len(tab_links):
-            tab_links = get_tab_links()
-            tries += 1
+        waiting_for(
+            func=wait_for_tab_link,
+            timeout=10,
+            exc_cls=PollingTimeoutExceeded,
+            message="Couldn't find a link to open tab in iframe",
+            delay=0.5
+        )
 
+        tab_links = get_tab_links()
         tab_links[index].click()
         self.browser.switch_to.default_content()
 
