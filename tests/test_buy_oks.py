@@ -21,7 +21,6 @@ class OpenPageStep(selenium.Case):
     @seismograph.step(2, 'Open page')
     def auth(self, browser):
         feed_page = FeedPage(browser)
-        # feed_page.open()
         feed_page.avatar.wait(5)
 
 

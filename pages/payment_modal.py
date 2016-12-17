@@ -2,6 +2,7 @@
 from seismograph.ext import selenium
 from seismograph.ext.selenium.exceptions import PollingTimeoutExceeded
 from seismograph.ext.selenium.query import Contains
+from selenium.common.exceptions import NoSuchFrameException
 
 from utils.xpath_query import XPathQueryObject
 
@@ -64,7 +65,7 @@ class PaymentModal(selenium.Page):
         for i in range(0, len(frames)):
             try:
                 self.browser.switch_to.frame(i)
-            except:
+            except NoSuchFrameException:
                 continue
             els = self.browser.find_element_by_css_selector('body').find_elements_by_css_selector(sel)
 
