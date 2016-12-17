@@ -3,8 +3,8 @@ from seismograph.ext import selenium
 
 from pages.payment_modal import PaymentModal
 from utils.xpath_query import XPathQueryObject
-
-import time
+from selenium.webdriver.support.wait import WebDriverWait
+from seismograph.ext.selenium.exceptions import PollingTimeoutExceeded
 
 
 class FeedPage(selenium.Page):
@@ -33,22 +33,20 @@ class FeedPage(selenium.Page):
 
     payment_dropdown = selenium.PageElement(
         selenium.query(
-            selenium.query.UL,
-            _class='u-menu',
+            selenium.query.DIV,
+            _class='portlet __toolbar-pmnt',
         )
     )
 
     five_plus_payment_button = selenium.PageElement(
-        selenium.query(
-            selenium.query.A,
-            hrefattrs=selenium.query.contains('st.layer.srv=1&'),
+        XPathQueryObject(
+            '//li[contains(text(), "st.layer.srv=1&")]'
         )
     )
 
     smiles_payment_button = selenium.PageElement(
-        selenium.query(
-            selenium.query.A,
-            hrefattrs=selenium.query.contains('st.layer.srv=19&'),
+        XPathQueryObject(
+            '//li[contains(text(), "st.layer.srv=19&")]'
         )
     )
 
@@ -72,6 +70,9 @@ class FeedPage(selenium.Page):
         )
     )
 
+    smiles_payment_button_locator = '.portlet.__toolbar-pmnt .u-menu .u-menu_li:nth-child(8)'
+    five_plus_payment_button_locator = '.portlet.__toolbar-pmnt .u-menu .u-menu_li:nth-child(7)'
+
     five_plus_checkbox_1_locator = 'label[for="val_30"]'
 
     five_plus_checkbox_2_locator = 'label[for="val_-1"]'
@@ -80,11 +81,11 @@ class FeedPage(selenium.Page):
 
     smiles_cost_locator = 'span[data-name="prPrice"]'
 
-    smiles_checkbox_1_locator = 'label[for="val_5"]'
+    smiles_checkbox_1_locator = '#val_5'
 
-    smiles_checkbox_2_locator = 'label[for="val_30"]'
+    smiles_checkbox_2_locator = '#val_30'
 
-    smiles_checkbox_3_locator = 'label[for="val_-1"]'
+    smiles_checkbox_3_locator = '#val_-1'
 
     paid_functions_locator = '.nav-side .nav-side_i:nth-child(2)'
 
@@ -101,14 +102,26 @@ class FeedPage(selenium.Page):
         self.payment_dropdown.wait(timeout=3)
 
     def open_five_plus_payment_from_dropdown(self):
-        time.sleep(2)  # Wait for eventListeners
-        self.five_plus_payment_button.click()
-        self.payment_iframe.wait()
+        try:
+            self.five_plus_payment_button.wait(timeout=3)
+        except PollingTimeoutExceeded:
+            WebDriverWait(self.browser, 3).until(
+                lambda br: br.find_element_by_css_selector(self.five_plus_payment_button_locator)
+            )
+            five_plus_payment_button = self.browser.find_element_by_css_selector(self.five_plus_payment_button_locator)
+            five_plus_payment_button.click()
+            self.payment_iframe.wait(timeout=3)
 
     def open_smiles_payment_from_dropdown(self):
-        time.sleep(2)  # Wait for eventListeners
-        self.smiles_payment_button.click()
-        self.payment_iframe.wait()
+        try:
+            self.smiles_payment_button.wait(timeout=3)
+        except PollingTimeoutExceeded:
+            WebDriverWait(self.browser, 3).until(
+                lambda br: br.find_element_by_css_selector(self.smiles_payment_button_locator)
+            )
+            smiles_payment_button = self.browser.find_element_by_css_selector(self.smiles_payment_button_locator)
+            smiles_payment_button.click()
+            self.payment_iframe.wait(timeout=3)
 
     def open_toolbar_dropdown(self):
         self.toolbar_dropdown_button.click()
@@ -119,7 +132,6 @@ class FeedPage(selenium.Page):
         self.payment_iframe.wait()
 
     def switch_to_last_frame(self):
-        time.sleep(4)  # time for iframe to load data
         frames = self.browser.find_elements_by_css_selector('iframe')
         self.browser.switch_to.frame(len(frames) - 1)
 
@@ -130,6 +142,7 @@ class FeedPage(selenium.Page):
         return self.browser.find_element_by_css_selector(self.five_plus_cost_locator).get_attribute('innerHTML')
 
     def get_smiles_cost(self):
+
         return self.browser.find_element_by_css_selector(self.smiles_cost_locator).get_attribute('innerHTML')
 
     def click_five_plus_checkbox_by_index(self, index):
@@ -139,7 +152,11 @@ class FeedPage(selenium.Page):
         elif index == 2:
             locator = self.five_plus_checkbox_2_locator
         self.browser.find_element_by_css_selector(locator).click()
-        time.sleep(2)  # Time for iframe to load data
+        cost = self.get_five_plus_cost()
+        self.browser.find_element_by_css_selector(locator).click()
+        WebDriverWait(self.browser, 3).until(
+            lambda br: cost != self.get_five_plus_cost()
+        )
 
     def click_smiles_checkbox_by_index(self, index):
         locator = ''
@@ -149,8 +166,11 @@ class FeedPage(selenium.Page):
             locator = self.smiles_checkbox_2_locator
         elif index == 3:
             locator = self.smiles_checkbox_3_locator
+        cost = self.get_smiles_cost()
         self.browser.find_element_by_css_selector(locator).click()
-        time.sleep(2)  # Time for iframe to load data
+        WebDriverWait(self.browser, 3).until(
+            lambda br: cost != self.get_smiles_cost()
+        )
 
     def click_paid_functions(self):
         self.browser.find_element_by_css_selector(self.paid_functions_locator).click()
