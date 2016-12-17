@@ -1,6 +1,6 @@
 from seismograph.ext import selenium
 from seismograph.ext.selenium.exceptions import PollingTimeoutExceeded
-from seismograph.ext.selenium.query import QueryObject, QueryResult, logger
+from seismograph.ext.selenium.query import QueryObject, QueryResult
 from seismograph.utils.common import waiting_for
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
@@ -110,12 +110,6 @@ def get_execute_method(proxy, list_result):
 
 
 def execute(proxy, xpath, list_result=False, disable_polling=False):
-    # logger.debug(
-    #     u'Execute xpath query "{}", list result "{}"'.format(
-    #         xpath, 'Yes' if list_result else 'No',
-    #     ),
-    # )
-
     proxy.reason_storage['last xpath query'] = xpath
 
     if disable_polling:
