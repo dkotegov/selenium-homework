@@ -83,9 +83,6 @@ class PaymentModal(selenium.Page):
             return self.browser.find_elements_by_css_selector('a.nav-side_i')
 
         def wait_for_tab_link():
-            print(index)
-            print(get_tab_links())
-            print(index < len(get_tab_links()))
             return index < len(get_tab_links())
 
         waiting_for(
