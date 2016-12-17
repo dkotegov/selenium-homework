@@ -15,3 +15,7 @@ class AuthPage(selenium.Page):
         self.login_field.set(login)
         self.password_field.set(password)
         self.submit_button.click()
+        self.browser.waiting_for(
+            lambda: not self.browser.title.startswith(self.TITLE)
+        )
+

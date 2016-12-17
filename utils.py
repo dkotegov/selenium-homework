@@ -59,7 +59,6 @@ def wait_value(driver, xpath, value, timeout=None):
     return driver.waiting_for(lambda: driver.find_element_by_xpath(xpath).text == value, timeout)
 
 
-@repeat_on_error
 def wait_screen_change(driver, xpath, timeout=None):
     size = driver.find_element_by_xpath(xpath).size['width']
     return driver.waiting_for(lambda: driver.find_element_by_xpath(xpath).size['width'] != size, timeout)

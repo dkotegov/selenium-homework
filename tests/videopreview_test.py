@@ -7,28 +7,32 @@ from tests.base_case import BaseCase
 
 suite = seismograph.Suite(__name__, require=['selenium'])
 
-TEST_CHANNEL_ID = '1567208'
-TEST_VIDEO_ID = '218249104011'
 
 
 @suite.register
 class VideoOpenCase(BaseCase):
+    VIDEO_ID = '206699762152'
+    CHANNEL_ID = '1567208'
+
     def test_openclose(self):
+        
         videos_page = ChannelPage(self.browser)
-        videos_page.open(id=TEST_CHANNEL_ID)
-        videos_page.open_video_by_id(TEST_VIDEO_ID)
-        self.assertion.is_in(TEST_VIDEO_ID, self.browser.current_url)
+        videos_page.open(id=self.CHANNEL_ID)
+        videos_page.open_video_by_id(self.VIDEO_ID)
+        self.assertion.is_in(self.VIDEO_ID, self.browser.current_url)
         videoplayer_page = VideoPage(self.browser)
         videoplayer_page.close_video()
-        self.assertion.is_not_in(TEST_VIDEO_ID, self.browser.current_url)
+        self.assertion.is_not_in(self.VIDEO_ID, self.browser.current_url)
 
 
 @suite.register
 class VideoPreviewCase(BaseCase):
+    VIDEO_ID = '218249104011'
+
     def setup(self):
         super(VideoPreviewCase, self).setup()
         self.videoplayer_page = VideoPage(self.browser)
-        self.videoplayer_page.open(id=TEST_VIDEO_ID)
+        self.videoplayer_page.open(id=self.VIDEO_ID)
 
     def test_open_in_newtab(self):
         url_related_video = self.videoplayer_page.get_url_related_video()

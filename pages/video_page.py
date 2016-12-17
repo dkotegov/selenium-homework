@@ -252,6 +252,7 @@ class VideoPage(selenium.Page):
         self.browser.switch_to_window(self.browser.window_handles[1])
         self.browser.get(link)
 
+    @utils.repeat_on_error
     def open_widescreen(self):
         self.widescreen_mode.click()
         utils.wait_screen_change(self.browser, self.VIDEO_WINDOW)
