@@ -1,14 +1,15 @@
 from seismograph.ext import selenium
+
 from utils import query
+
 
 class AuthPage(selenium.Page):
     TITLE = 'OK.RU'
     __url_path__ = '/'
 
-
     login_field = query('INPUT', name="st.email")
     password_field = query('INPUT', name="st.password")
-    submit_button = query('INPUT', _class = "button-pro form-actions_yes")
+    submit_button = query('INPUT', _class="button-pro form-actions_yes")
 
     def signin(self, login, password):
         self.login_field.set(login)

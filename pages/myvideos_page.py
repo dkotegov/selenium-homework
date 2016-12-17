@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
-import utils
 from seismograph.ext import selenium
+
+import utils
 from utils import query
 
+
 class VideoActionList(selenium.PageItem):
-    create_channel_button = query( 'A', _id ='vv_btn_create_channel_left_menu')
+    create_channel_button = query('A', _id='vv_btn_create_channel_left_menu')
+
 
 class CreateChannelDialog(selenium.PageItem):
-    channel_name_input = query("INPUT", name = 'st.vv_albumName')
-    submit_button =  query("INPUT", value = u'Создать канал')
+    channel_name_input = query("INPUT", name='st.vv_albumName')
+    submit_button = query("INPUT", value=u'Создать канал')
 
     def create_channel(self, name):
         self.channel_name_input.set(name)
@@ -30,6 +33,3 @@ class MyVideosPage(selenium.Page):
     def create_channel(self, name):
         self.main_create_channel_button.click()
         self.create_channel_dialog.create_channel(name)
-
-
-

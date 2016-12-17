@@ -9,7 +9,7 @@ from tests.base_case import BaseCase
 suite = seismograph.Suite(__name__, require=['selenium'])
 
 
-@suite.register
+# @suite.register
 class CreateChannelCase(BaseCase):
     TEST_CHANNEL1 = 'TEST_CHANNEL1'
     TEST_CHANNEL2 = 'TEST_CHANNEL2'
@@ -32,7 +32,7 @@ class CreateChannelCase(BaseCase):
         self.channel_page.delete_channel()
         self.assertion.is_not_in(self.TEST_CHANNEL2, self.browser.page_source)
 
-@suite.register
+# @suite.register
 class AddVideoCase(BaseCase):
     FIRST_CHANNEL_ID = '1533672'
     SECOND_CHANNEL_ID = '1566696'
@@ -92,7 +92,7 @@ class ChangeChannelCase(BaseCase):
         self.assertion.equal(channel_page.channel_name, NEW_CHANNEL_NAME)
         channel_page.edit_channel(CHANNEL_NAME)
 
-    def test_add_tags(self):#TODO исправить
+    def test_add_tags(self):
         CHANNEL_ID = '1534184'
         NEW_TAG = 'TAGTAGTAG'
         VIDEO_NAME = 'VIDEO_TO_TEST_TAGS'

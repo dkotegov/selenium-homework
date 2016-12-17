@@ -10,9 +10,9 @@ suite = seismograph.Suite(__name__, require=['selenium'])
 TEST_CHANNEL_ID = '1567208'
 TEST_VIDEO_ID = '218249104011'
 
+
 @suite.register
 class VideoOpenCase(BaseCase):
-
     def test_openclose(self):
         videos_page = ChannelPage(self.browser)
         videos_page.open(id=TEST_CHANNEL_ID)
@@ -22,9 +22,9 @@ class VideoOpenCase(BaseCase):
         videoplayer_page.close_video()
         self.assertion.is_not_in(TEST_VIDEO_ID, self.browser.current_url)
 
+
 @suite.register
 class VideoPreviewCase(BaseCase):
-
     def setup(self):
         super(VideoPreviewCase, self).setup()
         self.videoplayer_page = VideoPage(self.browser)
@@ -33,7 +33,7 @@ class VideoPreviewCase(BaseCase):
     def test_open_in_newtab(self):
         url_related_video = self.videoplayer_page.get_url_related_video()
         self.videoplayer_page.open_related_video_in_new_tab()
-        self.assertion.equal(url_related_video, self.browser.current_url) #bug in ok.ru here
+        self.assertion.equal(url_related_video, self.browser.current_url)  # bug in ok.ru here
 
     def test_video_plays(self):
         # self.videoplayer_page.pause_video()
@@ -52,7 +52,6 @@ class VideoPreviewCase(BaseCase):
         self.assertion.not_equal(next_video_url, self.browser.current_url)
 
     def test_video_rewind(self):
-
         self.videoplayer_page.pause_video()
         begin_time = self.videoplayer_page.get_video_play_time()
         self.videoplayer_page.rewind_video()

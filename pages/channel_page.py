@@ -37,8 +37,9 @@ class EditVideoDialog(selenium.PageItem):
     def add_tag(self, tag):
         self.tags_input.set(tag)
 
+    @utils.repeat_on_error
     def delete_tag(self, tag):
-        utils.wait_xpath(self.browser,self.TAG_INPUT_XPATH)
+        utils.wait_xpath(self.browser, self.TAG_INPUT_XPATH)
         delete_elem = utils.wait_xpath(self.browser, self.DELETE_LAST_TAG_XPATH)
         self.browser.execute_script('arguments[0].click();', delete_elem._wrapped)
 
@@ -63,7 +64,7 @@ class AddVideoDialog(selenium.PageItem):
 class Counters(selenium.PageItem):
     __area__ = selenium.query(
         selenium.query.DIV,
-        _class = 'jcol'
+        _class='jcol'
     )
     SUBSCRPTIONS_COUNT_XPATH = '//i[contains(@class,"mml_ic_friends")]/..'
     VIDEOS_COUNT_XPATH = '//i[contains(@class,"vl_ic_channel")]/..'
@@ -98,7 +99,6 @@ class ChannelPage(selenium.Page):
     VIDEO_LINK_XPATH = '//a[@title="{}"]'
     IS_SUBSCRIBE_XPATH = '//a[starts-with(@id,"vv_btn_album_subscribe") and @class="vl_btn invisible"]'
     NOT_SUBSCRIBE_XPATH = '//a[contains(@class,"invisible") and contains(@class , "__unsubscribe")]'
-
 
     delete_button = utils.query('SPAN', _class='tico_img vl_ic_delete')
     edit_video_buttons = utils.query('A', _class='vid-card_ac_i ic vl_ic_edit')
@@ -161,16 +161,15 @@ class ChannelPage(selenium.Page):
         edit_button = utils.wait_xpath(self.browser, self.EDIT_VIDEO_XPATH_TEMPLATE.format(name))
         utils.js_click(self.browser, edit_button)
 
-
     def edit_video(self, name, title=None, description=None, new_tags=None, remove_tags=None):
         self.click_edit_video(name)
-        if title is not None:
+        if title:
             utils.replace_text(self.edit_video_dialog.title_input, title)
-        if description is not None:
+        if description:
             utils.replace_text(self.edit_video_dialog.description_input, description)
-        if new_tags is not None:
+        if new_tags:
             self.edit_video_dialog.add_tag(new_tags)
-        if remove_tags is not None:
+        if remove_tags:
             self.edit_video_dialog.delete_tag(remove_tags)
         self.edit_video_dialog.submit_button.click()
         self.browser.refresh()
@@ -191,21 +190,21 @@ class ChannelPage(selenium.Page):
         return self.browser.find_elements_by_xpath(self.VIDEOS_LINKS_XPATH)
 
     def subscribe(self):
-        utils.js_click(self.browser,self.subscribe_button)
+        utils.js_click(self.browser, self.subscribe_button)
 
     def unsubscribe(self):
         self.unsubscribe_button.click()
 
     def open_video_by_id(self, video_id):
-        link = self.browser.div( data_id=video_id)
+        link = self.browser.div(data_id=video_id)
         link.click()
         utils.wait_change_url(self.browser)
 
     def is_subscribe(self):
-        return len( utils.wait_many_xpath(self.browser, self.IS_SUBSCRIBE_XPATH)) > 0
+        return len(utils.wait_many_xpath(self.browser, self.IS_SUBSCRIBE_XPATH)) > 0
 
     def is_not_subscribe(self):
-        return len( utils.wait_many_xpath(self.browser, self.NOT_SUBSCRIBE_XPATH)) > 0
+        return len(utils.wait_many_xpath(self.browser, self.NOT_SUBSCRIBE_XPATH)) > 0
 
     def get_videos_titles(self):
         return [v.get_attribute('title') for v in self.get_videos_elements()]
