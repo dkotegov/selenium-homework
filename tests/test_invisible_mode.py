@@ -57,19 +57,57 @@ class LeftColumnTopCardUser(selenium.Page):
 
 
 class LeftColumnTopCardUserMobile(selenium.Page):
-    text_turn_down_invisible = u"Невидимка"
-    invisible_mode = 'document.getElementById("userInvisibleSettingItemCheckBox").click()'
+    text_turn_down_invisible = u"Выключить невидимку"
+
+    profile_link = selenium.PageElement(
+        selenium.query(
+            selenium.query.A,
+            _class="lnk js-title-username profile-link",
+        )
+    )
+
+    enable_invisible_btn = selenium.PageElement(
+        selenium.query(
+            selenium.query.A,
+            title=u"Включить невидимку",
+        )
+    )
+
+    disnable_invisible_btn = selenium.PageElement(
+        selenium.query(
+            selenium.query.A,
+            title=text_turn_down_invisible,
+        )
+    )
 
     invisible_toggler = selenium.PageElement(
         selenium.query(
             selenium.query.INPUT,
-            _class="tumbler_target nofasttouch js-ajax-checkbox",
+            type="checkbox",
         ),
     )
+
+    def disable_invisible_mode(self):
+        return self.invisible_toggler.first()
 
     def wait_for_invisible_toggler(self):
         WebDriverWait(selenium.Page.browser, 3).until(
             lambda br: self.invisible_toggler.first()
+        )
+
+    def wait_for_profile_link(self):
+        WebDriverWait(selenium.Page.browser, 3).until(
+            lambda br: self.profile_link.first()
+        )
+
+    def wait_for_enable_invisible_btn(self):
+        WebDriverWait(selenium.Page.browser, 3).until(
+            lambda br: self.enable_invisible_btn.first()
+        )
+
+    def wait_for_disable_invisible_btn(self):
+        WebDriverWait(selenium.Page.browser, 3).until(
+            lambda br: self.disnable_invisible_btn.first()
         )
 
 
@@ -110,6 +148,8 @@ class CheckInvisibleModeFromNavbar(WebOkSuite):
         navbar = UpperNavbar(browser)
         navbar.click_user_settings_icon.click()
         navbar.check_invisible_mode().click()
+        browser.refresh()
+        user_card.wait_for_invisible_toggler()
         self.assertion.text_exist(browser, user_card.text_turn_down_invisible)
 
 
@@ -118,9 +158,10 @@ class CheckInvisibleModeFromMainPage(WebOkSuite):
     @seismograph.step(3, 'Check invisible from main page')
     def check_text(self, browser):
         user_card = LeftColumnTopCardUser(browser)
-        user_card.wait_for_invisible_toggler()
         browser.execute_script(user_card.check_invisible_mode)
+        browser.refresh()
         user_card.wait_for_invisible_toggler()
+        browser.refresh()
         self.assertion.text_exist(browser, user_card.text_turn_down_invisible)
 
 
@@ -136,14 +177,15 @@ class CheckInvisibleModeFromMobileVersion(selenium.Case):
 
         user_card = LeftColumnTopCardUserMobile(browser)
         user_card.wait_for_invisible_toggler()
-        if user_card.invisible_toggler.first().is_selected():
-            browser.execute_script(user_card.invisible_mode)
-            browser.refresh()
+        user_card.wait_for_profile_link()
+        user_card.profile_link.click()
+        if user_card.disable_invisible_mode().is_selected():
+            user_card.wait_for_disable_invisible_btn()
+            user_card.disnable_invisible_btn.click()
 
     @seismograph.step(2, 'Check invisible mode for mobile version')
     def check_text(self, browser):
         user_card = LeftColumnTopCardUserMobile(browser)
-        browser.execute_script(user_card.invisible_mode)
-        browser.refresh()
-        user_card.wait_for_invisible_toggler()
-        assert user_card.invisible_toggler.first().is_selected()
+        user_card.wait_for_enable_invisible_btn()
+        user_card.enable_invisible_btn.click()
+        self.assertion.text_exist(browser, user_card.text_turn_down_invisible)
