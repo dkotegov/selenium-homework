@@ -1,24 +1,22 @@
 # -*- coding: utf-8 -*-
 
-import sys
+import sys, getopt
+import unittest
+import tests.settings
+from tests.group_messages_test import GroupMessagesTest
+from tests.audio_messages_test import AudioMessagesTest
+from tests.video_messages_test import VideoMessagesTest
+from tests.simple_messages_test import SimpleMessagesTest
 
-from tests.car_showrooms.add_showroom_test import AddShowroomFormTest
-from tests.car_showrooms.list_showroom_test import ShowroomListTest
-from tests.car_showrooms.list_special_offers_test import SpecialOffersListTest
-from tests.car_showrooms.search_showroom_tests import *
 
 if __name__ == '__main__':
-
+    tests.settings.Settings.get_login() and tests.settings.Settings.get_password()
     suite = unittest.TestSuite((
-        unittest.makeSuite(RegionSelectFormTest),
-        unittest.makeSuite(SelectCarModelTest),
-        unittest.makeSuite(SelectStationTest),
-        unittest.makeSuite(IsOfficialCheckboxTest),
-        unittest.makeSuite(SearchFormTest),
-        unittest.makeSuite(ShowroomListTest),
-        unittest.makeSuite(SpecialOffersListTest),
-        unittest.makeSuite(AddShowroomFormTest),
+        unittest.makeSuite(AudioMessagesTest),
+        unittest.makeSuite(SimpleMessagesTest),
+        unittest.makeSuite(GroupMessagesTest),
+        unittest.makeSuite(VideoMessagesTest)
+
     ))
     result = unittest.TextTestRunner().run(suite)
-
     sys.exit(not result.wasSuccessful())
