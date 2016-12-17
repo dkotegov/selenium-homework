@@ -5,6 +5,7 @@ from pages.payment_modal import PaymentModal
 from utils.xpath_query import XPathQueryObject
 from selenium.webdriver.support.wait import WebDriverWait
 from seismograph.ext.selenium.exceptions import PollingTimeoutExceeded
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 
 
 class FeedPage(selenium.Page):
@@ -70,12 +71,19 @@ class FeedPage(selenium.Page):
         )
     )
 
+    frame_wrapper = 'modal-new_cnt'
+
     smiles_payment_button_locator = '.portlet.__toolbar-pmnt .u-menu .u-menu_li:nth-child(8)'
+
     five_plus_payment_button_locator = '.portlet.__toolbar-pmnt .u-menu .u-menu_li:nth-child(7)'
 
-    five_plus_checkbox_1_locator = 'label[for="val_30"]'
+    five_plus_checkbox_1_locator = '#val_30'
 
-    five_plus_checkbox_2_locator = 'label[for="val_-1"]'
+    five_plus_checkbox_2_locator = '#val_-1'
+
+    smiles_cost_wrapper_locator = '.pf_info_tx.pf_price'
+
+    five_plus_cost_wrapper_locator = '.pf_info_tx.pf_price'
 
     five_plus_cost_locator = 'span[data-name="prPrice"]'
 
@@ -132,6 +140,12 @@ class FeedPage(selenium.Page):
         self.payment_iframe.wait()
 
     def switch_to_last_frame(self):
+        try:
+            WebDriverWait(self.browser, 3).until(
+                lambda br: br.find_element_by_css_selector(self.frame_wrapper)
+            )
+        except TimeoutException:
+            self.payment_iframe.wait(timeout=3)
         frames = self.browser.find_elements_by_css_selector('iframe')
         self.browser.switch_to.frame(len(frames) - 1)
 
@@ -139,26 +153,40 @@ class FeedPage(selenium.Page):
         self.browser.switch_to_default_content()
 
     def get_five_plus_cost(self):
-        return self.browser.find_element_by_css_selector(self.five_plus_cost_locator).get_attribute('innerHTML')
+        try:
+            WebDriverWait(self.browser, 1).until(
+                lambda br: br.find_element_by_css_selector(self.five_plus_cost_wrapper_locator)
+            )
+            cost = self.browser.find_element_by_css_selector(self.five_plus_cost_wrapper_locator).text.split(' ')[1]
+        except StaleElementReferenceException:
+            cost = self.browser.find_element_by_css_selector(self.five_plus_cost_locator).text
+        return cost
 
     def get_smiles_cost(self):
+        try:
+            WebDriverWait(self.browser, 1).until(
+                lambda br: br.find_element_by_css_selector(self.smiles_cost_wrapper_locator)
+            )
+            cost = self.browser.find_element_by_css_selector(self.smiles_cost_wrapper_locator).text.split(' ')[1]
+        except StaleElementReferenceException:
+            cost = self.browser.find_element_by_css_selector(self.smiles_cost_locator).text
+        return cost
 
-        return self.browser.find_element_by_css_selector(self.smiles_cost_locator).get_attribute('innerHTML')
-
-    def click_five_plus_checkbox_by_index(self, index):
+    def click_five_plus_checkbox_by_index(self, index, expected_cost):
         locator = ''
         if index == 1:
             locator = self.five_plus_checkbox_1_locator
         elif index == 2:
             locator = self.five_plus_checkbox_2_locator
         self.browser.find_element_by_css_selector(locator).click()
-        cost = self.get_five_plus_cost()
-        self.browser.find_element_by_css_selector(locator).click()
-        WebDriverWait(self.browser, 3).until(
-            lambda br: cost != self.get_five_plus_cost()
-        )
+        try:
+            WebDriverWait(self.browser, 3).until(
+                lambda br: br.find_element_by_css_selector(self.five_plus_cost_locator).text == expected_cost
+            )
+        except TimeoutException:
+            pass  # Цены на разные типы покупки могут быть одинаковые
 
-    def click_smiles_checkbox_by_index(self, index):
+    def click_smiles_checkbox_by_index(self, index, expected_cost):
         locator = ''
         if index == 1:
             locator = self.smiles_checkbox_1_locator
@@ -166,11 +194,13 @@ class FeedPage(selenium.Page):
             locator = self.smiles_checkbox_2_locator
         elif index == 3:
             locator = self.smiles_checkbox_3_locator
-        cost = self.get_smiles_cost()
         self.browser.find_element_by_css_selector(locator).click()
-        WebDriverWait(self.browser, 3).until(
-            lambda br: cost != self.get_smiles_cost()
-        )
+        try:
+            WebDriverWait(self.browser, 3).until(
+                lambda br: br.find_element_by_css_selector(self.five_plus_cost_locator).text == expected_cost
+            )
+        except TimeoutException:
+            pass  # Цены на разные типы покупки могут быть одинаковые
 
     def click_paid_functions(self):
         self.browser.find_element_by_css_selector(self.paid_functions_locator).click()
