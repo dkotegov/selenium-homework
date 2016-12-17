@@ -36,8 +36,6 @@ class VideoPreviewCase(BaseCase):
         self.assertion.equal(url_related_video, self.browser.current_url)  # bug in ok.ru here
 
     def test_video_plays(self):
-        # self.videoplayer_page.pause_video()
-        # self.videoplayer_page.rewind_video(0)
         time1 = self.videoplayer_page.get_video_play_time()
         self.videoplayer_page.play_video_during(1)
         time2 = self.videoplayer_page.get_video_play_time()

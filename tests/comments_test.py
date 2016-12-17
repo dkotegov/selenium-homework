@@ -106,7 +106,6 @@ class AddCommentCase(BaseCase):
         self.browser.refresh()
 
         self.assertion.equal(COMMENT, self.video_page.last_comment.content)
-        self.video_page.last_comment.remove()
 
     def test_add_comment(self):
         VIDEO_ID = '206460097000'
@@ -122,5 +121,5 @@ class AddCommentCase(BaseCase):
 
     def teardown(self):
         self.video_page.last_comment.remove()
-        self.assertion.true(self.last_comment.is_deleted)
+        self.assertion.true(self.video_page.last_comment.is_deleted)
         super(AddCommentCase, self).teardown()

@@ -8,8 +8,8 @@ from tests import (
 )
 suites = [
     channels_test.suite,
-    # videopreview_test.suite,
-    # comments_test.suite
+    videopreview_test.suite,
+    comments_test.suite
 ]
 
 if __name__ == '__main__':
