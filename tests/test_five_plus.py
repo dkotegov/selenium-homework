@@ -2,10 +2,9 @@
 
 import seismograph
 from seismograph.ext import selenium
-from pages.auth_page import AuthPage
 from pages.feed_page import FeedPage
 from pages.profile_page import ProfilePage
-from utils.auth_manager import AuthManager
+from tests.common_steps import AuthStep
 
 suite = selenium.Suite(__name__)
 
@@ -16,19 +15,10 @@ COST_1 = u'60'
 COST_2 = u'50'
 
 
-class AuthStep(selenium.Case):
-    """Базовый класс со степом входа в ok.ru"""
-    @seismograph.step(1, 'Login to ok.ru')
-    def auth(self, browser):
-        auth_page = AuthPage(browser)
-        auth_page.open()
-        auth_page.auth(AuthManager.get_login(),
-                       AuthManager.get_password())
-
-
 @suite.register
 class TestFivePlusAvailableFromToolbar(AuthStep, selenium.Case):
     """Доступность покупки функции 5+ из меню платных функций"""
+
     @seismograph.step(2, 'Check is 5+ available')
     def check_is_available(self, browser):
         feed_page = FeedPage(browser)
@@ -43,6 +33,7 @@ class TestFivePlusAvailableFromToolbar(AuthStep, selenium.Case):
 @suite.register
 class TestFivePlusChangeCost(AuthStep, selenium.Case):
     """Меняется сумма при нажатии на нужный радио баттон в модальном окне покупки"""
+
     @seismograph.step(2, 'Check is 5+ iframe change cost')
     def check_is_change_cost(self, browser):
         feed_page = FeedPage(browser)
@@ -63,6 +54,7 @@ class TestFivePlusChangeCost(AuthStep, selenium.Case):
 @suite.register
 class TestFivePlusPaymentAvailable(AuthStep, selenium.Case):
     """Доступность покупки функции 5+ из дропдауна платных функций"""
+
     @seismograph.step(2, 'Check is 5+ payment available from dropdown')
     def check_is_available(self, browser):
         feed_page = FeedPage(browser)
@@ -75,6 +67,7 @@ class TestFivePlusPaymentAvailable(AuthStep, selenium.Case):
 @suite.register
 class TestAddFivePlusForPhoto(AuthStep, selenium.Case):
     """Проставляется оценка 5+ при нажатии на 5+ под фотографией"""
+
     @seismograph.step(2, 'Check is 5+ available under the photo')
     def check_is_available(self, browser):
         profile_page = ProfilePage(browser)
@@ -86,6 +79,7 @@ class TestAddFivePlusForPhoto(AuthStep, selenium.Case):
 @suite.register
 class TestOpenFivePlusPaymentFromPhoto(AuthStep, selenium.Case):
     """Открытие модального окна с покупкой при нажатии на 5+ под фотографией"""
+
     @seismograph.step(2, 'Check is 5+ iframe available from the photo')
     def check_is_available(self, browser):
         profile_page = ProfilePage(browser)

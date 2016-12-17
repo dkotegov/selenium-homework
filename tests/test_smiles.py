@@ -2,31 +2,20 @@
 
 import seismograph
 from seismograph.ext import selenium
-from pages.auth_page import AuthPage
 from pages.feed_page import FeedPage
-from utils.auth_manager import AuthManager
+from tests.common_steps import AuthStep
 
 suite = selenium.Suite(__name__)
-
 
 DEFAULT_COST = u'60'
 COST_1 = u'20'
 COST_2 = u'50'
 
 
-class AuthStep(selenium.Case):
-    """Базовый класс со степом входа в ok.ru"""
-    @seismograph.step(1, 'Login to ok.ru')
-    def auth(self, browser):
-        auth_page = AuthPage(browser)
-        auth_page.open()
-        auth_page.auth(AuthManager.get_login(),
-                       AuthManager.get_password())
-
-
 @suite.register
 class TestSmilesAvailableFromToolbar(AuthStep, selenium.Case):
     """Дуступна ли покупка смайликов и стикеров из меню платных функций"""
+
     @seismograph.step(2, 'Check is smiles available from the paid functions menu')
     def check_is_available(self, browser):
         feed_page = FeedPage(browser)
@@ -41,6 +30,7 @@ class TestSmilesAvailableFromToolbar(AuthStep, selenium.Case):
 @suite.register
 class TestSmilesChangeCost(AuthStep, selenium.Case):
     """Меняется сумма при нажатии на нужный радио баттон в модальном окне покупки"""
+
     @seismograph.step(2, 'Check is smiles iframe changes cost')
     def check_is_cost_change(self, browser):
         feed_page = FeedPage(browser)
@@ -61,6 +51,7 @@ class TestSmilesChangeCost(AuthStep, selenium.Case):
 @suite.register
 class TestSmilesPaymentAvailable(AuthStep, selenium.Case):
     """Доступность покупки функции покупки смайликов и стикеров из дропдауна платных функций"""
+
     @seismograph.step(2, 'Check is smiles payment available from dropdown')
     def check_is_available(self, browser):
         feed_page = FeedPage(browser)

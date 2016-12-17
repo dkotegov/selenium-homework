@@ -1,20 +1,10 @@
 # coding=utf-8
 import seismograph
 from seismograph.ext import selenium
-from pages.auth_page import AuthPage
 from pages.feed_page import FeedPage
-from utils.auth_manager import AuthManager
+from tests.common_steps import AuthStep
 
 suite = selenium.Suite(__name__)
-
-
-class AuthStep(selenium.Case):
-    @seismograph.step(1, 'Login to ok.ru')
-    def auth(self, browser):
-        auth_page = AuthPage(browser)
-        auth_page.open()
-        auth_page.auth(AuthManager.get_login(),
-                       AuthManager.get_password())
 
 
 class OpenPageStep(selenium.Case):
