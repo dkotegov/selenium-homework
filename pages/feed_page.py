@@ -81,10 +81,6 @@ class FeedPage(selenium.Page):
 
     five_plus_checkbox_2_locator = '#val_-1'
 
-    smiles_cost_wrapper_locator = '.pf_info_tx.pf_price'
-
-    five_plus_cost_wrapper_locator = '.pf_info_tx.pf_price'
-
     five_plus_cost_locator = 'span[data-name="prPrice"]'
 
     smiles_cost_locator = 'span[data-name="prPrice"]'
@@ -147,26 +143,16 @@ class FeedPage(selenium.Page):
         self.browser.switch_to_default_content()
 
     def get_five_plus_cost(self):
-        self.switch_to_last_frame()
-        try:
-            WebDriverWait(self.browser, 5).until(
-                lambda br: br.find_element_by_css_selector(self.five_plus_cost_wrapper_locator)
-            )
-            cost = self.browser.find_element_by_css_selector(self.five_plus_cost_wrapper_locator).text.split(' ')[1]
-        except (StaleElementReferenceException, TimeoutException):
-            cost = self.browser.find_element_by_css_selector(self.five_plus_cost_locator).text
-        return cost
+        WebDriverWait(self.browser, 3).until(
+            lambda br: br.find_element_by_css_selector(self.five_plus_cost_locator)
+        )
+        return self.browser.find_element_by_css_selector(self.five_plus_cost_locator).text
 
     def get_smiles_cost(self):
-        self.switch_to_last_frame()
-        try:
-            WebDriverWait(self.browser, 5).until(
-                lambda br: br.find_element_by_css_selector(self.smiles_cost_wrapper_locator)
-            )
-            cost = self.browser.find_element_by_css_selector(self.smiles_cost_wrapper_locator).text.split(' ')[1]
-        except (StaleElementReferenceException, TimeoutException):
-            cost = self.browser.find_element_by_css_selector(self.smiles_cost_locator).text
-        return cost
+        WebDriverWait(self.browser, 3).until(
+            lambda br: br.find_element_by_css_selector(self.smiles_cost_locator)
+        )
+        return self.browser.find_element_by_css_selector(self.smiles_cost_locator).text
 
     def click_five_plus_checkbox_by_index(self, index, expected_cost):
         locator = ''
@@ -175,7 +161,6 @@ class FeedPage(selenium.Page):
         elif index == 2:
             locator = self.five_plus_checkbox_2_locator
         self.browser.find_element_by_css_selector(locator).click()
-        self.switch_to_last_frame()
         try:
             WebDriverWait(self.browser, 3).until(
                 lambda br: br.find_element_by_css_selector(self.five_plus_cost_locator).text == expected_cost
@@ -192,7 +177,6 @@ class FeedPage(selenium.Page):
         elif index == 3:
             locator = self.smiles_checkbox_3_locator
         self.browser.find_element_by_css_selector(locator).click()
-        self.switch_to_last_frame()
         try:
             WebDriverWait(self.browser, 3).until(
                 lambda br: br.find_element_by_css_selector(self.five_plus_cost_locator).text == expected_cost
