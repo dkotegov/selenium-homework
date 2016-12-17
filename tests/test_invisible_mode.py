@@ -57,6 +57,7 @@ class LeftColumnTopCardUser(selenium.Page):
 
 
 class LeftColumnTopCardUserMobile(selenium.Page):
+    text_turn_down_invisible = u"Невидимка"
     invisible_mode = 'document.getElementById("userInvisibleSettingItemCheckBox").click()'
 
     invisible_toggler = selenium.PageElement(
@@ -120,7 +121,6 @@ class CheckInvisibleModeFromMainPage(WebOkSuite):
         user_card.wait_for_invisible_toggler()
         browser.execute_script(user_card.check_invisible_mode)
         user_card.wait_for_invisible_toggler()
-        browser.refresh()
         self.assertion.text_exist(browser, user_card.text_turn_down_invisible)
 
 
@@ -144,6 +144,6 @@ class CheckInvisibleModeFromMobileVersion(selenium.Case):
     def check_text(self, browser):
         user_card = LeftColumnTopCardUserMobile(browser)
         browser.execute_script(user_card.invisible_mode)
-        user_card.wait_for_invisible_toggler()
         browser.refresh()
+        user_card.wait_for_invisible_toggler()
         assert user_card.invisible_toggler.first().is_selected()
