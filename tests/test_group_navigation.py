@@ -19,21 +19,13 @@ class GroupsPage(Page):
 
     @property
     def scroll_to_bottom(self):
-        while True:
-            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-
-            try:
-                WebDriverWait(self.driver, 10).until(
-                    lambda x: x.find_element_by_xpath(
-                        "//*[contains(@class,'stream-items')]/li[contains(@class,'stream-item')][" + str(31) + "]"))
-            except:
-                break
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         try:
             toTopButton = WebDriverWait(self.driver, 30, 0.1).until(
                 lambda d: d.find_element_by_id("scrollToTop")
             )
             return True
-        except:
+        except TimeoutException:
             return False
 
     @property
@@ -50,7 +42,6 @@ class GroupsPage(Page):
             lambda d: d.find_element_by_xpath("//a[@class='create-group-dialog_i']")
         )
         self.driver.find_element_by_xpath("//div[@class='create-group-dialog_cnt']").click()
-        # print("create publci page tapped")
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_id('hook_Form_PopLayerCreateAltGroupDialog2Form')
         )
@@ -58,7 +49,6 @@ class GroupsPage(Page):
         self.driver.find_element_by_id("field_description").send_keys(u'...')
         Select(self.driver.find_element_by_id('field_pageMixedCategory')).select_by_value('subcatVal12005')
         self.driver.find_element_by_id("hook_FormButton_button_create").click()
-        # print("submit")
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath("//div[@class='posting-form_itx_dec itx_w']")
         )

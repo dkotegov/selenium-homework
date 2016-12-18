@@ -7,9 +7,11 @@ from test_auth import AuthPage
 
 
 class BaseCase(seismograph.Case):
-    USERLOGIN = os.environ['LOGIN']
+    USERLOGIN = 'technopark30'
+    #os.environ['LOGIN']
     USERNAME = u'Евдакия Фёдорова'
-    PASSWORD = os.environ['PASSWORD']
+    PASSWORD = 'testQA1'
+    #os.environ['PASSWORD']
 
     def setup(self):
         browser = os.environ.get('BROWSER', 'FIREFOX')
