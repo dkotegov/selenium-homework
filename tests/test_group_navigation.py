@@ -20,13 +20,9 @@ class GroupsPage(Page):
     @property
     def scroll_to_bottom(self):
         self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        try:
-            toTopButton = WebDriverWait(self.driver, 30, 0.1).until(
-                lambda d: d.find_element_by_id("scrollToTop")
-            )
-            return True
-        except TimeoutException:
-            return False
+        toTopButton = WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_id("scrollToTop")
+        )
 
     @property
     def open_group(self):
@@ -137,8 +133,7 @@ class NavigationGroupTest(BaseCase):
         self.groups_page.open()
 
     def test_scroll(self):
-        scrolled = self.groups_page.scroll_to_bottom
-        self.assertion.equal(scrolled, True)
+        self.groups_page.scroll_to_bottom
 
     def test_groups_open(self):
         search = self.groups_page.form
