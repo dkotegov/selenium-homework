@@ -53,12 +53,11 @@ class NewPost(Component):
         self.driver.find_element_by_xpath(self.MUSIC_SEARCH).send_keys(search_text)
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.TRACK)
-        )
-        self.driver.find_element_by_xpath(self.TRACK).click()
+        ).click()
+
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.BUTTON_ADD_TRACK)
-        )
-        self.driver.find_element_by_xpath(self.BUTTON_ADD_TRACK).click()
+        ).click()
 
     def set_no_comment(self):
         self.driver.find_element_by_xpath(self.ICO_SETTINGS).click()
@@ -70,8 +69,7 @@ class NewPost(Component):
     def submit(self):
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.SUBMIT)
-        )
-        self.driver.find_element_by_xpath(self.SUBMIT).click()
+        ).click()
 
 
 class LastPost(Component):
@@ -93,10 +91,9 @@ class LastPost(Component):
                      "input[@class='disc_simple_input disc_simple_input__im']"
 
     def get_last_post_text(self):
-        WebDriverWait(self.driver, 30, 0.1).until(
+        return WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.LAST_POST)
-        )
-        return self.driver.find_element_by_xpath(self.LAST_POST).text
+        ).text
 
     def get_track(self):
         WebDriverWait(self.driver, 30, 0.1).until(
@@ -108,26 +105,23 @@ class LastPost(Component):
         text_lock = u"Комментарии к этой теме закрыты администрацией"
         self.driver.find_element_by_xpath(self.COMMENT_IN_LAST_POST).click()
         self.driver.find_element_by_xpath(self.COMMENT_IN_LAST_POST).click()
-        WebDriverWait(self.driver, 30, 0.1).until(
+        comment_block = WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.COMMENT_CLOSED)
         )
-        return self.driver.find_element_by_xpath(self.COMMENT_CLOSED).get_attribute('value') == text_lock
+        return comment_block.get_attribute('value') == text_lock
 
     def delete(self):
         WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.LAST_POST_A)
-        )
-        self.driver.find_element_by_xpath(self.LAST_POST).click()
+            lambda d: d.find_element_by_xpath(self.LAST_POST)
+        ).click()
 
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.FALLING_MENU)
-        )
-        self.driver.find_element_by_xpath(self.FALLING_MENU).click()
+        ).click()
 
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.DELETE_POST)
-        )
-        self.driver.find_element_by_xpath(self.DELETE_POST).click()
+        ).click()
 
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.TEXT_POST_DELETED)

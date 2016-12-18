@@ -38,15 +38,17 @@ class MainSettings(Component):
         return self.driver.find_element_by_xpath(self.NAME_INPUT).get_attribute('value')
 
     def change_group_name(self, new_name):
-        self.driver.find_element_by_xpath(self.NAME_INPUT).clear()
-        self.driver.find_element_by_xpath(self.NAME_INPUT).send_keys(new_name)
+        name_input = self.driver.find_element_by_xpath(self.NAME_INPUT)
+        name_input.clear()
+        name_input.send_keys(new_name)
 
     def get_description(self):
         return self.driver.find_element_by_xpath(self.DESCRIPTION).get_attribute('value')
 
     def change_description(self, new_description):
-        self.driver.find_element_by_xpath(self.DESCRIPTION).clear()
-        self.driver.find_element_by_xpath(self.DESCRIPTION).send_keys(new_description)
+        description = self.driver.find_element_by_xpath(self.DESCRIPTION)
+        description.clear()
+        description.send_keys(new_description)
 
     def get_city(self):
         return self.driver.find_element_by_xpath(self.CITY).get_attribute('value')
@@ -54,19 +56,18 @@ class MainSettings(Component):
     def change_city(self, new_city):
 
         self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        self.driver.find_element_by_xpath(self.CITY).clear()
-        self.driver.find_element_by_xpath(self.CITY).send_keys(new_city)
+        city = self.driver.find_element_by_xpath(self.CITY)
+        city.clear()
+        city.send_keys(new_city)
 
         if new_city == u"Санкт ":
             WebDriverWait(self.driver, 30, 0.1).until(
                 lambda d: d.find_element_by_xpath(self.StPetersburg)
-            )
-            self.driver.find_element_by_xpath(self.StPetersburg).click()
+            ).click()
         else:
             WebDriverWait(self.driver, 30, 0.1).until(
                 lambda d: d.find_element_by_xpath(self.Moscow)
-            )
-            self.driver.find_element_by_xpath(self.Moscow).click()
+            ).click()
 
     def save_changes(self):
         self.driver.find_element_by_xpath(self.SAVE).click()
