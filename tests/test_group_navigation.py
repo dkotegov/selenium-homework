@@ -20,13 +20,9 @@ class GroupsPage(Page):
     @property
     def scroll_to_bottom(self):
         self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        try:
-            toTopButton = WebDriverWait(self.driver, 30, 0.1).until(
-                lambda d: d.find_element_by_id("scrollToTop")
-            )
-            return True
-        except TimeoutException:
-            return False
+        toTopButton = WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_id("scrollToTop")
+        )
 
     @property
     def open_group(self):
@@ -131,28 +127,24 @@ class NavigationGroupTest(BaseCase):
 
     groups_page = GroupsPage
 
-    def test_scroll(self):
+    def setup(self):
+        super(NavigationGroupTest, self).setup()
         self.groups_page = GroupsPage(self.driver)
         self.groups_page.open()
-        scrolled = self.groups_page.scroll_to_bottom
-        self.assertion.equal(scrolled, True)
+
+    def test_scroll(self):
+        self.groups_page.scroll_to_bottom
 
     def test_groups_open(self):
-        self.groups_page = GroupsPage(self.driver)
-        self.groups_page.open()
         search = self.groups_page.form
         placeholder = search.search_placeholder()
         self.assertion.equal(placeholder, u'поиск по группам')
 
     def test_create_group(self):
-        self.groups_page = GroupsPage(self.driver)
-        self.groups_page.open()
         name = self.groups_page.create_group(self.GROUP_NAME)
         self.assertion.equal(name, self.GROUP_NAME)
 
     def test_search_created_group(self):
-        self.groups_page = GroupsPage(self.driver)
-        self.groups_page.open()
         search = self.groups_page.form
         search.set_text(u'Как я открыл selenium и познал...')
         element = WebDriverWait(self.driver, 30, 0.1).until(
@@ -162,8 +154,6 @@ class NavigationGroupTest(BaseCase):
         self.assertion.equal(search_result, self.GROUP_NAME)
 
     def test_open_my_group(self):
-        self.groups_page = GroupsPage(self.driver)
-        self.groups_page.open()
         search = self.groups_page.form
         search.set_text(u'Как я открыл selenium и познал...')
         element = WebDriverWait(self.driver, 30, 0.1).until(
