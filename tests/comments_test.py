@@ -3,8 +3,8 @@ import os
 
 import seismograph
 
-from  pages.profile_page import ProfilePage
-from  pages.video_page import VideoPage
+from pages.profile_page import ProfilePage
+from pages.video_page import VideoPage
 from tests.base_case import BaseCase
 
 suite = seismograph.Suite(__name__, require=['selenium'])
@@ -89,7 +89,7 @@ class AddCommentCase(BaseCase):
 
     def test_photo_attachment_from_pc(self):
         VIDEO_ID = '207005094376'
-        IMG_PATH = '../unnamed.png'
+        IMG_PATH = './unnamed.png'
 
         self.video_page.open(id=VIDEO_ID)
         self.video_page.add_comment(photo_pc=os.path.abspath(IMG_PATH))

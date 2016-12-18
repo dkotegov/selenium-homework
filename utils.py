@@ -1,26 +1,22 @@
 # -*- coding: utf-8 -*-
 from seismograph.ext import selenium
 from selenium.common.exceptions import StaleElementReferenceException
-from selenium.webdriver.support.ui import WebDriverWait
 
-DEFAULT_TIMEOUT = 30
-MICRO_TIMEOUT = 0.1
-SHORT_TIMEOUT = 5
-DEFAULT_SLEEP_TIME = 0.1
+
 
 
 def raises_stale_element_reference_exception(func, *args, **kwargs):
     try:
         func(*args, **kwargs)
-        return False
-    except StaleElementReferenceException:
         return True
+    except StaleElementReferenceException:
+        return False
 
 
 def repeat_on_error(func):
     def wrapper(*args, **kwargs):
         return args[0].browser.waiting_for(
-            lambda: not raises_stale_element_reference_exception(func, *args, **kwargs)
+            lambda: raises_stale_element_reference_exception(func, *args, **kwargs)
         )
 
     return wrapper

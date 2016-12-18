@@ -32,6 +32,7 @@ class CreateChannelCase(BaseCase):
         self.channel_page.delete_channel()
         self.assertion.is_not_in(self.TEST_CHANNEL2, self.browser.page_source)
 
+
 @suite.register
 class AddVideoCase(BaseCase):
     FIRST_CHANNEL_ID = '1533672'
@@ -61,14 +62,12 @@ class AddVideoCase(BaseCase):
         super(AddVideoCase, self).teardown()
 
 
-
 @suite.register
 class ChangeChannelCase(BaseCase):
-
     def test_move_video(self):
         DESTINATION_ID = '1534952'
         SOURCE_ID = '1535208'
-        DESTINATION_NAME ='DESTINATION_CHANNEL'
+        DESTINATION_NAME = 'DESTINATION_CHANNEL'
         SOURCE_NAME = 'SOURCE_CHANNEL'
         VIDEO_NAME = 'VIDEO_TO_MOVE'
 
@@ -76,10 +75,12 @@ class ChangeChannelCase(BaseCase):
         destination = ChannelPage(self.browser)
         source.open(id=SOURCE_ID)
         source.move_video(VIDEO_NAME, DESTINATION_NAME)
-        self.assertion.is_not_in(VIDEO_NAME, source.get_videos_titles())
         destination.open(id=DESTINATION_ID)
+        self.browser.refresh()
         self.assertion.is_in(VIDEO_NAME, destination.get_videos_titles())
         destination.move_video(VIDEO_NAME, SOURCE_NAME)
+        destination.open(id=DESTINATION_ID)
+        self.assertion.is_not_in(VIDEO_NAME, destination.get_videos_titles())
 
     def test_rename_channel(self):
         CHANNEL_ID = '1534696'
@@ -98,7 +99,7 @@ class ChangeChannelCase(BaseCase):
         VIDEO_NAME = 'VIDEO_TO_TEST_TAGS'
 
         channel_page = ChannelPage(self.browser)
-        channel_page.open(id = CHANNEL_ID)
+        channel_page.open(id=CHANNEL_ID)
         channel_page.edit_video(VIDEO_NAME, new_tags=NEW_TAG)
         self.assertion.is_in(NEW_TAG, channel_page.get_video_tags(VIDEO_NAME))
         channel_page.edit_video(VIDEO_NAME, remove_tags=NEW_TAG)
@@ -110,7 +111,7 @@ class ChangeChannelCase(BaseCase):
         NEW_VIDEO_NAME = 'NEW_VIDEO_NAME'
         OLD_VIDEO_NAME = 'OLD_VIDEO_NAME'
 
-        channel_page = ChannelPage(self.browser )
+        channel_page = ChannelPage(self.browser)
         channel_page.open(id=CHANNEL_ID)
         channel_page.edit_video(OLD_VIDEO_NAME, title=NEW_VIDEO_NAME)
         video_page = VideoPage(self.browser)
@@ -136,6 +137,7 @@ class ChangeChannelCase(BaseCase):
         channel_page.open(id=CHANNEL_ID)
         channel_page.edit_video(VIDEO_NAME, description=OLD_DESCRIPTION)
 
+
 @suite.register
 class SubscriptionsCase(BaseCase):
     CHANNEL_ID = '1100320'
@@ -144,7 +146,7 @@ class SubscriptionsCase(BaseCase):
 
     def test_subscribe_from_channel_page(self):
         self.page = ChannelPage(self.browser)
-        self.page.open(id = self.CHANNEL_ID)
+        self.page.open(id=self.CHANNEL_ID)
 
     def test_subscribe_from_video_page(self):
         self.page = VideoPage(self.browser)
@@ -159,6 +161,7 @@ class SubscriptionsCase(BaseCase):
         self.assertion.equal(self.page.subscriptions_count, self.DEFAULT_SUBSCRIPTIONS_COUNT)
         super(SubscriptionsCase, self).teardown()
 
+
 @suite.register
 class OpenChannelCase(BaseCase):
     VIDEO_ID = '206523142632'
@@ -172,5 +175,3 @@ class OpenChannelCase(BaseCase):
 
         channel_page = ChannelPage(self.browser)
         self.assertion.equal(channel_page.channel_name, video_channel)
-
-

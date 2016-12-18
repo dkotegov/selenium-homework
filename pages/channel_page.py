@@ -130,10 +130,6 @@ class ChannelPage(selenium.Page):
         self.browser.refresh()
         return self.counters.subscriptions_count
 
-    def click_add_video(self):
-        utils.wait_class(self.browser, self.ADD_VIDEO_CLASS).click()
-        return AddVideoDialog(self.browser)
-
     def add_video(self, url):
         self.add_video_button.click()
         self.add_video_dialog.add_video_by_url(url)
@@ -178,7 +174,9 @@ class ChannelPage(selenium.Page):
         self.click_edit_video(name)
         self.edit_video_dialog.channel_select.set(new_channel)
         self.edit_video_dialog.submit_button.click()
-        self.browser.refresh()
+        # utils.js_click(self.browser, self.edit_video_dialog.submit_button)
+        #utils.wait_change_url(self.browser)
+
 
     def get_video_tags(self, video_name):
         self.click_edit_video(video_name)

@@ -10,12 +10,14 @@ class AttachVideoDialog(selenium.PageItem):
         selenium.query.DIV,
         _id='hook_Block_AttachShareVideoContent'
     )
+    VIDEOS_LIST_CLASS ='modal-new_hld'
 
     videos = utils.query('A', _class=selenium.query.contains('attachInput'))
 
     @utils.repeat_on_error
     def click_first(self):
-        utils.js_click(self.browser, self.videos.first())
+        utils.wait_class(self.browser, self.VIDEOS_LIST_CLASS)
+        self.videos.first().click()
 
 
 class AttachPhotoDialog(selenium.PageItem):
