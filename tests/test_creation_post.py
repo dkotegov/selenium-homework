@@ -96,21 +96,13 @@ class LastPost(Component):
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.LAST_POST)
         )
-        # print self.driver.find_element_by_xpath(self.LAST_POST).text
-        # print text
-        if self.driver.find_element_by_xpath(self.LAST_POST).text == text:
-            return True
-        else:
-            return False
+        return self.driver.find_element_by_xpath(self.LAST_POST).text == text
 
     def is_last_post_has_track(self, track):
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.LAST_POST)
         )
-        if self.driver.find_element_by_xpath(self.TRACK_IN_LAST_POST).text == track:
-            return True
-        else:
-            return False
+        return self.driver.find_element_by_xpath(self.TRACK_IN_LAST_POST).text == track
 
     def is_last_post_without_comments(self):
         text_lock = u"Комментарии к этой теме закрыты администрацией"
