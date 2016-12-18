@@ -1,25 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import os
-
-import unittest
-# import seismograph
-import urlparse
-import time
-
-from selenium.webdriver import DesiredCapabilities, Remote
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.action_chains import ActionChains
-
 from test_base import Page
 from test_base import Component
+from seismograph.ext import selenium
+from base_case import BaseCase
 
-from test_auth import AuthPage
-from test_auth import AuthForm
 
 class GroupPage(Page):
-
     PATH = "/group/53389738115166"
     CREATE_POST = "//div[@class='input_placeholder']"
 
@@ -45,14 +33,13 @@ class NewPost(Component):
     MUSIC_BLOCK = "//div[@id='swtch'][@class='posting-form_controls  posting-form_controls__off']"
     MUSIC_SEARCH = "//div[@class='it_w search-input']/label/input[@class='search-input_it it'][@type='text']"
     TRACK = "//div[@class='posting-form_track  m_portal_track']/span[@class='posting-form_track_info_w show-on-hover']" \
-                 "/span[@class='posting-form_track_info ellip']"
+            "/span[@class='posting-form_track_info ellip']"
     BUTTON_ADD_TRACK = "//div[@class='modal-new_center']/div[@class='modal-new_cnt']/div[@class='form-actions __center']" \
                        "/a[@class='button-pro form-actions_yes']"
 
     ICO_SETTINGS = "//span[@class='tico toggler lp']/i[@class='tico_img ic ic_settings']"
     MENU_SETTINGS = "//div[@class='jcol-l']/div[@class='iblock-cloud_dropdown h-mod __active']"
     NO_COMMENT = "//div[@class='nowrap']/input[@name='st.toggleComments']"
-
 
     def set_text(self, text):
         WebDriverWait(self.driver, 30, 0.1).until(
@@ -81,10 +68,6 @@ class NewPost(Component):
             lambda d: d.find_element_by_xpath(self.MENU_SETTINGS)
         )
         self.driver.find_element_by_xpath(self.NO_COMMENT).click()
-
-
-
-
 
     def submit(self):
         WebDriverWait(self.driver, 30, 0.1).until(
@@ -162,54 +145,33 @@ class LastPost(Component):
         self.driver.find_element_by_xpath(self.ICO_X).click()
 
 
-class CreationPostTest(#seismograph.Case):
+suite = selenium.Suite(__name__, require=['selenium'])
 
-    unittest.TestCase):
-    USERLOGIN = 'technopark30'
-    USERNAME = u'Евдакия Фёдорова'
-    PASSWORD = os.environ.get('PASSWORD', 'testQA1')
-    # new_post = NewPost
+
+@suite.register
+class CreationPostTest(BaseCase):
     group_page = GroupPage
 
-    def setUp(self):
-        browser = os.environ.get('BROWSER', 'FIREFOX')
-        self.driver = Remote(
-            command_executor='http://127.0.0.1:4444/wd/hub',
-            desired_capabilities=getattr(DesiredCapabilities, browser).copy()
-        )
-
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_form = auth_page.form
-        auth_form.open_form()
-        auth_form.set_login(self.USERLOGIN)
-        auth_form.set_password(self.PASSWORD)
-        auth_form.submit()
-
-        user_name = auth_page.user_block.get_username()
-        self.assertEqual(user_name, self.USERNAME)
-
+    def test_simple_post(self):
         self.group_page = GroupPage(self.driver)
         self.group_page.open()
         self.new_post = self.group_page.creating_post
-
-    def tearDown(self):
-        self.driver.quit()
-
-    def test_simple_post(self):
         text = u"simple post with simple text"
 
         new_post = self.group_page.creating_post
         new_post.set_text(text)
         new_post.submit()
         last_post = self.group_page.get_last_post
-        self.assertTrue(last_post.is_last_post_new_post(text))
+        self.assertion.true(last_post.is_last_post_new_post(text))
         self.group_page.refresh_page()
         last_post.delete()
         self.group_page.refresh_page()
-        self.assertFalse(last_post.is_last_post_new_post(text))
+        self.assertion.false(last_post.is_last_post_new_post(text))
 
     def test_post_with_music(self):
+        self.group_page = GroupPage(self.driver)
+        self.group_page.open()
+        self.new_post = self.group_page.creating_post
         text = u"This is post with music"
         search_text = u"Лабутены"
 
@@ -219,15 +181,18 @@ class CreationPostTest(#seismograph.Case):
         new_post.submit()
 
         last_post = self.group_page.get_last_post
-        self.assertTrue(last_post.is_last_post_new_post(text + u'\n#музыка'))
-        self.assertTrue(last_post.is_last_post_has_track(search_text))
+        self.assertion.true(last_post.is_last_post_new_post(text + u'\n#музыка'))
+        self.assertion.true(last_post.is_last_post_has_track(search_text))
         self.group_page.refresh_page()
         last_post.delete()
         self.group_page.refresh_page()
-        self.assertFalse(last_post.is_last_post_new_post(text))
+        self.assertion.false(last_post.is_last_post_new_post(text))
 
     def test_post_without_comments(self):
         text = u"This is post without comments"
+        self.group_page = GroupPage(self.driver)
+        self.group_page.open()
+        self.new_post = self.group_page.creating_post
 
         new_post = self.group_page.creating_post
         new_post.set_text(text)
@@ -235,11 +200,11 @@ class CreationPostTest(#seismograph.Case):
         new_post.submit()
 
         last_post = self.group_page.get_last_post
-        self.assertTrue(last_post.is_last_post_new_post(text))
-        self.assertTrue(last_post.is_last_post_without_comments())
+        self.assertion.true(last_post.is_last_post_new_post(text))
+        self.assertion.true(last_post.is_last_post_without_comments())
         # last_post.is_last_post_without_comments()
 
         self.group_page.refresh_page()
         last_post.delete()
         self.group_page.refresh_page()
-        self.assertFalse(last_post.is_last_post_new_post(text))
+        self.assertion.false(last_post.is_last_post_new_post(text))

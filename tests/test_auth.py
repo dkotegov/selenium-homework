@@ -1,17 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os
-
-import unittest
-# import seismograph
-import urlparse
-import time
-
-from selenium.webdriver import DesiredCapabilities, Remote
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.action_chains import ActionChains
-
 from test_base import Page
 from test_base import Component
 
@@ -28,9 +17,7 @@ class AuthPage(Page):
         return UserBlock(self.driver)
 
 
-
 class AuthForm(Component):
-
     LOGIN_BUTTON = "//a[@id='enterHeader']"
     LOGIN = "//input[@id='field_email']"
     PASSWORD = "//input[@id='field_password']"
@@ -48,8 +35,8 @@ class AuthForm(Component):
     def submit(self):
         self.driver.find_element_by_xpath(self.SUBMIT).click()
 
-class UserBlock(Component):
 
+class UserBlock(Component):
     USERNAME = "//div[@class='mctc_nameAndOnline']/span[@class='mctc_name textWrap']/a[@class='mctc_nameLink']" \
                "/h1[@class='mctc_name_tx bl']"
 
