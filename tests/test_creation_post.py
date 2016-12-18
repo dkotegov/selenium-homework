@@ -32,10 +32,8 @@ class NewPost(Component):
     MUSIC = "//a[@id='openmusic']"
     MUSIC_BLOCK = "//div[@id='swtch'][@class='posting-form_controls  posting-form_controls__off']"
     MUSIC_SEARCH = "//div[@class='it_w search-input']/label/input[@class='search-input_it it'][@type='text']"
-    TRACK = "//div[@class='posting-form_track  m_portal_track']/span[@class='posting-form_track_info_w show-on-hover']" \
-            "/span[@class='posting-form_track_info ellip']"
-    BUTTON_ADD_TRACK = "//div[@class='modal-new_center']/div[@class='modal-new_cnt']/div[@class='form-actions __center']" \
-                       "/a[@class='button-pro form-actions_yes']"
+    TRACK = "//span[@class='posting-form_track_info ellip'][1]"
+    BUTTON_ADD_TRACK = "//div[@class='form-actions __center']/a[@class='button-pro form-actions_yes']"
 
     ICO_SETTINGS = "//span[@class='tico toggler lp']/i[@class='tico_img ic ic_settings']"
     MENU_SETTINGS = "//div[@class='jcol-l']/div[@class='iblock-cloud_dropdown h-mod __active']"
@@ -151,60 +149,63 @@ suite = selenium.Suite(__name__, require=['selenium'])
 @suite.register
 class CreationPostTest(BaseCase):
     group_page = GroupPage
+    text = str
 
-    def test_simple_post(self):
-        self.group_page = GroupPage(self.driver)
-        self.group_page.open()
-        self.new_post = self.group_page.creating_post
-        text = u"simple post with simple text"
-
-        new_post = self.group_page.creating_post
-        new_post.set_text(text)
-        new_post.submit()
+    def teardown(self):
         last_post = self.group_page.get_last_post
-        self.assertion.true(last_post.is_last_post_new_post(text))
-        self.group_page.refresh_page()
         last_post.delete()
         self.group_page.refresh_page()
-        self.assertion.false(last_post.is_last_post_new_post(text))
+        self.assertion.false(last_post.is_last_post_new_post(self.text))
 
-    def test_post_with_music(self):
+        self.driver.quit()
+
+    def test_simple_post(self):
+        self.text = u"simple post with simple text"
         self.group_page = GroupPage(self.driver)
         self.group_page.open()
         self.new_post = self.group_page.creating_post
-        text = u"This is post with music"
-        search_text = u"Лабутены"
 
         new_post = self.group_page.creating_post
-        new_post.set_text(text)
+        new_post.set_text(self.text)
+        new_post.submit()
+
+        last_post = self.group_page.get_last_post
+        self.assertion.true(last_post.is_last_post_new_post(self.text))
+        self.group_page.refresh_page()
+
+    def test_post_with_music(self):
+        self.text = u"This is post with music"
+        search_text = u"Лабутены"
+
+        self.group_page = GroupPage(self.driver)
+        self.group_page.open()
+        self.new_post = self.group_page.creating_post
+
+        new_post = self.group_page.creating_post
+        new_post.set_text(self.text)
         new_post.set_music(search_text)
         new_post.submit()
 
         last_post = self.group_page.get_last_post
-        self.assertion.true(last_post.is_last_post_new_post(text + u'\n#музыка'))
+        self.text = self.text + u'\n#музыка'
+        self.assertion.true(last_post.is_last_post_new_post(self.text))
         self.assertion.true(last_post.is_last_post_has_track(search_text))
         self.group_page.refresh_page()
-        last_post.delete()
-        self.group_page.refresh_page()
-        self.assertion.false(last_post.is_last_post_new_post(text))
 
     def test_post_without_comments(self):
-        text = u"This is post without comments"
+        self.text = u"This is post without comments"
+
         self.group_page = GroupPage(self.driver)
         self.group_page.open()
         self.new_post = self.group_page.creating_post
 
         new_post = self.group_page.creating_post
-        new_post.set_text(text)
+        new_post.set_text(self.text)
         new_post.set_no_comment()
         new_post.submit()
 
         last_post = self.group_page.get_last_post
-        self.assertion.true(last_post.is_last_post_new_post(text))
+        self.assertion.true(last_post.is_last_post_new_post(self.text))
         self.assertion.true(last_post.is_last_post_without_comments())
-        # last_post.is_last_post_without_comments()
+        self.group_page.refresh_page()
 
-        self.group_page.refresh_page()
-        last_post.delete()
-        self.group_page.refresh_page()
-        self.assertion.false(last_post.is_last_post_new_post(text))
