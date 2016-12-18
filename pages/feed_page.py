@@ -170,6 +170,7 @@ class FeedPage(selenium.Page):
             locator = self.five_plus_checkbox_2_locator
         self.browser.find_element_by_css_selector(locator).click()
         try:
+            self.switch_to_last_frame()
             WebDriverWait(self.browser, 3).until(
                 lambda br: br.find_element_by_css_selector(self.five_plus_cost_locator).text == expected_cost
             )
@@ -186,6 +187,7 @@ class FeedPage(selenium.Page):
             locator = self.smiles_checkbox_3_locator
         self.browser.find_element_by_css_selector(locator).click()
         try:
+            self.switch_to_last_frame()
             WebDriverWait(self.browser, 3).until(
                 lambda br: br.find_element_by_css_selector(self.five_plus_cost_locator).text == expected_cost
             )
