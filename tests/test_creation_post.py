@@ -92,17 +92,17 @@ class LastPost(Component):
     COMMENT_CLOSED = "//div[@class='disc_simple_input_cont'][@style='display: block;']//" \
                      "input[@class='disc_simple_input disc_simple_input__im']"
 
-    def is_last_post_new_post(self, text):
+    def get_last_post_text(self):
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.LAST_POST)
         )
-        return self.driver.find_element_by_xpath(self.LAST_POST).text == text
+        return self.driver.find_element_by_xpath(self.LAST_POST).text
 
-    def is_last_post_has_track(self, track):
+    def get_track(self):
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.LAST_POST)
         )
-        return self.driver.find_element_by_xpath(self.TRACK_IN_LAST_POST).text == track
+        return self.driver.find_element_by_xpath(self.TRACK_IN_LAST_POST).text
 
     def is_last_post_without_comments(self):
         text_lock = u"Комментарии к этой теме закрыты администрацией"
@@ -147,7 +147,8 @@ class CreationPostTest(BaseCase):
         last_post = self.group_page.get_last_post
         last_post.delete()
         self.group_page.refresh_page()
-        self.assertion.false(last_post.is_last_post_new_post(self.text))
+        last_post_text = last_post.get_last_post_text()
+        self.assertion.not_equal(self.text, last_post_text)
 
         self.driver.quit()
 
@@ -162,7 +163,8 @@ class CreationPostTest(BaseCase):
         new_post.submit()
 
         last_post = self.group_page.get_last_post
-        self.assertion.true(last_post.is_last_post_new_post(self.text))
+        last_post_text = last_post.get_last_post_text()
+        self.assertion.equal(self.text, last_post_text)
         self.group_page.refresh_page()
 
     def test_post_with_music(self):
@@ -180,8 +182,11 @@ class CreationPostTest(BaseCase):
 
         last_post = self.group_page.get_last_post
         self.text = self.text + u'\n#музыка'
-        self.assertion.true(last_post.is_last_post_new_post(self.text))
-        self.assertion.true(last_post.is_last_post_has_track(search_text))
+        last_post_text = last_post.get_last_post_text()
+        self.assertion.equal(self.text, last_post_text)
+
+        track = last_post.get_track()
+        self.assertion.equal(search_text, track)
         self.group_page.refresh_page()
 
     def test_post_without_comments(self):
@@ -197,7 +202,8 @@ class CreationPostTest(BaseCase):
         new_post.submit()
 
         last_post = self.group_page.get_last_post
-        self.assertion.true(last_post.is_last_post_new_post(self.text))
+        last_post_text = last_post.get_last_post_text()
+        self.assertion.equal(self.text, last_post_text)
         self.assertion.true(last_post.is_last_post_without_comments())
         self.group_page.refresh_page()
 

@@ -7,11 +7,9 @@ from test_auth import AuthPage
 
 
 class BaseCase(seismograph.Case):
-    USERLOGIN = 'technopark30'
-    #os.environ['LOGIN']
+    USERLOGIN = os.environ['LOGIN']
     USERNAME = u'Евдакия Фёдорова'
-    PASSWORD = 'testQA1'
-    #os.environ['PASSWORD']
+    PASSWORD = os.environ['PASSWORD']
 
     def setup(self):
         browser = os.environ.get('BROWSER', 'FIREFOX')
@@ -31,5 +29,4 @@ class BaseCase(seismograph.Case):
         user_name = auth_page.user_block.get_username()
         self.assertion.equal(user_name, self.USERNAME)
 
-    def teardown(self):
-        self.driver.quit()
+
