@@ -2,7 +2,6 @@
 from seismograph.ext import selenium
 
 from pages.payment_modal import PaymentModal
-from utils.xpath_query import XPathQueryObject
 from selenium.webdriver.support.wait import WebDriverWait
 from seismograph.ext.selenium.exceptions import PollingTimeoutExceeded
 from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
@@ -40,26 +39,25 @@ class FeedPage(selenium.Page):
     )
 
     five_plus_payment_button = selenium.PageElement(
-        XPathQueryObject(
-            '//li[contains(text(), "st.layer.srv=1&")]'
+        selenium.query(
+            selenium.query.A,
+            _class=selenium.query.contains('u-menu_a'),
+            hrefattrs=selenium.query.contains('st.layer.srv=1&'),
         )
     )
 
     smiles_payment_button = selenium.PageElement(
-        XPathQueryObject(
-            '//li[contains(text(), "st.layer.srv=19&")]'
+        selenium.query(
+            selenium.query.A,
+            _class=selenium.query.contains('u-menu_a'),
+            hrefattrs=selenium.query.contains('st.layer.srv=19&'),
         )
     )
 
     toolbar_dropdown_button = selenium.PageElement(
-        XPathQueryObject(
-            '//div[@data-module="Toolbar"]'
-        )
-    )
-
-    toolbar_dropdown = selenium.PageElement(
-        XPathQueryObject(
-            '//div[@class="toolbar_dropdown"]/ul[@class="u-menu"]'
+        selenium.query(
+            selenium.query.DIV,
+            **{'data-module':'Toolbar'}
         )
     )
 
@@ -129,7 +127,7 @@ class FeedPage(selenium.Page):
 
     def open_toolbar_dropdown(self):
         self.toolbar_dropdown_button.click()
-        self.toolbar_dropdown.wait(timeout=2)
+        self.div(_class='toolbar_dropdown').ul(_class='u-menu').wait(timeout=2)
 
     def open_payments_from_dropdown(self):
         self.all_payments_button.click()

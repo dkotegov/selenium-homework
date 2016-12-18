@@ -5,8 +5,6 @@ from seismograph.ext.selenium.query import Contains
 from seismograph.utils.common import waiting_for
 from selenium.common.exceptions import NoSuchFrameException
 
-from utils.xpath_query import XPathQueryObject
-
 
 class PaymentModal(selenium.Page):
     buy_link = selenium.PageElement(
