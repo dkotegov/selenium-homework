@@ -34,7 +34,6 @@ class GroupsPage(Page):
             lambda d: d.find_element_by_xpath("//li[сontains(@class,'it')]")
         )
         group = links[randint(0, len(links) - 1)]
-        # print group
 
     def create_group(self, name):
         self.driver.find_element_by_xpath(self.CREATE_GROUP).click()
@@ -98,29 +97,29 @@ class SearchGroup(Component):
             lambda d: d.find_element_by_xpath("//span[@class='mctc_name_holder']/h1")
         )
         return self.driver.find_element_by_xpath("//span[@class='mctc_name_holder']/h1").text
-        # self.driver.execute_script("window.scrollTo(0, 200);")
+        self.driver.execute_script("window.scrollTo(0, 200);")
 
-        # elem = WebDriverWait(self.driver, 30, 0.1).until(
-        #     lambda d: d.find_elements_by_class_name(self.ADDITIONAL_ACTIONS)
-        # )
-        # elem[0].click()
-        # while True:
-        #     try:
-        #         delete = WebDriverWait(self.driver, 30, 0.1).until(
-        #             lambda d: d.find_element_by_xpath(self.DELETE_BUTTON)
-        #         )
-        #         self.driver.find_element_by_xpath(self.DELETE_BUTTON).click()
-        #         break
-        #     except:
-        #         pass
-        #
-        # confirm = WebDriverWait(self.driver, 30, 0.1).until(
-        #     lambda d: d.find_element_by_id(self.CONFIRM_BUTTON)
-        # )
-        # confirm.click()
-        # WebDriverWait(self.driver, 30, 0.1).until(
-        #     lambda d: d.find_element_by_id(self.CONFIRM_BUTTON)
-        # )
+        elem = WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_elements_by_class_name(self.ADDITIONAL_ACTIONS)
+        )
+        elem[0].click()
+        while True:
+            try:
+                delete = WebDriverWait(self.driver, 30, 0.1).until(
+                    lambda d: d.find_element_by_xpath(self.DELETE_BUTTON)
+                )
+                self.driver.find_element_by_xpath(self.DELETE_BUTTON).click()
+                break
+            except:
+                pass
+
+        confirm = WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_id(self.CONFIRM_BUTTON)
+        )
+        confirm.click()
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_id(self.CONFIRM_BUTTON)
+        )
 
 
 suite = selenium.Suite(__name__, require=['selenium'])
@@ -132,36 +131,35 @@ class NavigationGroupTest(BaseCase):
 
     groups_page = GroupsPage
 
-    def test_scroll(self):
-        self.groups_page = GroupsPage(self.driver)
-        self.groups_page.open()
-        scrolled = self.groups_page.scroll_to_bottom
-        self.assertion.equal(scrolled, True)
-
-    def test_groups_open(self):
-        self.groups_page = GroupsPage(self.driver)
-        self.groups_page.open()
-        search = self.groups_page.form
-        placeholder = search.search_placeholder()
-        self.assertion.equal(placeholder, u'поиск по группам')
-
-    def test_create_group(self):
-        self.groups_page = GroupsPage(self.driver)
-        self.groups_page.open()
-        name = self.groups_page.create_group(self.GROUP_NAME)
-        self.assertion.equal(name, self.GROUP_NAME)
-
-    def test_search_created_group(self):
-        self.groups_page = GroupsPage(self.driver)
-        self.groups_page.open()
-        search = self.groups_page.form
-        search.set_text(u'Как я открыл selenium и познал...')
-        element = WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_id('hook_Block_UserGroupsSearch')
-        )
-        search_result = search.check_result()
-        # print(search_result)
-        self.assertion.equal(search_result, self.GROUP_NAME)
+    # def test_scroll(self):
+    #     self.groups_page = GroupsPage(self.driver)
+    #     self.groups_page.open()
+    #     scrolled = self.groups_page.scroll_to_bottom
+    #     self.assertion.equal(scrolled, True)
+    #
+    # def test_groups_open(self):
+    #     self.groups_page = GroupsPage(self.driver)
+    #     self.groups_page.open()
+    #     search = self.groups_page.form
+    #     placeholder = search.search_placeholder()
+    #     self.assertion.equal(placeholder, u'поиск по группам')
+    #
+    # def test_create_group(self):
+    #     self.groups_page = GroupsPage(self.driver)
+    #     self.groups_page.open()
+    #     name = self.groups_page.create_group(self.GROUP_NAME)
+    #     self.assertion.equal(name, self.GROUP_NAME)
+    #
+    # def test_search_created_group(self):
+    #     self.groups_page = GroupsPage(self.driver)
+    #     self.groups_page.open()
+    #     search = self.groups_page.form
+    #     search.set_text(u'Как я открыл selenium и познал...')
+    #     element = WebDriverWait(self.driver, 30, 0.1).until(
+    #         lambda d: d.find_element_by_id('hook_Block_UserGroupsSearch')
+    #     )
+    #     search_result = search.check_result()
+    #     self.assertion.equal(search_result, self.GROUP_NAME)
 
     def test_open_my_group(self):
         self.groups_page = GroupsPage(self.driver)
