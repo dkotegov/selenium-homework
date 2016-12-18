@@ -174,8 +174,6 @@ class ChannelPage(selenium.Page):
         self.click_edit_video(name)
         self.edit_video_dialog.channel_select.set(new_channel)
         self.edit_video_dialog.submit_button.click()
-        # utils.js_click(self.browser, self.edit_video_dialog.submit_button)
-        #utils.wait_change_url(self.browser)
 
 
     def get_video_tags(self, video_name):
