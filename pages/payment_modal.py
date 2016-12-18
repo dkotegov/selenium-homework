@@ -10,8 +10,9 @@ from utils.xpath_query import XPathQueryObject
 
 class PaymentModal(selenium.Page):
     buy_link = selenium.PageElement(
-        XPathQueryObject(
-            u'//a/span[contains(text(), "Купить ОКи")]'
+        selenium.query(
+            selenium.query.A,
+            href='/payment/service_22',
         )
     )
 
