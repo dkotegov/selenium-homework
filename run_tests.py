@@ -8,8 +8,8 @@ from tests import test_group_navigation
 
 
 suites = [
-    # test_creation_post.suite,
-    # test_group_settings.suite,
+    test_creation_post.suite,
+    test_group_settings.suite,
     test_group_navigation.suite,
 ]
 if __name__ == '__main__':
