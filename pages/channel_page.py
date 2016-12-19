@@ -4,6 +4,7 @@ from seismograph.ext import selenium
 
 import utils
 
+CHANNEL_PREFIX = 'c'
 
 class DeleteVideoDialog(selenium.PageItem):
     submit_button = utils.query('INPUT', value=u'Удалить')
@@ -170,9 +171,14 @@ class ChannelPage(selenium.Page):
         self.edit_video_dialog.submit_button.click()
         self.browser.refresh()
 
-    def move_video(self, name, new_channel):
+    def move_video(self, name, new_channel_id):
         self.click_edit_video(name)
-        self.edit_video_dialog.channel_select.set(new_channel)
+        utils.set_attribute(
+            driver=self.browser,
+            element=self.edit_video_dialog.channel_select,
+            attribute='value',
+            value=CHANNEL_PREFIX + new_channel_id
+        )
         self.edit_video_dialog.submit_button.click()
 
 

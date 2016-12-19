@@ -74,11 +74,11 @@ class ChangeChannelCase(BaseCase):
         source = ChannelPage(self.browser)
         destination = ChannelPage(self.browser)
         source.open(id=SOURCE_ID)
-        source.move_video(VIDEO_NAME, DESTINATION_NAME)
+        source.move_video(VIDEO_NAME, DESTINATION_ID)
         destination.open(id=DESTINATION_ID)
         self.browser.refresh()
         self.assertion.is_in(VIDEO_NAME, destination.get_videos_titles())
-        destination.move_video(VIDEO_NAME, SOURCE_NAME)
+        destination.move_video(VIDEO_NAME, SOURCE_ID)
         destination.open(id=DESTINATION_ID)
         self.assertion.is_not_in(VIDEO_NAME, destination.get_videos_titles())
 

@@ -64,6 +64,11 @@ def replace_text(web_element, new_text):
     web_element.clear()
     web_element.send_keys(new_text)
 
+def set_attribute(driver, element, attribute, value):
+    driver.execute_script(
+        'arguments[0].{}="{}";'.format(attribute, value),
+        element._wrapped
+    )
 
 def js_click(driver, element):
     driver.execute_script('arguments[0].click();', element._wrapped)
