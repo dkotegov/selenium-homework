@@ -21,6 +21,8 @@ class GiftsPage(selenium.Page):
         'music_section_link': 'a.nav-side_i[href="/gifts/music"]',
         'designer_section_link': 'a.nav-side_i[href="/gifts/designer"]',
         'my_section_link': 'a.nav-side_i[href="/gifts/my"]',
+        'gift_block': '.ugrid.__xxxl .ugrid_cnt [data-block="GiftsFrontContentRBx"] > div > div',
+        'gift': '.ugrid_i.soh-s.posR',
     }
 
     gifts_portlet = selenium.PageElement(
@@ -37,3 +39,12 @@ class GiftsPage(selenium.Page):
         section_link = self.browser.find_element_by_css_selector(self.page_locators[section_link_locator])
         section_link.click()
         time.sleep(1)
+
+    def get_gifts_block_count(self):
+        return len(self.browser.find_elements_by_css_selector(self.page_locators['gift_block']))
+
+    def get_gifts_count(self):
+        return len(self.browser.find_elements_by_css_selector(self.page_locators['gift']))
+
+    def scroll_to_page_down(self):
+        self.browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
