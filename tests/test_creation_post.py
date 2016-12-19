@@ -85,8 +85,8 @@ class LastPost(Component):
 
     TRACK_IN_LAST_POST = "//div[@class='groups_post-w __search-enabled'][1]//a[@class='track_song']"
 
-    COMMENT_IN_LAST_POST = "//div[@class='groups_post-w __search-enabled'][1]//a[@class='h-mod widget_cnt']" \
-                           "/span[@class='widget_ico ic12 ic12_comment']"
+    COMMENT_IN_LAST_POST = "//div[@class='groups_post-w __search-enabled'][1]//a[@class='h-mod widget_cnt']"
+                          # "/span[@class='widget_ico ic12 ic12_comment']"
     COMMENT_CLOSED = "//div[@class='disc_simple_input_cont'][@style='display: block;']//" \
                      "input[@class='disc_simple_input disc_simple_input__im']"
 
@@ -103,8 +103,14 @@ class LastPost(Component):
 
     def is_last_post_without_comments(self):
         text_lock = u"Комментарии к этой теме закрыты администрацией"
-        self.driver.find_element_by_xpath(self.COMMENT_IN_LAST_POST).click()
-        self.driver.find_element_by_xpath(self.COMMENT_IN_LAST_POST).click()
+
+        comment = WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.COMMENT_IN_LAST_POST)
+        )
+        comment.click()
+        comment.click()
+        comment.click()
+        # self.driver.find_element_by_xpath(self.COMMENT_IN_LAST_POST).click()
         comment_block = WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.COMMENT_CLOSED)
         )
@@ -194,6 +200,7 @@ class CreationPostTest(BaseCase):
         new_post.set_text(self.text)
         new_post.set_no_comment()
         new_post.submit()
+
 
         last_post = self.group_page.get_last_post
         last_post_text = last_post.get_last_post_text()

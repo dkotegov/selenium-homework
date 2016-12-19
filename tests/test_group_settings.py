@@ -29,6 +29,7 @@ class MainSettings(Component):
     NAME_INPUT = "//input[@name='st.name']"
     SAVE = "//input[@name='button_save_settings'][@class='button-pro form-actions_yes h-mod']"
     SAVE_MESSAGE = "//div[@class='tip __active __l __mid __fixed h-mod']"
+    SAVE_MESSAGE_OFF = "//div[@class='tip __l __mid __fixed h-mod']"
     DESCRIPTION = "//textarea[@name='st.description']"
     CITY = "//input[@name='st.city']"
     StPetersburg = "//div[@title='Санкт-Петербург, Россия'][@class='sug_it-div']"
@@ -70,9 +71,16 @@ class MainSettings(Component):
             ).click()
 
     def save_changes(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.SAVE).get_attribute('disabled') != True
+        )
         self.driver.find_element_by_xpath(self.SAVE).click()
+
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.SAVE_MESSAGE)
+        )
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.SAVE_MESSAGE_OFF)
         )
 
 

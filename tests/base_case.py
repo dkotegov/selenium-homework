@@ -29,4 +29,7 @@ class BaseCase(seismograph.Case):
         user_name = auth_page.user_block.get_username()
         self.assertion.equal(user_name, self.USERNAME)
 
+    def teardown(self):
+        self.driver.quit()
+
 
