@@ -67,8 +67,6 @@ class ChangeChannelCase(BaseCase):
     def test_move_video(self):
         DESTINATION_ID = '1534952'
         SOURCE_ID = '1535208'
-        DESTINATION_NAME = 'DESTINATION_CHANNEL'
-        SOURCE_NAME = 'SOURCE_CHANNEL'
         VIDEO_NAME = 'VIDEO_TO_MOVE'
 
         source = ChannelPage(self.browser)
@@ -80,6 +78,7 @@ class ChangeChannelCase(BaseCase):
         self.assertion.is_in(VIDEO_NAME, destination.get_videos_titles())
         destination.move_video(VIDEO_NAME, SOURCE_ID)
         destination.open(id=DESTINATION_ID)
+        self.browser.refresh()
         self.assertion.is_not_in(VIDEO_NAME, destination.get_videos_titles())
 
     def test_rename_channel(self):
