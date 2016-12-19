@@ -38,7 +38,7 @@ class GroupsPage(Page):
         )
         self.driver.find_element_by_xpath("//div[@class='create-group-dialog_cnt']").click()
         WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_id('hook_Form_PopLayerCreateAltGroupDialog2Form')
+            lambda d: d.find_element_by_id('hook_Form_PopLayerCreateAltGroupDialogForm')
         )
         self.driver.find_element_by_id("field_name").send_keys(name)
         self.driver.find_element_by_id("field_description").send_keys(u'...')
@@ -138,7 +138,7 @@ class NavigationGroupTest(BaseCase):
     def test_groups_open(self):
         search = self.groups_page.form
         placeholder = search.search_placeholder()
-        self.assertion.equal(placeholder, u'поиск по группам')
+        self.assertion.equal(placeholder, u'Поиск по группам')
 
     def test_create_group(self):
         name = self.groups_page.create_group(self.GROUP_NAME)
@@ -146,7 +146,7 @@ class NavigationGroupTest(BaseCase):
 
     def test_search_created_group(self):
         search = self.groups_page.form
-        search.set_text(u'Как я открыл selenium и познал...')
+        search.set_text(self.GROUP_NAME)
         element = WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_id('hook_Block_UserGroupsSearch')
         )
@@ -155,10 +155,11 @@ class NavigationGroupTest(BaseCase):
 
     def test_open_my_group(self):
         search = self.groups_page.form
-        search.set_text(u'Как я открыл selenium и познал...')
+        search.set_text(self.GROUP_NAME)
         element = WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_id('hook_Block_UserGroupsSearch')
         )
         search_result = search.check_result()
         name = search.open_group()
+
         self.assertion.equal(name, self.GROUP_NAME)
