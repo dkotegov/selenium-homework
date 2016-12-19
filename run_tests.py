@@ -1,24 +1,16 @@
 # -*- coding: utf-8 -*-
+# #!/usr/bin/env python2
 
-import sys
+import seismograph
+from tests import test_creation_post
+from tests import test_group_settings
+from tests import test_group_navigation
 
-from tests.car_showrooms.add_showroom_test import AddShowroomFormTest
-from tests.car_showrooms.list_showroom_test import ShowroomListTest
-from tests.car_showrooms.list_special_offers_test import SpecialOffersListTest
-from tests.car_showrooms.search_showroom_tests import *
 
+suites = [
+    test_creation_post.suite,
+    test_group_settings.suite,
+    test_group_navigation.suite,
+]
 if __name__ == '__main__':
-
-    suite = unittest.TestSuite((
-        unittest.makeSuite(RegionSelectFormTest),
-        unittest.makeSuite(SelectCarModelTest),
-        unittest.makeSuite(SelectStationTest),
-        unittest.makeSuite(IsOfficialCheckboxTest),
-        unittest.makeSuite(SearchFormTest),
-        unittest.makeSuite(ShowroomListTest),
-        unittest.makeSuite(SpecialOffersListTest),
-        unittest.makeSuite(AddShowroomFormTest),
-    ))
-    result = unittest.TextTestRunner().run(suite)
-
-    sys.exit(not result.wasSuccessful())
+    seismograph.main(config_path='config.py', suites=suites)
