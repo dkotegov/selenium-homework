@@ -10,13 +10,13 @@ class AttachVideoDialog(selenium.PageItem):
         selenium.query.DIV,
         _id='hook_Block_AttachShareVideoContent'
     )
-    VIDEOS_LIST_CLASS ='modal-new_hld'
+    VIDEOS_LIST_XPATH ='//div[contains(@class, "modal-new_hld")]/descendant::a[contains(@class, "attachInput")]'
 
+    
     videos = utils.query('A', _class=selenium.query.contains('attachInput'))
 
-    @utils.repeat_on_error
     def click_first(self):
-        utils.wait_class(self.browser, self.VIDEOS_LIST_CLASS)
+        utils.wait_xpath(self.browser, self.VIDEOS_LIST_XPATH)
         self.videos.first().click()
 
 
