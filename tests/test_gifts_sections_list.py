@@ -23,7 +23,7 @@ MY_SECTION_LINK_SELECTOR_NAME = 'my_section_link'
 class AuthStep(selenium.Case):
     @seismograph.step(1, 'Login to ok.ru')
     def auth(self, browser):
-        print '\nAuthStep'
+        # print '\nAuthStep'
         auth_page = AuthPage(browser)
         auth_page.open()
         auth_page.auth(AuthManager.get_login(), AuthManager.get_password())
@@ -32,7 +32,7 @@ class AuthStep(selenium.Case):
 class OpenPageStep(selenium.Case):
     @seismograph.step(2, 'Open page')
     def auth(self, browser):
-        print 'OpenPageStep'
+        # print 'OpenPageStep'
         gifts_page = GiftsPage(browser)
         gifts_page.gifts_portlet.wait()
 
@@ -41,13 +41,13 @@ class OpenPageStep(selenium.Case):
 class TestAuthorSection(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert url and portlet name is valid')
     def check_section(self, browser):
-        print 'TestAuthorSection - check_section'
+        # print 'TestAuthorSection - check_section'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(AUTHOR_SECTION_LINK_SELECTOR_NAME)
         portlet_name_div = gifts_page.get_portlet_name()
-        print browser.current_url
-        print portlet_name_div.text
+        # print browser.current_url
+        # print portlet_name_div.text
         self.assertion.is_in('/gifts/authorGifts', browser.current_url, 'URLI NE SOVPADAUT!')
         self.assertion.equal(portlet_name_div.text, u'Подарки от пользователей')
 
@@ -56,13 +56,13 @@ class TestAuthorSection(AuthStep, OpenPageStep, selenium.Case):
 class TestPostcardsSection(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert url and portlet name is valid')
     def check_section(self, browser):
-        print 'TestPostcardsSection - check_section'
+        # print 'TestPostcardsSection - check_section'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(POSTCARDS_SECTION_LINK_SELECTOR_NAME)
         portlet_name_div = gifts_page.get_portlet_name()
-        print browser.current_url
-        print portlet_name_div.text
+        # print browser.current_url
+        # print portlet_name_div.text
         self.assertion.is_in('/gifts/liveGifts', browser.current_url, 'URLI NE SOVPADAUT!')
         self.assertion.equal(portlet_name_div.text, u'Открытки')
 
@@ -71,13 +71,13 @@ class TestPostcardsSection(AuthStep, OpenPageStep, selenium.Case):
 class TestLoveSection(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert url and portlet name is valid')
     def check_section(self, browser):
-        print 'TestLoveSection - check_section'
+        # print 'TestLoveSection - check_section'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(LOVE_SECTION_LINK_SELECTOR_NAME)
         portlet_name_div = gifts_page.get_portlet_name()
-        print browser.current_url
-        print portlet_name_div.text
+        # print browser.current_url
+        # print portlet_name_div.text
         self.assertion.is_in('/gifts/searchBased1', browser.current_url, 'URLI NE SOVPADAUT!')
         self.assertion.equal(portlet_name_div.text, u'Любовь')
 
@@ -86,13 +86,13 @@ class TestLoveSection(AuthStep, OpenPageStep, selenium.Case):
 class TestFriendSection(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert url and portlet name is valid')
     def check_section(self, browser):
-        print 'TestFriendSection - check_section'
+        # print 'TestFriendSection - check_section'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(FRIEND_SECTION_LINK_SELECTOR_NAME)
         portlet_name_div = gifts_page.get_portlet_name()
-        print browser.current_url
-        print portlet_name_div.text
+        # print browser.current_url
+        # print portlet_name_div.text
         self.assertion.is_in('/gifts/searchBased2', browser.current_url, 'URLI NE SOVPADAUT!')
         self.assertion.equal(portlet_name_div.text, u'Дружба')
 
@@ -101,13 +101,13 @@ class TestFriendSection(AuthStep, OpenPageStep, selenium.Case):
 class TestFlowerSection(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert url and portlet name is valid')
     def check_section(self, browser):
-        print 'TestFlowerSection - check_section'
+        # print 'TestFlowerSection - check_section'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(FLOWER_SECTION_LINK_SELECTOR_NAME)
         portlet_name_div = gifts_page.get_portlet_name()
-        print browser.current_url
-        print portlet_name_div.text
+        # print browser.current_url
+        # print portlet_name_div.text
         self.assertion.is_in('/gifts/searchBased3', browser.current_url, 'URLI NE SOVPADAUT!')
         self.assertion.equal(portlet_name_div.text, u'Цветы')
 
@@ -116,13 +116,13 @@ class TestFlowerSection(AuthStep, OpenPageStep, selenium.Case):
 class TestComplimentsSection(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert url and portlet name is valid')
     def check_section(self, browser):
-        print 'TestComplimentsSection - check_section'
+        # print 'TestComplimentsSection - check_section'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(COMPLIMENTS_SECTION_LINK_SELECTOR_NAME)
         portlet_name_div = gifts_page.get_portlet_name()
-        print browser.current_url
-        print portlet_name_div.text
+        # print browser.current_url
+        # print portlet_name_div.text
         self.assertion.is_in('/gifts/searchBased4', browser.current_url, 'URLI NE SOVPADAUT!')
         self.assertion.equal(portlet_name_div.text, u'Комплименты')
 
@@ -131,13 +131,13 @@ class TestComplimentsSection(AuthStep, OpenPageStep, selenium.Case):
 class TestMusicSection(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert url and portlet name is valid')
     def check_section(self, browser):
-        print 'TestMusicSection - check_section'
+        # print 'TestMusicSection - check_section'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(MUSIC_SECTION_LINK_SELECTOR_NAME)
         portlet_name_div = gifts_page.get_portlet_name()
-        print browser.current_url
-        print portlet_name_div.text
+        # print browser.current_url
+        # print portlet_name_div.text
         self.assertion.is_in('/gifts/music', browser.current_url, 'URLI NE SOVPADAUT!')
         self.assertion.equal(portlet_name_div.text, u'Музыкальные подарки')
 
@@ -146,13 +146,13 @@ class TestMusicSection(AuthStep, OpenPageStep, selenium.Case):
 class TestDesignerSection(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert url and portlet name is valid')
     def check_section(self, browser):
-        print 'TestDesignerSection - check_section'
+        # print 'TestDesignerSection - check_section'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(DESIGNER_SECTION_LINK_SELECTOR_NAME)
         portlet_name_div = gifts_page.get_portlet_name()
-        print browser.current_url
-        print portlet_name_div.text
+        # print browser.current_url
+        # print portlet_name_div.text
         self.assertion.is_in('/gifts/designer', browser.current_url, 'URLI NE SOVPADAUT!')
         self.assertion.equal(portlet_name_div.text, u'Подарки ОК')
 
@@ -161,12 +161,12 @@ class TestDesignerSection(AuthStep, OpenPageStep, selenium.Case):
 class TestMySection(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert url and portlet name is valid')
     def check_section(self, browser):
-        print 'TestMySection - check_section'
+        # print 'TestMySection - check_section'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(MY_SECTION_LINK_SELECTOR_NAME)
         portlet_name_div = gifts_page.get_portlet_name()
-        print browser.current_url
-        print portlet_name_div.text
+        # print browser.current_url
+        # print portlet_name_div.text
         self.assertion.is_in('/gifts/my', browser.current_url, 'URLI NE SOVPADAUT!')
         self.assertion.equal(portlet_name_div.text, u'Отправленные')

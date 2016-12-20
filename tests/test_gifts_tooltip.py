@@ -15,7 +15,7 @@ AUTHOR_SECTION_LINK_SELECTOR_NAME = 'author_section_link'
 class AuthStep(selenium.Case):
     @seismograph.step(1, 'Login to ok.ru')
     def auth(self, browser):
-        print '\nAuthStep'
+        # print '\nAuthStep'
         auth_page = AuthPage(browser)
         auth_page.open()
         auth_page.auth(AuthManager.get_login(), AuthManager.get_password())
@@ -24,7 +24,7 @@ class AuthStep(selenium.Case):
 class OpenPageStep(selenium.Case):
     @seismograph.step(2, 'Open page')
     def auth(self, browser):
-        print 'OpenPageStep'
+        # print 'OpenPageStep'
         gifts_page = GiftsPage(browser)
         gifts_page.gifts_portlet.wait()
 
@@ -33,7 +33,7 @@ class OpenPageStep(selenium.Case):
 class TestGiftTooltipBehavior(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert gifts tooltips works')
     def check_tooltip_appearance(self, browser):
-        print 'TestGiftTooltipBehavior - check_tooltip_appearance'
+        # print 'TestGiftTooltipBehavior - check_tooltip_appearance'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(AUTHOR_SECTION_LINK_SELECTOR_NAME)

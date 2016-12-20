@@ -15,7 +15,7 @@ GIFT_SELECTOR_NAME = 'gift'
 class AuthStep(selenium.Case):
     @seismograph.step(1, 'Login to ok.ru')
     def auth(self, browser):
-        print '\nAuthStep'
+        # print '\nAuthStep'
         auth_page = AuthPage(browser)
         auth_page.open()
         auth_page.auth(AuthManager.get_login(), AuthManager.get_password())
@@ -24,7 +24,7 @@ class AuthStep(selenium.Case):
 class OpenPageStep(selenium.Case):
     @seismograph.step(2, 'Open page')
     def auth(self, browser):
-        print 'OpenPageStep'
+        # print 'OpenPageStep'
         gifts_page = GiftsPage(browser)
         gifts_page.gifts_portlet.wait()
 
@@ -33,7 +33,7 @@ class OpenPageStep(selenium.Case):
 class TestProgressiveScroll(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert progressive scroll is works')
     def check_one_scroll(self, browser):
-        print 'TestProgressiveScroll - check_one_scroll'
+        # print 'TestProgressiveScroll - check_one_scroll'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gift_blocks_count_before_scroll = gifts_page.get_gifts_block_count()
@@ -41,14 +41,14 @@ class TestProgressiveScroll(AuthStep, OpenPageStep, selenium.Case):
         gifts_page.scroll_to_page_down()
         gift_blocks_count_after_scroll = gifts_page.get_gifts_block_count()
         gift_count_after_scroll = gifts_page.get_gifts_count()
-        print gift_blocks_count_before_scroll, gift_blocks_count_after_scroll
-        print gift_count_before_scroll, gift_count_after_scroll
+        # print gift_blocks_count_before_scroll, gift_blocks_count_after_scroll
+        # print gift_count_before_scroll, gift_count_after_scroll
         self.assertion.true(gift_blocks_count_before_scroll < gift_blocks_count_after_scroll)
         self.assertion.true(gift_count_before_scroll < gift_count_after_scroll)
 
     @seismograph.step(3, 'Assert progressive scroll is works')
     def check_many_scrolls(self, browser):
-        print 'TestProgressiveScroll - check_many_scrolls'
+        # print 'TestProgressiveScroll - check_many_scrolls'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gift_blocks_count_before_scroll = gifts_page.get_gifts_block_count()
@@ -65,7 +65,7 @@ class TestProgressiveScroll(AuthStep, OpenPageStep, selenium.Case):
         gifts_page.scroll_to_page_down()
         gift_blocks_count_after_scroll = gifts_page.get_gifts_block_count()
         gift_count_after_scroll = gifts_page.get_gifts_count()
-        print gift_blocks_count_before_scroll, gift_blocks_count_after_scroll
-        print gift_count_before_scroll, gift_count_after_scroll
+        # print gift_blocks_count_before_scroll, gift_blocks_count_after_scroll
+        # print gift_count_before_scroll, gift_count_after_scroll
         self.assertion.true(gift_blocks_count_before_scroll < gift_blocks_count_after_scroll)
         self.assertion.true(gift_count_before_scroll < gift_count_after_scroll)

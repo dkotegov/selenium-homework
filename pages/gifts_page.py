@@ -3,6 +3,7 @@ from seismograph.ext import selenium
 from seismograph.ext.selenium import ActionChains
 from seismograph.ext.selenium.exceptions import PollingTimeoutExceeded
 from seismograph.utils.common import waiting_for
+from selenium.common.exceptions import StaleElementReferenceException
 
 
 class SearchResults(selenium.PageItem):
@@ -33,6 +34,7 @@ class GiftsPage(selenium.Page):
         'music_modal': 'div.modal-new_center',
         'music_modal_submit': 'div.modal-new_cnt button[type=submit][action=link]',
         'song': '.track.soh-s.__selectable.__has-price',
+        'choosed_song_title': 'div.portlet.__sidebar-gifts.taCenter > div.textWrap div[title]',
 
     }
 
@@ -43,16 +45,35 @@ class GiftsPage(selenium.Page):
         )
     )
 
+    gifts_music_modal = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class='modal-new_center'
+        )
+    )
+
+    gifts_music_gift = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class='portlet __sidebar-gifts taCenter'
+        )
+    )
+
     _old_capture = None
     _new_capture = None
 
     def get_portlet_name(self):
         return self.browser.find_element_by_css_selector(self.page_locators['portlet_name'])
 
+    def get_portlet_name_text(self):
+        try:
+            return self.browser.find_element_by_css_selector(self.page_locators['portlet_name']).text
+        except StaleElementReferenceException:
+            return None
+
     def open_section(self, section_link_locator):
         section_link = self.browser.find_element_by_css_selector(self.page_locators[section_link_locator])
-        portlet_name = self.get_portlet_name()
-        self._old_capture = portlet_name.text
+        self._old_capture = self.get_portlet_name_text()
         section_link.click()
         waiting_for(
             func=self.wait_for_text_changed,
@@ -65,17 +86,24 @@ class GiftsPage(selenium.Page):
     def open_music_tab(self):
         music_tab_link = self.browser.find_element_by_css_selector(self.page_locators['add_music'])
         music_tab_link.click()
+        self.gifts_music_modal.wait()
+
+    def get_first_selectable_song(self):
+        return self.browser.find_element_by_css_selector(self.page_locators['song'])
+
+    def get_selected_song_title(self):
+        return self.browser.find_element_by_css_selector(self.page_locators['choosed_song_title'])
 
     def choose_first_song(self):
         first_song = self.browser.find_element_by_css_selector(self.page_locators['song'])
         first_song.click()
         submit_music_modal = self.browser.find_element_by_css_selector(self.page_locators['music_modal_submit'])
         submit_music_modal.click()
+        self.gifts_music_gift.wait()
 
     def wait_for_text_changed(self):
-        portlet_name = self.get_portlet_name()
-        self._new_capture = portlet_name.text
-        print self._new_capture
+        self._new_capture = self.get_portlet_name_text()
+        # print self._new_capture
         return self._old_capture != self._new_capture
 
     def get_gifts_block_count(self):

@@ -12,7 +12,7 @@ suite = selenium.Suite(__name__)
 class AuthStep(selenium.Case):
     @seismograph.step(1, 'Login to ok.ru')
     def auth(self, browser):
-        print '\nAuthStep'
+        # print '\nAuthStep'
         auth_page = AuthPage(browser)
         auth_page.open()
         auth_page.auth(AuthManager.get_login(), AuthManager.get_password())
@@ -21,7 +21,7 @@ class AuthStep(selenium.Case):
 class OpenPageStep(selenium.Case):
     @seismograph.step(2, 'Open page')
     def auth(self, browser):
-        print 'OpenPageStep'
+        # print 'OpenPageStep'
         gifts_page = GiftsPage(browser)
         gifts_page.gifts_portlet.wait()
 
@@ -30,10 +30,14 @@ class OpenPageStep(selenium.Case):
 class TestMusicGiftsBehavior(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert music in gifts works')
     def check_music_appearance(self, browser):
-        print 'TestMusicGiftsBehavior - check_music_appearance'
+        # print 'TestMusicGiftsBehavior - check_music_appearance'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
-        first_gift_element = gifts_page.get_first_gift()
-        gifts_page.move_mouse_to_element(first_gift_element)
-        tooltips = gifts_page.get_tooltips()
-        self.assertion.equal(len(tooltips), 1)
+        gifts_page.open_music_tab()
+        first_selectable_song = gifts_page.get_first_selectable_song()
+        artist = first_selectable_song.get_attribute('data-artist')
+        gifts_page.choose_first_song()
+        title = gifts_page.get_selected_song_title().text
+        # print title
+        # print artist
+        self.assertion.true(title.startswith(artist))

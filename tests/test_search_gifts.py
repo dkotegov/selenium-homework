@@ -25,7 +25,7 @@ def rand_str(n):
 class AuthStep(selenium.Case):
     @seismograph.step(1, 'Login to ok.ru')
     def auth(self, browser):
-        print '\nAuthStep'
+        # print '\nAuthStep'
         auth_page = AuthPage(browser)
         auth_page.open()
         auth_page.auth(AuthManager.get_login(), AuthManager.get_password())
@@ -34,7 +34,7 @@ class AuthStep(selenium.Case):
 class OpenPageStep(selenium.Case):
     @seismograph.step(2, 'Open page')
     def auth(self, browser):
-        print 'OpenPageStep'
+        # print 'OpenPageStep'
         gifts_page = GiftsPage(browser)
         gifts_page.gifts_portlet.wait()
 
@@ -43,7 +43,7 @@ class OpenPageStep(selenium.Case):
 class TestSearchSymbolsQueries(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert searching works')
     def check_more_slash_query_search(self, browser):
-        print 'TestProgressiveScroll - check_more_slash_query_search'
+        # print 'TestProgressiveScroll - check_more_slash_query_search'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.search(MORE_SLASH_QUERY)
@@ -52,7 +52,7 @@ class TestSearchSymbolsQueries(AuthStep, OpenPageStep, selenium.Case):
 
     @seismograph.step(3, 'Assert searching works')
     def check_dots_and_commas_and_semicolons_query_search(self, browser):
-        print 'TestProgressiveScroll - check_dots_and_commas_and_semicolons_query_search'
+        # print 'TestProgressiveScroll - check_dots_and_commas_and_semicolons_query_search'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.search(DOTS_AND_COMMAS_AND_SEMICOLONS_QUERY)
@@ -61,7 +61,7 @@ class TestSearchSymbolsQueries(AuthStep, OpenPageStep, selenium.Case):
 
     @seismograph.step(3, 'Assert searching works')
     def check_underscore_query_search(self, browser):
-        print 'TestProgressiveScroll - check_underscore_query_search'
+        # print 'TestProgressiveScroll - check_underscore_query_search'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.search(UNDERSCORE_QUERY)
@@ -73,7 +73,7 @@ class TestSearchSymbolsQueries(AuthStep, OpenPageStep, selenium.Case):
 class TestSearchRandomQueries(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert searching works with random queries')
     def check_random_query_search(self, browser):
-        print 'TestProgressiveScroll - check_random_query_search'
+        # print 'TestProgressiveScroll - check_random_query_search'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.search(rand_str(25))
@@ -85,7 +85,7 @@ class TestSearchRandomQueries(AuthStep, OpenPageStep, selenium.Case):
 class TestLowerUpperCaseQueries(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert searching works with lowercase and uppercase queries')
     def check_lower_upper_case_query_search(self, browser):
-        print 'TestLowerUpperCaseQueries - check_lower_upper_case_query_search'
+        # print 'TestLowerUpperCaseQueries - check_lower_upper_case_query_search'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.search(SIMPLE_SEARCH)
@@ -94,6 +94,6 @@ class TestLowerUpperCaseQueries(AuthStep, OpenPageStep, selenium.Case):
         gifts_page.search(SIMPLE_SEARCH.upper())
         gift_uppercase = gifts_page.get_gifts()
         gift_uppercase_ids = map(lambda el: el.get_attribute('data-pid'), gift_uppercase)
-        print gift_lowercase_ids
-        print gift_uppercase_ids
+        # print gift_lowercase_ids
+        # print gift_uppercase_ids
         self.assertion.equal_by_iter(gift_lowercase_ids, gift_uppercase_ids)
