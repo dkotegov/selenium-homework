@@ -56,8 +56,6 @@ class AddVideoCase(BaseCase):
         self.assertion.is_in(self.VIDEO_TITLE, self.channel_page.get_videos_titles())
         self.assertion.equal(self.channel_page.videos_count, self.DEFAULT_VIDEOS_COUNT + 1)
         self.channel_page.delete_video(self.VIDEO_TITLE)
-        self.assertion.is_not_in(self.VIDEO_TITLE, self.channel_page.get_videos_titles())
-        self.assertion.equal(self.channel_page.videos_count, self.DEFAULT_VIDEOS_COUNT)
         super(AddVideoCase, self).teardown()
 
 
