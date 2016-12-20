@@ -34,6 +34,7 @@ class VideoPreviewCase(BaseCase):
         self.videoplayer_page = VideoPage(self.browser)
         self.videoplayer_page.open(id=self.VIDEO_ID)
 
+    @seismograph.skip('Bug in OK')
     def test_open_in_newtab(self):
         url_related_video = self.videoplayer_page.get_url_related_video()
         self.videoplayer_page.open_related_video_in_new_tab()
