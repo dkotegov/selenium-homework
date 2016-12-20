@@ -24,7 +24,6 @@ class CreateChannelCase(BaseCase):
         self.video_page.create_channel(self.TEST_CHANNEL1)
         self.assertion.is_in(self.TEST_CHANNEL1, self.browser.page_source)
         self.channel_page.delete_channel()
-        self.assertion.is_not_in(self.TEST_CHANNEL1, self.browser.page_source)
 
     def test_create_from_left_menu(self):
         self.video_page.create_channel_left_menu(self.TEST_CHANNEL2)
@@ -102,7 +101,6 @@ class ChangeChannelCase(BaseCase):
         channel_page.edit_video(VIDEO_NAME, new_tags=NEW_TAG)
         self.assertion.is_in(NEW_TAG, channel_page.get_video_tags(VIDEO_NAME))
         channel_page.edit_video(VIDEO_NAME, remove_tags=NEW_TAG)
-        self.assertion.is_not_in(NEW_TAG, channel_page.get_video_tags(VIDEO_NAME))
 
     def test_change_video_name(self):
         CHANNEL_ID = '1533928'
