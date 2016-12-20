@@ -1,10 +1,16 @@
 # coding=utf-8
 from seismograph.ext import selenium
 from seismograph.ext.selenium import ActionChains
+from seismograph.ext.selenium.exceptions import PollingTimeoutExceeded
+from seismograph.utils.common import waiting_for
 
 from utils.xpath_query import XPathQueryObject
 
 import time
+
+
+class SearchResults(selenium.PageItem):
+    __area__ = selenium.query(selenium.query.DIV, _class="gift-front_cnt")
 
 
 class GiftsPage(selenium.Page):
@@ -23,7 +29,7 @@ class GiftsPage(selenium.Page):
         'designer_section_link': 'a.nav-side_i[href="/gifts/designer"]',
         'my_section_link': 'a.nav-side_i[href="/gifts/my"]',
         'gift_block': '.ugrid.__xxxl .ugrid_cnt [data-block="GiftsFrontContentRBx"] > div > div',
-        'gift': '.ugrid_i.soh-s.posR',
+        'gift': '.ugrid_i.soh-s.posR > div',
         'search_input': 'input#gf-search-input[type=text]',
         'search_submit': 'input.search_btn.button-pro[type=submit]',
         'gift_tooltip': 'div.sc-menu.gift-front_SM',
@@ -36,18 +42,39 @@ class GiftsPage(selenium.Page):
         )
     )
 
+    _old_capture = None
+    _new_capture = None
+
     def get_portlet_name(self):
         return self.browser.find_element_by_css_selector(self.page_locators['portlet_name'])
 
     def open_section(self, section_link_locator):
         section_link = self.browser.find_element_by_css_selector(self.page_locators[section_link_locator])
+        portlet_name = self.get_portlet_name()
+        self._old_capture = portlet_name.text
         section_link.click()
+        waiting_for(
+            func=self.wait_for_smth,
+            timeout=10,
+            exc_cls=PollingTimeoutExceeded,
+            message="Couldn't wait for text to change",
+            delay=0.5
+        )
+
+    def wait_for_smth(self):
+        portlet_name = self.get_portlet_name()
+        self._new_capture = portlet_name.text
+        print self._new_capture
+        return self._old_capture != self._new_capture
 
     def get_gifts_block_count(self):
         return len(self.browser.find_elements_by_css_selector(self.page_locators['gift_block']))
 
     def get_gifts_count(self):
         return len(self.browser.find_elements_by_css_selector(self.page_locators['gift']))
+
+    def get_gifts(self):
+        return self.browser.find_elements_by_css_selector(self.page_locators['gift'])
 
     def get_first_gift(self):
         return self.browser.find_element_by_css_selector(self.page_locators['gift'])
@@ -58,8 +85,10 @@ class GiftsPage(selenium.Page):
     def search(self, search_query):
         search_input = self.browser.find_element_by_css_selector(self.page_locators['search_input'])
         search_submit = self.browser.find_element_by_css_selector(self.page_locators['search_submit'])
+        search_input.clear()
         search_input.send_keys(search_query)
         search_submit.click()
+        self.gifts_portlet.wait()
 
     def move_mouse_to_element(self, element):
         action = ActionChains(self.browser)

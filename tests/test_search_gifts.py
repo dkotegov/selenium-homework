@@ -15,6 +15,7 @@ GIFT_SELECTOR_NAME = 'gift'
 MORE_SLASH_QUERY = '////////////////'
 DOTS_AND_COMMAS_AND_SEMICOLONS_QUERY = '.,.,.,.,.,.,.,.,.,;;;;'
 UNDERSCORE_QUERY = '_______________'
+SIMPLE_SEARCH = 'mailru'
 
 
 def rand_str(n):
@@ -78,3 +79,21 @@ class TestSearchRandomQueries(AuthStep, OpenPageStep, selenium.Case):
         gifts_page.search(rand_str(25))
         gift_count = gifts_page.get_gifts_count()
         self.assertion.equal(gift_count, 0)
+
+
+@suite.register
+class TestLowerUpperCaseQueries(AuthStep, OpenPageStep, selenium.Case):
+    @seismograph.step(3, 'Assert searching works with lowercase and uppercase queries')
+    def check_lower_upper_case_query_search(self, browser):
+        print 'TestLowerUpperCaseQueries - check_lower_upper_case_query_search'
+        gifts_page = GiftsPage(browser)
+        gifts_page.open()
+        gifts_page.search(SIMPLE_SEARCH)
+        gift_lowercase = gifts_page.get_gifts()
+        gift_lowercase_ids = map(lambda el: el.get_attribute('data-pid'), gift_lowercase)
+        gifts_page.search(SIMPLE_SEARCH.upper())
+        gift_uppercase = gifts_page.get_gifts()
+        gift_uppercase_ids = map(lambda el: el.get_attribute('data-pid'), gift_uppercase)
+        print gift_lowercase_ids
+        print gift_uppercase_ids
+        self.assertion.equal_by_iter(gift_lowercase_ids, gift_uppercase_ids)

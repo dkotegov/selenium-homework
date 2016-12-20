@@ -37,22 +37,6 @@ class OpenPageStep(selenium.Case):
 
 
 @suite.register
-class TestActualSection(AuthStep, OpenPageStep, selenium.Case):
-    @seismograph.step(3, 'Assert url and portlet name is valid')
-    def check_section(self, browser):
-        print 'TestActualSection - check_section'
-        gifts_page = GiftsPage(browser)
-        gifts_page.open()
-        gifts_page.open_section(ACTUAL_SECTION_LINK_SELECTOR_NAME)
-        gifts_page.gifts_portlet.wait()
-        portlet_name_div = gifts_page.get_portlet_name()
-        print browser.current_url
-        print portlet_name_div.text
-        self.assertion.is_in('/gifts', browser.current_url, 'URLI NE SOVPADAUT!')
-        self.assertion.equal(portlet_name_div.text, u'Акция!')
-
-
-@suite.register
 class TestAuthorSection(AuthStep, OpenPageStep, selenium.Case):
     @seismograph.step(3, 'Assert url and portlet name is valid')
     def check_section(self, browser):
@@ -60,7 +44,6 @@ class TestAuthorSection(AuthStep, OpenPageStep, selenium.Case):
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(AUTHOR_SECTION_LINK_SELECTOR_NAME)
-        gifts_page.gifts_portlet.wait()
         portlet_name_div = gifts_page.get_portlet_name()
         print browser.current_url
         print portlet_name_div.text
@@ -76,7 +59,6 @@ class TestPostcardsSection(AuthStep, OpenPageStep, selenium.Case):
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(POSTCARDS_SECTION_LINK_SELECTOR_NAME)
-        gifts_page.gifts_portlet.wait()
         portlet_name_div = gifts_page.get_portlet_name()
         print browser.current_url
         print portlet_name_div.text
@@ -92,7 +74,6 @@ class TestLoveSection(AuthStep, OpenPageStep, selenium.Case):
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(LOVE_SECTION_LINK_SELECTOR_NAME)
-        gifts_page.gifts_portlet.wait()
         portlet_name_div = gifts_page.get_portlet_name()
         print browser.current_url
         print portlet_name_div.text
@@ -108,7 +89,6 @@ class TestFriendSection(AuthStep, OpenPageStep, selenium.Case):
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(FRIEND_SECTION_LINK_SELECTOR_NAME)
-        gifts_page.gifts_portlet.wait()
         portlet_name_div = gifts_page.get_portlet_name()
         print browser.current_url
         print portlet_name_div.text
@@ -124,7 +104,6 @@ class TestFlowerSection(AuthStep, OpenPageStep, selenium.Case):
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(FLOWER_SECTION_LINK_SELECTOR_NAME)
-        gifts_page.gifts_portlet.wait()
         portlet_name_div = gifts_page.get_portlet_name()
         print browser.current_url
         print portlet_name_div.text
@@ -140,7 +119,6 @@ class TestComplimentsSection(AuthStep, OpenPageStep, selenium.Case):
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(COMPLIMENTS_SECTION_LINK_SELECTOR_NAME)
-        gifts_page.gifts_portlet.wait()
         portlet_name_div = gifts_page.get_portlet_name()
         print browser.current_url
         print portlet_name_div.text
@@ -156,7 +134,6 @@ class TestMusicSection(AuthStep, OpenPageStep, selenium.Case):
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(MUSIC_SECTION_LINK_SELECTOR_NAME)
-        gifts_page.gifts_portlet.wait()
         portlet_name_div = gifts_page.get_portlet_name()
         print browser.current_url
         print portlet_name_div.text
@@ -172,7 +149,6 @@ class TestDesignerSection(AuthStep, OpenPageStep, selenium.Case):
         gifts_page = GiftsPage(browser)
         gifts_page.open()
         gifts_page.open_section(DESIGNER_SECTION_LINK_SELECTOR_NAME)
-        gifts_page.gifts_portlet.wait()
         portlet_name_div = gifts_page.get_portlet_name()
         print browser.current_url
         print portlet_name_div.text
@@ -187,8 +163,8 @@ class TestMySection(AuthStep, OpenPageStep, selenium.Case):
         print 'TestMySection - check_section'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
+        # gifts_page.browser.execute_script("window.scrollTo(0, 140);")
         gifts_page.open_section(MY_SECTION_LINK_SELECTOR_NAME)
-        gifts_page.gifts_portlet.wait()
         portlet_name_div = gifts_page.get_portlet_name()
         print browser.current_url
         print portlet_name_div.text
