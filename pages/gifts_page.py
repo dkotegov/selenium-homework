@@ -4,10 +4,6 @@ from seismograph.ext.selenium import ActionChains
 from seismograph.ext.selenium.exceptions import PollingTimeoutExceeded
 from seismograph.utils.common import waiting_for
 
-from utils.xpath_query import XPathQueryObject
-
-import time
-
 
 class SearchResults(selenium.PageItem):
     __area__ = selenium.query(selenium.query.DIV, _class="gift-front_cnt")
@@ -32,7 +28,12 @@ class GiftsPage(selenium.Page):
         'gift': '.ugrid_i.soh-s.posR > div',
         'search_input': 'input#gf-search-input[type=text]',
         'search_submit': 'input.search_btn.button-pro[type=submit]',
-        'gift_tooltip': 'div.sc-menu.gift-front_SM',
+        'gift_tooltip': 'div.sc-menu.gift-front_SM:not(.sc-menu__hidden)',
+        'add_music': 'div.portlet.__sidebar-gifts > div > a',
+        'music_modal': 'div.modal-new_center',
+        'music_modal_submit': 'div.modal-new_cnt button[type=submit][action=link]',
+        'song': '.track.soh-s.__selectable.__has-price',
+
     }
 
     gifts_portlet = selenium.PageElement(
@@ -54,14 +55,24 @@ class GiftsPage(selenium.Page):
         self._old_capture = portlet_name.text
         section_link.click()
         waiting_for(
-            func=self.wait_for_smth,
+            func=self.wait_for_text_changed,
             timeout=10,
             exc_cls=PollingTimeoutExceeded,
             message="Couldn't wait for text to change",
             delay=0.5
         )
 
-    def wait_for_smth(self):
+    def open_music_tab(self):
+        music_tab_link = self.browser.find_element_by_css_selector(self.page_locators['add_music'])
+        music_tab_link.click()
+
+    def choose_first_song(self):
+        first_song = self.browser.find_element_by_css_selector(self.page_locators['song'])
+        first_song.click()
+        submit_music_modal = self.browser.find_element_by_css_selector(self.page_locators['music_modal_submit'])
+        submit_music_modal.click()
+
+    def wait_for_text_changed(self):
         portlet_name = self.get_portlet_name()
         self._new_capture = portlet_name.text
         print self._new_capture
@@ -90,9 +101,30 @@ class GiftsPage(selenium.Page):
         search_submit.click()
         self.gifts_portlet.wait()
 
-    def move_mouse_to_element(self, element):
+    def true_move_mouse_to_element(self, element):
         action = ActionChains(self.browser)
         action.context_click(element).perform()
+        waiting_for(
+            func=self.wait_for_tooltip_showed,
+            timeout=10,
+            exc_cls=PollingTimeoutExceeded,
+            message="Couldn't wait for text to change",
+            delay=1
+        )
+
+    def hack_move_mouse_to_element(self, element):
+        self.browser.execute_script("$('.gift_a').eq(0).mouseover()")
+        waiting_for(
+            func=self.wait_for_tooltip_showed,
+            timeout=10,
+            exc_cls=PollingTimeoutExceeded,
+            message="Couldn't wait for text to change",
+            delay=1
+        )
+
+    def wait_for_tooltip_showed(self):
+        tooltips = self.get_tooltips()
+        return len(tooltips) > 0
 
     def get_tooltips(self):
         return self.browser.find_elements_by_css_selector(self.page_locators['gift_tooltip'])

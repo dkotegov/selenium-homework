@@ -8,9 +8,6 @@ from utils.auth_manager import AuthManager
 
 suite = selenium.Suite(__name__)
 
-GIFT_SELECTOR_NAME = 'gift'
-AUTHOR_SECTION_LINK_SELECTOR_NAME = 'author_section_link'
-
 
 class AuthStep(selenium.Case):
     @seismograph.step(1, 'Login to ok.ru')
@@ -30,14 +27,13 @@ class OpenPageStep(selenium.Case):
 
 
 @suite.register
-class TestGiftTooltipBehavior(AuthStep, OpenPageStep, selenium.Case):
-    @seismograph.step(3, 'Assert gifts tooltips works')
-    def check_tooltip_appearance(self, browser):
-        print 'TestGiftTooltipBehavior - check_tooltip_appearance'
+class TestMusicGiftsBehavior(AuthStep, OpenPageStep, selenium.Case):
+    @seismograph.step(3, 'Assert music in gifts works')
+    def check_music_appearance(self, browser):
+        print 'TestMusicGiftsBehavior - check_music_appearance'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
-        gifts_page.open_section(AUTHOR_SECTION_LINK_SELECTOR_NAME)
         first_gift_element = gifts_page.get_first_gift()
-        gifts_page.hack_move_mouse_to_element(first_gift_element)
+        gifts_page.move_mouse_to_element(first_gift_element)
         tooltips = gifts_page.get_tooltips()
         self.assertion.equal(len(tooltips), 1)

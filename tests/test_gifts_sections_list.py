@@ -1,6 +1,7 @@
 # coding=utf-8
 import seismograph
 from seismograph.ext import selenium
+
 from pages.auth_page import AuthPage
 from pages.gifts_page import GiftsPage
 from utils.auth_manager import AuthManager
@@ -163,7 +164,6 @@ class TestMySection(AuthStep, OpenPageStep, selenium.Case):
         print 'TestMySection - check_section'
         gifts_page = GiftsPage(browser)
         gifts_page.open()
-        # gifts_page.browser.execute_script("window.scrollTo(0, 140);")
         gifts_page.open_section(MY_SECTION_LINK_SELECTOR_NAME)
         portlet_name_div = gifts_page.get_portlet_name()
         print browser.current_url

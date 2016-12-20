@@ -3,8 +3,8 @@ import random
 import string
 
 import seismograph
-import time
 from seismograph.ext import selenium
+
 from pages.auth_page import AuthPage
 from pages.gifts_page import GiftsPage
 from utils.auth_manager import AuthManager
