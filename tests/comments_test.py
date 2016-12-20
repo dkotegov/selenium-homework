@@ -120,6 +120,8 @@ class AddCommentCase(BaseCase):
         self.assertion.equal(COMMENT, last_comment.content)
 
     def teardown(self):
-        self.video_page.last_comment.remove()
-        self.assertion.true(self.video_page.last_comment.is_deleted)
-        super(AddCommentCase, self).teardown()
+        try:
+            self.video_page.last_comment.remove()
+            self.assertion.true(self.video_page.last_comment.is_deleted)
+        finally:
+            super(AddCommentCase, self).teardown()

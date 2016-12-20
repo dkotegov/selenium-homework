@@ -49,13 +49,15 @@ class AddVideoCase(BaseCase):
         self.channel_page.add_video_main(self.VIDEO_URL)
 
     def test_button_on_channel_page(self):
-        self.channel_page.open(id=self.FIRST_CHANNEL_ID)
+        self.channel_page.open(id=self.SECOND_CHANNEL_ID)
         self.channel_page.add_video(self.VIDEO_URL)
 
     def teardown(self):
-        self.assertion.is_in(self.VIDEO_TITLE, self.channel_page.get_videos_titles())
-        self.channel_page.delete_video(self.VIDEO_TITLE)
-        super(AddVideoCase, self).teardown()
+        try:
+            self.assertion.is_in(self.VIDEO_TITLE, self.channel_page.get_videos_titles())
+            self.channel_page.delete_video(self.VIDEO_TITLE)
+        finally:
+            super(AddVideoCase, self).teardown()
 
 
 @suite.register
@@ -142,17 +144,20 @@ class SubscriptionsCase(BaseCase):
         self.page = ChannelPage(self.browser)
         self.page.open(id=self.CHANNEL_ID)
 
+
     def test_subscribe_from_video_page(self):
         self.page = VideoPage(self.browser)
         self.page.open(id=self.VIDEO_ID)
 
     def teardown(self):
-        self.page.subscribe()
-        self.assertion.true(self.page.is_subscribe())
-        self.assertion.equal(self.page.subscriptions_count, self.DEFAULT_SUBSCRIPTIONS_COUNT + 1)
-        self.page.unsubscribe()
-        self.assertion.true(self.page.is_not_subscribe())
-        self.assertion.equal(self.page.subscriptions_count, self.DEFAULT_SUBSCRIPTIONS_COUNT)
+      try:
+            self.page.subscribe()
+            self.assertion.true(self.page.is_subscribe())
+            self.assertion.equal(self.page.subscriptions_count, self.DEFAULT_SUBSCRIPTIONS_COUNT + 1)
+            self.page.unsubscribe()
+            self.assertion.true(self.page.is_not_subscribe())
+            self.assertion.equal(self.page.subscriptions_count, self.DEFAULT_SUBSCRIPTIONS_COUNT)
+      finally:
         super(SubscriptionsCase, self).teardown()
 
 
