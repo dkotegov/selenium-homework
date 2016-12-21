@@ -94,8 +94,11 @@ class ChannelPage(selenium.Page):
     VIDEOS_LINKS_XPATH = '//div[@class="vid-card js-sortable"]/child::a'
     CHANGE_VIDEO_XPATH_TEMPLATE = '//div[@class="vid-card js-sortable"]/child::a[@title="{}"]/following-sibling::' \
                                   'div[@class="vid-card_ac"]/descendant::a[contains(@class,"vl_ic_{}")]'
+    CHANGE_VIDEO_XPATH_TEMPLATE2 = '//div[@class="vid-card js-sortable"]/child::a[@title="{}"]/following-sibling::' \
+                                  'div[@class="vid-card_ac"]/descendant::a[contains(@class,"vl_ic_{}")]'
     DELETE_VIDEO_XPATH_TEMPLATE = CHANGE_VIDEO_XPATH_TEMPLATE.format('{}', 'delete')
-    EDIT_VIDEO_XPATH_TEMPLATE = CHANGE_VIDEO_XPATH_TEMPLATE.format('{}', 'edit')
+    # EDIT_VIDEO_XPATH_TEMPLATE = CHANGE_VIDEO_XPATH_TEMPLATE2.format('{}', 'edit')
+    EDIT_VIDEO_XPATH = '//a[@class="vid-card_ac_i ic vl_ic_edit"]'
     VIDEO_LINK_CLASS = 'vid-card_img__link'
     VIDEO_LINK_XPATH = '//a[@title="{}"]'
     IS_SUBSCRIBE_XPATH = '//a[starts-with(@id,"vv_btn_album_subscribe") and @class="vl_btn invisible"]'
@@ -155,7 +158,8 @@ class ChannelPage(selenium.Page):
 
     @utils.repeat_on_error
     def click_edit_video(self, name):
-        edit_button = utils.wait_xpath(self.browser, self.EDIT_VIDEO_XPATH_TEMPLATE.format(name))
+        # edit_button = utils.wait_xpath(self.browser, self.EDIT_VIDEO_XPATH_TEMPLATE.format(name))
+        edit_button = utils.wait_xpath(self.browser, self.EDIT_VIDEO_XPATH)
         utils.js_click(self.browser, edit_button)
 
     def edit_video(self, name, title=None, description=None, new_tags=None, remove_tags=None):

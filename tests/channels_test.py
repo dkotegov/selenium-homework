@@ -62,6 +62,7 @@ class AddVideoCase(BaseCase):
 
 @suite.register
 class ChangeChannelCase(BaseCase):
+
     def test_move_video(self):
         DESTINATION_ID = '1534952'
         SOURCE_ID = '1535208'
@@ -136,8 +137,8 @@ class ChangeChannelCase(BaseCase):
 
 @suite.register
 class SubscriptionsCase(BaseCase):
-    CHANNEL_ID = '1100320'
-    VIDEO_ID = '203665445152'
+    CHANNEL_ID = '1125281'
+    VIDEO_ID = '205534990753'
     DEFAULT_SUBSCRIPTIONS_COUNT = 0
 
     def test_subscribe_from_channel_page(self):
