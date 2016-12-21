@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import time
 
 import seismograph
@@ -15,7 +14,7 @@ suite = selenium.Suite(__name__)
 
 
 @suite.register
-class TestComments(AuthStep, OpenNotesPageStep, selenium.Case):
+class TestCommentNone(AuthStep, OpenNotesPageStep, selenium.Case):
 
     """
         Добавляем заметку.
@@ -39,21 +38,21 @@ class TestComments(AuthStep, OpenNotesPageStep, selenium.Case):
         notes_page.wait_for_open()
 
     @seismograph.step(4, 'Comment note')
-    def test_comment_note(self, browser):
+    def comment_note(self, browser):
         notes_page = NotesPage(browser)
-
         last_note = notes_page.get_last_note()
         last_note.open()
 
         note_popup = NotePopup(browser)
-        note_popup.wait_for_open()
         for _ in range(self.COMMENT_COUNT):
             note_popup.comment_form.add_comment(get_note_text())
+            # Добавляет комментарии слишком быстро
+            time.sleep(0.5)
 
         self.assertion.equal(self.COMMENT_COUNT, note_popup.actions.get_comment_count())
 
     @seismograph.step(5, 'Check comment actions')
-    def test_remove_comment(self, browser):
+    def remove_comment(self, browser):
         notes_page = NotesPage(browser)
         note_popup = NotePopup(browser)
 
@@ -62,6 +61,7 @@ class TestComments(AuthStep, OpenNotesPageStep, selenium.Case):
         self.assertion.equal(self.COMMENT_COUNT - 1, note_popup.actions.get_comment_count())
 
         note_popup.close()
+        notes_page.refresh()
         notes_page.wait_for_open()
         last_note = notes_page.get_last_note()
         self.assertion.equal(self.COMMENT_COUNT - 1, last_note.actions.get_comment_count())

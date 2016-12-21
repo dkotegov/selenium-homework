@@ -681,7 +681,7 @@ class NotePopup(selenium.PageItem):
     )
 
     def wait_for_open(self):
-        self.comment_form.wait()
+        self.text_input.wait()
 
     def edit_note(self, text):
         import time
