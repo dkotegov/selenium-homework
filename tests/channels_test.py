@@ -163,7 +163,7 @@ class SubscriptionsCase(BaseCase):
 
 @suite.register
 class OpenChannelCase(BaseCase):
-    VIDEO_ID = '206523142632'
+    VIDEO_ID = '211779916264'
 
     def test_open_channel(self):
         video_page = VideoPage(self.browser)
