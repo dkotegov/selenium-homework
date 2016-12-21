@@ -6,7 +6,7 @@ from elements.forms import NoteCreateForm
 from elements.pages import NotesPage, RemoveStatusPopup
 from seismograph.ext import selenium
 from selenium.common.exceptions import NoSuchElementException
-from tests.notes.utils import auth, get_note_text
+from tests.notes.utils import get_note_text
 
 
 suite = selenium.Suite(__name__)
@@ -27,7 +27,7 @@ def test_in_status(case, browser):
     time.sleep(1)
     notes_page.remove_all_notes()
 
-    notes_page.open_note_input()
+    notes_page.open_note_create_form()
     time.sleep(1)
     note_form = NoteCreateForm(browser)
     note_text = get_note_text()
@@ -47,7 +47,7 @@ def test_in_status(case, browser):
     with case.assertion.raises(NoSuchElementException):
         notes_page.get_status_note().get_text()
 
-    notes_page.open_note_input()
+    notes_page.open_note_create_form()
     time.sleep(1)
     note_form = NoteCreateForm(browser)
     note_text = get_note_text()

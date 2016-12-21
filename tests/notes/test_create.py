@@ -7,7 +7,7 @@ from seismograph.ext import selenium
 from elements.forms import AuthForm, NoteCreateForm
 from elements.items import AddAudioPopup, NotePopup
 from elements.pages import NotesPage
-from tests.notes.utils import auth, get_note_text
+from tests.notes.utils import get_note_text
 
 
 suite = selenium.Suite(__name__)
@@ -31,7 +31,7 @@ def test_create_with_text_boxes(case, browser):
     time.sleep(1)
     notes_page.remove_all_notes()
 
-    notes_page.open_note_input()
+    notes_page.open_note_create_form()
     time.sleep(1)
 
     note_texts = []
@@ -79,7 +79,7 @@ def test_create_with_photo(case, browser):
     time.sleep(1)
     notes_page.remove_all_notes()
 
-    notes_page.open_note_input()
+    notes_page.open_note_create_form()
     time.sleep(1)
 
     note_form = NoteCreateForm(browser)
@@ -135,7 +135,7 @@ def test_create_with_audio(case, browser):
     time.sleep(1)
     notes_page.remove_all_notes()
 
-    notes_page.open_note_input()
+    notes_page.open_note_create_form()
     time.sleep(1)
 
     note_form = NoteCreateForm(browser)
@@ -190,7 +190,7 @@ def test_create_with_place(case, browser):
     time.sleep(1)
     notes_page.remove_all_notes()
 
-    notes_page.open_note_input()
+    notes_page.open_note_create_form()
     time.sleep(1)
 
     note_form = NoteCreateForm(browser)
@@ -246,7 +246,7 @@ def test_create_with_user(case, browser):
     time.sleep(1)
     notes_page.remove_all_notes()
 
-    notes_page.open_note_input()
+    notes_page.open_note_create_form()
     time.sleep(1)
 
     note_form = NoteCreateForm(browser)

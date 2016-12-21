@@ -35,7 +35,7 @@ SELENIUM_EX = {
 
     'PROJECT_URL': '{0}{1}/'.format(OK_URL, OK_USER_ID),
 
-    'POLLING_TIMEOUT': 15,
+    'POLLING_TIMEOUT': 10,
 
     'DEFAULT_BROWSER': os.environ.get('BROWSER', 'CHROME'),
     'MAXIMIZE_WINDOW': True,

@@ -11,12 +11,12 @@ import seismograph
 
 
 suites = (
-    test_create.suite,
-    test_restore.suite,
-    test_in_status.suite,
-    test_rate.suite,
+    # test_create.suite,
+    # test_restore.suite,
+    # test_in_status.suite,
+    # test_rate.suite,
     test_comment.suite,
-    test_edit.suite,
+    # test_edit.suite,
 )
 
 

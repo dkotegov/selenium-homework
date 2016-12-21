@@ -135,12 +135,11 @@ class Note(selenium.PageItem):
         is_list=True
     )
 
-    restore = selenium.PageElement(
+    restore_link = selenium.PageElement(
         selenium.query(
             selenium.query.A,
             _class=selenium.query.contains('delete-stub_cancel')
-        ),
-        call=lambda btn: btn.click()
+        )
     )
 
     in_status_link = selenium.PageElement(
@@ -175,6 +174,10 @@ class Note(selenium.PageItem):
             action.move_to_element(self)
             action.click(self.delete_btn)
             action.perform()
+        self.restore_link.wait()
+
+    def restore(self):
+        self.restore_link.click()
 
     def in_status(self):
         with self.browser.action_chains as action:
@@ -676,6 +679,9 @@ class NotePopup(selenium.PageItem):
         ),
         call=lambda btn: btn.click()
     )
+
+    def wait_for_open(self):
+        self.comment_form.wait()
 
     def edit_note(self, text):
         import time

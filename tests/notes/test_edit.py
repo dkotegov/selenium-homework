@@ -6,7 +6,7 @@ from elements.forms import NoteCreateForm
 from elements.items import NotePopup
 from elements.pages import NotesPage
 from seismograph.ext import selenium
-from tests.notes.utils import auth, get_note_text
+from tests.notes.utils import get_note_text
 
 
 suite = selenium.Suite(__name__)
@@ -27,7 +27,7 @@ def test_edit(case, browser):
     time.sleep(1)
     notes_page.remove_all_notes()
 
-    notes_page.open_note_input()
+    notes_page.open_note_create_form()
     time.sleep(1)
     note_form = NoteCreateForm(browser)
     first_text = get_note_text()

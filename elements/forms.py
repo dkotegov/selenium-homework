@@ -7,18 +7,25 @@ from elements.items import InStatusCheckbox, NoteCreateFormAddedText, NoteCreate
     NoteCreateFormAddedPhoto, NoteCreateFormActions, NoteCreateFormPlaceSelect, NoteCreateFormUserSelect
 
 
-class AuthForm(forms.UIForm):
+class AuthForm(selenium.PageItem):
 
-    login_field = forms.fields.Input(
-        'Login',
-        value=USERNAME,
-        selector=forms.fields.selector(id='field_email'),
+    __area__ = selenium.query(
+        selenium.query.DIV,
+        _class=selenium.query.contains('anonym_login')
     )
 
-    password_field = forms.fields.Input(
-        'Password',
-        value=PASSWORD,
-        selector=forms.fields.selector(id='field_password'),
+    login_field = selenium.PageElement(
+        selenium.query(
+            selenium.query.INPUT,
+            id='field_email'
+        ),
+    )
+
+    password_field = selenium.PageElement(
+        selenium.query(
+            selenium.query.INPUT,
+            id='field_password'
+        ),
     )
 
     submit = selenium.PageElement(
@@ -29,6 +36,10 @@ class AuthForm(forms.UIForm):
         ),
         call=lambda btn: btn.click(),
     )
+
+    def fill(self):
+        self.login_field.send_keys(USERNAME)
+        self.password_field.send_keys(PASSWORD)
 
 
 class NoteCreateForm(forms.UIForm):
@@ -71,6 +82,9 @@ class NoteCreateForm(forms.UIForm):
         ),
         call=lambda btn: btn.click()
     )
+
+    def wait_for_open(self):
+        self.submit.wait()
 
     def send_keys_in_last_text_form(self, text):
         self.added_text_fields[-1].text_input.send_keys(text)

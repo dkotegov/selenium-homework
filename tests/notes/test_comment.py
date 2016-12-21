@@ -2,63 +2,78 @@
 
 import time
 
+import seismograph
 from elements.forms import NoteCreateForm
 from elements.items import NotePopup
 from elements.pages import NotesPage
 from seismograph.ext import selenium
-from tests.notes.utils import auth, get_note_text
+from tests.notes.base_steps import AuthStep, OpenNotesPageStep
+from tests.notes.utils import get_note_text
 
 
 suite = selenium.Suite(__name__)
 
 
 @suite.register
-def test_comment(case, browser):
+class TestComments(AuthStep, OpenNotesPageStep, selenium.Case):
+
     """
         Добавляем заметку.
         Комментируем, проверяем возможность удаления / восстановления комментариев.
         Удаляем заметку.
     """
 
-    auth(browser)
+    COMMENT_COUNT = 3
 
-    notes_page = NotesPage(browser)
-    notes_page.open()
-    time.sleep(1)
-    notes_page.remove_all_notes()
+    @seismograph.step(3, 'Create note')
+    def create_note(self, browser):
+        notes_page = NotesPage(browser)
+        notes_page.open_note_create_form()
 
-    notes_page.open_note_input()
-    time.sleep(1)
-    note_form = NoteCreateForm(browser)
-    note_form.send_keys_in_last_text_form(get_note_text())
-    note_form.in_status.unchecked()
-    note_form.submit()
-    time.sleep(2)
+        note_form = NoteCreateForm(browser)
+        note_form.wait_for_open()
+        note_form.send_keys_in_last_text_form(get_note_text())
+        note_form.in_status.unchecked()
+        note_form.submit()
 
-    comment_count = 3
-    last_note = notes_page.get_last_note()
-    last_note.open()
-    time.sleep(1)
-    note_popup = NotePopup(browser)
-    for _ in range(comment_count):
-        note_popup.comment_form.add_comment(get_note_text())
-        time.sleep(1)
-    case.assertion.equal(comment_count, note_popup.actions.get_comment_count())
+        notes_page.wait_for_open()
 
-    last_comment = note_popup.get_last_comment()
-    last_comment.remove()
-    time.sleep(1)
-    case.assertion.equal(comment_count - 1, note_popup.actions.get_comment_count())
+    @seismograph.step(4, 'Comment note')
+    def test_comment_note(self, browser):
+        notes_page = NotesPage(browser)
 
-    note_popup.close()
-    time.sleep(1)
-    last_note = notes_page.get_last_note()
-    case.assertion.equal(comment_count - 1, last_note.actions.get_comment_count())
+        last_note = notes_page.get_last_note()
+        last_note.open()
 
-    last_note.delete()
-    time.sleep(1)
+        note_popup = NotePopup(browser)
+        note_popup.wait_for_open()
+        for _ in range(self.COMMENT_COUNT):
+            note_popup.comment_form.add_comment(get_note_text())
 
-    notes_page.refresh()
-    time.sleep(1)
+        self.assertion.equal(self.COMMENT_COUNT, note_popup.actions.get_comment_count())
 
-    case.assertion.equal(0, notes_page.get_note_count())
+    @seismograph.step(5, 'Check comment actions')
+    def test_remove_comment(self, browser):
+        notes_page = NotesPage(browser)
+        note_popup = NotePopup(browser)
+
+        last_comment = note_popup.get_last_comment()
+        last_comment.remove()
+        self.assertion.equal(self.COMMENT_COUNT - 1, note_popup.actions.get_comment_count())
+
+        note_popup.close()
+        notes_page.wait_for_open()
+        last_note = notes_page.get_last_note()
+        self.assertion.equal(self.COMMENT_COUNT - 1, last_note.actions.get_comment_count())
+
+    @seismograph.step(6, 'Remove note')
+    def remove_note(self, browser):
+        notes_page = NotesPage(browser)
+
+        last_note = notes_page.get_last_note()
+        last_note.delete()
+
+        notes_page.refresh()
+        notes_page.wait_for_open()
+
+        self.assertion.equal(0, notes_page.get_note_count())

@@ -5,7 +5,7 @@ import time
 from elements.forms import NoteCreateForm
 from elements.pages import NotesPage
 from seismograph.ext import selenium
-from tests.notes.utils import auth, get_note_text
+from tests.notes.utils import get_note_text
 
 
 suite = selenium.Suite(__name__)
@@ -28,7 +28,7 @@ def test_remove_and_restore(case, browser):
 
     note_count = 2
     for _ in range(note_count):
-        notes_page.open_note_input()
+        notes_page.open_note_create_form()
         time.sleep(1)
         note_form = NoteCreateForm(browser)
         note_form.send_keys_in_last_text_form(get_note_text())

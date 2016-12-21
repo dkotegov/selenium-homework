@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from elements.forms import AuthForm
+
 from seismograph.ext import selenium
 from elements import items
 from elements.items import Note
@@ -14,6 +16,41 @@ class BasePage(selenium.Page):
             value=u'Выход'
         ),
     )
+
+    footer = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            id='footer'
+        )
+    )
+
+    def wait_for_open(self):
+        self.footer.wait()
+
+
+class AuthPage(BasePage):
+
+    __url_path__ = '/'
+
+    exit_link = None
+
+    def authorize(self):
+        auth_form = AuthForm(self.browser)
+        auth_form.fill()
+        auth_form.submit()
+
+
+class UserPage(BasePage):
+
+    avatar = selenium.PageElement(
+        selenium.query(
+            selenium.query.IMG,
+            id='viewImageLinkId'
+        )
+    )
+
+    def wait_for_open(self):
+        self.avatar.wait()
 
 
 class NotesPage(BasePage):
@@ -61,7 +98,7 @@ class NotesPage(BasePage):
 
     status_note = selenium.PageElement(StatusNote, wait_timeout=2)
 
-    def open_note_input(self):
+    def open_note_create_form(self):
         self.note_input.click()
 
     def get_last_note(self):
@@ -77,16 +114,12 @@ class NotesPage(BasePage):
         return self.status_note
 
     def remove_all_notes(self):
-        import time
         for note in self.notes:
             note.delete()
-            time.sleep(1)
 
     def restore_all_notes(self):
-        import time
         for note in self.notes:
             note.restore()
-            time.sleep(1)
 
 
 class RemoveStatusPopup(selenium.PageItem):
