@@ -370,6 +370,13 @@ class AddAudioPopup(selenium.PageItem):
         )
     )
 
+    first_audio_record = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class=selenium.query.contains('posting-form_track')
+        )
+    )
+
     audio_records = selenium.PageElement(
         selenium.query(
             selenium.query.DIV,
@@ -388,6 +395,12 @@ class AddAudioPopup(selenium.PageItem):
 
     def search(self, audio_name):
         self.search_input.send_keys(audio_name)
+
+    def wait_for_search(self):
+        import time
+        # not_working
+        # self.first_audio_record.wait()
+        time.sleep(1)
 
     def select_audio(self, count=RECORDS_COUNT):
         records = []
@@ -456,10 +469,20 @@ class NoteCreateFormPlaceSelect(selenium.PageItem):
         we_class=Place
     )
 
+    place_list_wrap = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class='pform_map_cnt'
+        )
+    )
+
     selected_place = selenium.PageElement(SelectedPlace)
 
     def search(self, place_name):
         self.search_input.send_keys(place_name)
+
+    def wait_for_places(self):
+        self.place_list_wrap.wait()
 
     def select_random_place(self):
         random_place = random.choice(self.place_list)
@@ -681,7 +704,7 @@ class NotePopup(selenium.PageItem):
     )
 
     def wait_for_open(self):
-        self.text_input.wait()
+        self.text.wait()
 
     def edit_note(self, text):
         import time

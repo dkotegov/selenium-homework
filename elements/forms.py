@@ -42,7 +42,14 @@ class AuthForm(selenium.PageItem):
         self.password_field.send_keys(PASSWORD)
 
 
-class NoteCreateForm(forms.UIForm):
+class NoteCreateForm(selenium.PageItem):
+
+    close_button = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class=selenium.query.contains('media-layer_close_ico')
+        )
+    )
 
     added_text_fields = selenium.PageElement(
         selenium.query(
@@ -85,6 +92,14 @@ class NoteCreateForm(forms.UIForm):
 
     def wait_for_open(self):
         self.submit.wait()
+
+    def wait_for_submit_enabled(self):
+        while not self.submit.is_enabled():
+            pass
+
+    def wait_for_hide(self):
+        while self.close_button.is_displayed():
+            pass
 
     def send_keys_in_last_text_form(self, text):
         self.added_text_fields[-1].text_input.send_keys(text)

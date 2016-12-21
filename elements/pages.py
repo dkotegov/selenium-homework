@@ -50,7 +50,8 @@ class UserPage(BasePage):
     )
 
     def wait_for_open(self):
-        self.avatar.wait()
+        while not self.avatar.is_displayed():
+            pass
 
 
 class NotesPage(BasePage):
