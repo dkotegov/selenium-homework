@@ -11,8 +11,8 @@ suite = seismograph.Suite(__name__, require=['selenium'])
 
 @suite.register
 class VideoOpenCase(BaseCase):
-    VIDEO_ID = '206699762152'
-    CHANNEL_ID = '1567208'
+    VIDEO_ID = '211779916264'
+    CHANNEL_ID = '1631720'
 
     def test_openclose(self):
         
