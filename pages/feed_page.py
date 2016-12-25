@@ -85,9 +85,10 @@ class FeedPage(selenium.Page):
         return self.post
 
     def get_author(self, content):
-        return content.find_elements_by_css_selector('span.shortcut-wrap')[0].find_elements_by_css_selector('a.o')[0], \
-               content.find_elements_by_css_selector('span.shortcut-wrap')[0].find_elements_by_css_selector('a.o')[
-                   0].get_attribute('href')
+        title = WebDriverWait(self.browser, 10).until(
+            EC.presence_of_all_elements_located((By.XPATH, '//*[@class="feed"]/div[3]/div[1]/span[1]/span/a')))[0]
+        url = title.get_attribute('href')
+        return title, url
 
     def make_like_on_own_post(self):
         like_button = self.browser.find_elements_by_css_selector('button.h-mod.widget_cnt.controls-list_lk')[0]
