@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from seismograph.ext import selenium
-
 from pages.feed_page import FeedPage
 
 
@@ -38,4 +37,4 @@ class AuthPage(selenium.Page):
 
     def wait_for_auth(self):
         profile_page = FeedPage(self.browser)
-        profile_page.avatar.wait()
+        profile_page.right_div.wait()

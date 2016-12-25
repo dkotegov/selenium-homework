@@ -1,17 +1,26 @@
+# coding=utf-8
 from seismograph.ext import selenium
-from smth.xpath import XPathQueryObject
+from selenium.common.exceptions import WebDriverException
 
-import time
 
 class VideoPage(selenium.Page):
     __url_path__ = '/video/196391273929'
 
+    active_menu = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class='sc-menu __reshare __noarrow sc-menu__top'
+        )
+    )
 
-    def repostVideo(self):
-        time.sleep(2)
+    @selenium.polling.wrap(timeout=20, delay=1)
+    def wait_change(self):
+        if u'Поделиться' in self.active_menu.text:
+            raise WebDriverException
+
+    def repost_video(self):
         self.browser.execute_script('''$(':button[tsid=reshareMenu]').last().click()''')
-        time.sleep(3)
+        self.active_menu.wait()
         self.browser.execute_script('''$("div[data-l*='t,now']").last().find('a').click()''')
-        time.sleep(2)
-        val = self.browser.find_elements_by_css_selector("span.tico")[31].text
-        return val
+        self.wait_change()
+        return self.active_menu.text

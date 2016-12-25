@@ -2,8 +2,6 @@
 from seismograph.ext import selenium
 from smth.xpath import XPathQueryObject
 
-import time
-
 
 class RepostPage(selenium.Page):
     __url_path__ = '/feed'

@@ -1,8 +1,6 @@
 # coding=utf-8
 from seismograph.ext import selenium
-from smth.xpath import XPathQueryObject
-
-import time
+from selenium.common.exceptions import WebDriverException
 
 
 class PostPage(selenium.Page):
@@ -19,17 +17,30 @@ class PostPage(selenium.Page):
         selenium.query(
             selenium.query.INPUT,
             type='submit',
-            _class='button-pro'
+            _class=selenium.query.contains('button-pro')
         )
     )
 
-    def create_post(self,text):
+    invisible_overlay = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class='posting-form_overlay invisible'
+        )
+    )
+
+    @selenium.polling.wrap(timeout=20, delay=3)
+    def wait_send_post(self):
+        if self.browser.current_url.endswith(self.__url_path__):
+            raise WebDriverException
+
+    @selenium.polling.wrap(timeout=20, delay=1)
+    def wait_overlay(self):
+        self.invisible_overlay.wait()
+
+    def create_post(self, text):
         self.post_text.wait()
-        self.post_text.set(text)
         self.post_button.wait()
+        self.post_text.click()
+        self.post_text.send_keys(text)
         self.post_button.click()
-        time.sleep(3)
-
-    def delete_own_post(self):
-        return 1
-
+        self.wait_send_post()

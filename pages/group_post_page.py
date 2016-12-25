@@ -1,16 +1,9 @@
 # coding=utf-8
 from seismograph.ext import selenium
-from smth.xpath import XPathQueryObject
-
-import time
 
 
 class PostPage(selenium.Page):
     __url_path__ = '/avto.mobile/topic/66155670481722'
-
-    # def __init__(self, content, *args, **kwargs):
-    #     super(PostPage, self).__init__(*args, **kwargs)
-    #     self.content = content
 
     post_text = selenium.PageElement(
         selenium.query(
@@ -20,7 +13,6 @@ class PostPage(selenium.Page):
     )
 
     def makeGroupComment(self):
-        time.sleep(5)
         form = self.browser.find_element_by_css_selector("form.comments_add_form")
         form.click()
         # self.browser.execute_script(''' window.scrollBy(0,250) ''')
@@ -34,6 +26,3 @@ class PostPage(selenium.Page):
             assert True
         else:
             assert False
-
-    def makeRepost(self):
-        return 1
