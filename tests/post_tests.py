@@ -4,7 +4,7 @@ from pages.auth_page import AuthPage
 from pages.group_page import PostPage
 from pages.profile_page import ProfilePage
 from pages.feed_page import FeedPage
-from smth.Auth import AuthManager
+from smth.auth import AuthManager
 
 suite = selenium.Suite(__name__)
 
@@ -27,7 +27,6 @@ def test_post(case, browser):
     post_page = PostPage(browser)
     post_page.wait_overlay()
     post_page.create_post(text)
-    feed_page.click_zametki()
 
     profile_page = ProfilePage(browser)
     profile_page.open()
@@ -45,7 +44,6 @@ def test_delete_own_post(case, browser):
     post_page = PostPage(browser)
     post_page.wait_overlay()
     post_page.create_post(text)
-    feed_page.click_zametki()
 
     profile_page = ProfilePage(browser)
     profile_page.open()
