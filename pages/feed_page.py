@@ -2,10 +2,7 @@
 from seismograph.ext import selenium
 
 from pages.comment_page import CommentPage
-from smth.xpath import XPathQueryObject
 from selenium.common.exceptions import WebDriverException
-
-import time
 
 
 class FeedPage(selenium.Page):
@@ -18,13 +15,6 @@ class FeedPage(selenium.Page):
         )
     )
 
-    right_div = selenium.PageElement(
-        selenium.query(
-            selenium.query.DIV,
-            _class='online-fr_cnt'
-        )
-    )
-
     post = selenium.PageElement(
         selenium.query(
             selenium.query.DIV,
@@ -32,24 +22,10 @@ class FeedPage(selenium.Page):
         )
     )
 
-    friends_posts = selenium.PageElement(
-        XPathQueryObject(
-            '//a[@data-l="feedTargetFilterId,301"]'
-        )
-    )
-
     reshar_button = selenium.PageElement(
         selenium.query(
             selenium.query.BUTTON,
             _class='h-mod widget_cnt'
-        )
-    )
-
-    reshar_button_selector = "button.h-mod.widget_cnt"
-
-    make_reshar_div = selenium.PageElement(
-        XPathQueryObject(
-            '//div[@data-l="t,reshare-menu"]//div[@data-l="t,now"]'
         )
     )
 
@@ -66,6 +42,18 @@ class FeedPage(selenium.Page):
             _class='filter_i __active iblock-cloud_show'
         )
     )
+
+    active_menu = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            _class='sc-menu __reshare __noarrow sc-menu__top'
+        )
+    )
+
+    @selenium.polling.wrap(timeout=20, delay=1)
+    def wait_change(self):
+        if u'Поделиться' in self.active_menu.text:
+            raise WebDriverException
 
     @selenium.polling.wrap(timeout=20, delay=1)
     def wait_popular(self):
@@ -91,12 +79,6 @@ class FeedPage(selenium.Page):
         like_button = self.browser.find_elements_by_css_selector('button.h-mod.widget_cnt.controls-list_lk')[0]
         current_counter = int(like_button.find_elements_by_css_selector('span.widget_count')[0].text)
         return current_counter
-
-    def makeOwnRepost(self, content):
-        self.reshar_button.click()
-        self.make_reshar_div.wait()
-        self.make_reshar_div.click()
-        return 1
 
     def make_comment(self, content, feed_page):
         self.browser.execute_script('''$('div.feed_cnt').first().find('a.h-mod.widget_cnt').first().click()''')
@@ -166,20 +148,27 @@ class FeedPage(selenium.Page):
         self.wait_unlike(like_div)
         assert len(like_div.text) != 2
 
-    def makeLikeForSomemoneComment(self, content, feed_page):
-        button = content.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
+    def make_like_for_someone_comment(self, feed_page):
+        button = self.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
         button.click()
         comment_body = CommentPage(feed_page.browser)
-        comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[1]
+        comment_body.wait_popup()
+        comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-3]
         like_div = comment.find_element_by_css_selector('div.klass_w')
-        like_div.click()
-        if len(like_div.text) == 2:
-            assert True
-        else:
-            assert False
+        self.browser.execute_script('''$('.klass_w').last().find('a').click()''')
+        self.wait_like(like_div)
+        assert len(like_div.text) == 2
 
-    def makeLikeTwoLikes(self):
-        time.sleep(7)
+    def make_repost(self):
+        self.get_popular_content()  # TODO WAIT!
+        self.browser.execute_script('''$('div.feed_cnt').first().find('button.h-mod.widget_cnt').first().click()''')
+        self.active_menu.wait()
+        self.browser.execute_script('''$('div.feed').first().find("div[data-l*='t,now']").first().find('a').click()''')
+        self.wait_change()
+        return self.active_menu.text
+
+    def make_like_two_likes(self):
+        self.get_popular_content()  # TODO WAIT!
         val = self.browser.find_elements_by_css_selector('button.h-mod.widget_cnt')[-1].text
 
         self.browser.execute_script('''$('div.feed_cnt').first().find('button.h-mod.widget_cnt').last().click()''')
@@ -187,16 +176,10 @@ class FeedPage(selenium.Page):
 
         new_val = self.browser.find_elements_by_css_selector('button.h-mod.widget_cnt')[-1].text
 
-        if val == new_val:
-            assert True
-        else:
-            assert False
+        assert val == new_val
 
-        pass
-
-    def makeOneLike(self):
-        # может быть и false, если кто-то уберет лайк
-        time.sleep(5)
+    def make_one_like(self):
+        self.get_popular_content()  # TODO WAIT!
         val = self.browser.find_element_by_css_selector('div.feed_cnt').find_elements_by_css_selector(
             'button.h-mod.widget_cnt')[-1].text
 
@@ -205,10 +188,16 @@ class FeedPage(selenium.Page):
         new_val = self.browser.find_element_by_css_selector('div.feed_cnt').find_elements_by_css_selector(
             'button.h-mod.widget_cnt')[-1].text
 
-        if val != new_val:
-            assert True
-        else:
-            assert False
+        assert val != new_val
+
+    def make_double_click_repost(self):
+        self.get_popular_content()  # TODO WAIT!
+        self.browser.execute_script('''$('div.feed_cnt').first().find('button.h-mod.widget_cnt').first().click()''')
+        self.active_menu.wait()
+        self.browser.execute_script('''$('div.feed').first().find("div[data-l*='t,now']").first().find('a').click()''')
+        self.wait_change()
+        self.browser.execute_script('''$('div.feed').first().find("div[data-l*='t,now']").first().find('a').click()''')
+        return self.active_menu.text
 
     @selenium.polling.wrap(timeout=20, delay=1)
     def show_post(self):

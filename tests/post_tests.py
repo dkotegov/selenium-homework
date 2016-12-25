@@ -1,7 +1,7 @@
 # coding=utf-8
 from seismograph.ext import selenium
 from pages.auth_page import AuthPage
-from pages.post_page import PostPage
+from pages.group_page import PostPage
 from pages.profile_page import ProfilePage
 from pages.feed_page import FeedPage
 from smth.Auth import AuthManager

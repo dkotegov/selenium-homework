@@ -5,7 +5,7 @@ from pages.feed_page import FeedPage
 from pages.profile_page import ProfilePage
 from smth.Auth import AuthManager
 
-from pages.group_post_page import PostPage
+from pages.group_post_page import GroupPage
 
 suite = selenium.Suite(__name__)
 
@@ -83,70 +83,66 @@ def test_make_double_like(case, browser):
     feed_page.make_double_like(feed_page)
 
 
-# # ERROR
 # @suite.register
-# def test_make_someone_like_comment(case, browser):
-#     auth(case, browser)
-#
-#     feed_page = FeedPage(browser)
-#     content = feed_page.getPopularContent()
-#     feed_page.makeLikeForSomemoneComment(content, feed_page)
-#
-#
-# # ERROR
+def test_make_someone_like_comment(case, browser):
+    auth(case, browser)
+
+    feed_page = FeedPage(browser)
+    feed_page.make_like_for_someone_comment(feed_page)
+
+
 # @suite.register
-# def test_make_group_comment(case, browser):
-#     auth(case, browser)
-#
-#     post_page = PostPage(browser)
-#     post_page.open()
-#     post_page.makeGroupComment()
-#
-#
+def test_make_group_comment(case, browser):
+    auth(case, browser)
+
+    group_page = GroupPage(browser)
+    group_page.open()
+    group_page.open_post_comments()
+    group_page.make_group_comment()
+
+
 # @suite.register
-# def test_make_repost(case, browser):
-#     auth(case, browser)
-#
-#     feed_page = FeedPage(browser)
-#     val = feed_page.makeRepost()
-#     return val == u'Опубликовано!'
-#
-#
+def test_make_repost(case, browser):
+    auth(case, browser)
+
+    feed_page = FeedPage(browser)
+    val = feed_page.make_repost()
+    assert u'Опубликовано!' in val
+
+
 # @suite.register
-# def test_make_two_likes(case, browser):
-#     auth(case, browser)
-#
-#     feed_page = FeedPage(browser)
-#     content = feed_page.getPopularContent()
-#     feed_page.makeLikeTwoLikes()
-#
+def test_make_two_likes(case, browser):
+    auth(case, browser)
+
+    feed_page = FeedPage(browser)
+    feed_page.make_like_two_likes()
+
+
 # @suite.register
-# def test_make_one_likes(case, browser):
-#     auth(case, browser)
-#
-#     feed_page = FeedPage(browser)
-#     content = feed_page.getPopularContent()
-#     feed_page.makeOneLike()
-#
-#
+def test_make_one_like(case, browser):
+    auth(case, browser)
+
+    feed_page = FeedPage(browser)
+    feed_page.make_one_like()
+
+
 # @suite.register
-# def test_make_repost_by_double_click(case, browser):
-#     auth(case, browser)
-#
-#     feed_page = FeedPage(browser)
-#     val = feed_page.makeDoubleClickRepost()
-#     return val == u'Опубликовано!'
-#
-#
-# @suite.register
-# def test_make_repost_and_delete(case, browser):
-#     auth(case, browser)
-#
-#     feed_page = FeedPage(browser)
-#     val = feed_page.makeRepost()
-#     if val == u'Опубликовано!':
-#         profile_page = ProfilePage(browser)
-#         profile_page.open()
-#         return profile_page.delete_my_post()
-#     else:
-#         return False
+def test_make_repost_by_double_click(case, browser):
+    auth(case, browser)
+
+    feed_page = FeedPage(browser)
+    val = feed_page.make_double_click_repost()
+    assert u'Опубликовано!' in val
+
+
+@suite.register
+def test_make_repost_and_delete(case, browser):
+    auth(case, browser)
+
+    feed_page = FeedPage(browser)
+    val = feed_page.make_repost()
+    assert u'Опубликовано!' in val
+
+    profile_page = ProfilePage(browser)
+    profile_page.open()
+    profile_page.delete_my_post()
