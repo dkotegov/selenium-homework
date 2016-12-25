@@ -126,8 +126,13 @@ class FeedPage(selenium.Page):
             raise WebDriverException
 
     @selenium.polling.wrap(timeout=20, delay=1)
-    def wait_like_change(self, like_div):
-        if u'Класс' in like_div.text:
+    def wait_like(self, like_div):
+        if u'Вы' not in like_div.text:
+            raise WebDriverException
+
+    @selenium.polling.wrap(timeout=20, delay=1)
+    def wait_unlike(self, like_div):
+        if u'Класс' not in like_div.text:
             raise WebDriverException
 
     def make_like_on_self_comment(self, feed_page):
@@ -141,24 +146,25 @@ class FeedPage(selenium.Page):
         self.wait_message(count, comment_body)
         comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-1]
         like_div = comment.find_element_by_css_selector('div.klass_w')
-        self.browser.execute_script('''$('.al.tdn.show-on-hover_a.fade-on-hover').slice(-2, -1).click()''')
-        self.wait_like_change(like_div)
+        self.browser.execute_script('''$('.klass_w').last().find('a').click()''')
+        self.wait_like(like_div)
         assert len(like_div.text) == 2
 
-    def makeDoubleLike(self, content, feed_page):
-        button = content.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
+    def make_double_like(self, feed_page):
+        button = self.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
         button.click()
         comment_body = CommentPage(feed_page.browser)
+        comment_body.wait_popup()
         comment_body.comment_input.set(u'lel')
-        content.browser.find_elements_by_id('ok-e-d_button')[0].click()
+        self.browser.find_elements_by_id('ok-e-d_button')[0].click()
         comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-1]
         like_div = comment.find_element_by_css_selector('div.klass_w')
+        self.browser.execute_script('''$('.klass_w').last().find('a').click()''')
+        self.wait_like(like_div)
+        self.browser.execute_script('''$('.klass_w').last().find('a').click()''')
         like_div.click()
-        like_div.click()
-        if len(like_div.text) != 2:
-            assert True
-        else:
-            assert False
+        self.wait_unlike(like_div)
+        assert len(like_div.text) != 2
 
     def makeLikeForSomemoneComment(self, content, feed_page):
         button = content.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')

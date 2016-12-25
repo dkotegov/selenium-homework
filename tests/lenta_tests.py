@@ -67,7 +67,7 @@ def test_make_comment(case, browser):
     feed_page.make_comment(content, feed_page)
 
 
-@suite.register
+# @suite.register
 def test_make_like(case, browser):
     auth(case, browser)
 
@@ -75,16 +75,14 @@ def test_make_like(case, browser):
     feed_page.make_like_on_self_comment(feed_page)
 
 
-# # OK
 # @suite.register
-# def test_make_double_like(case, browser):
-#     auth(case, browser)
-#
-#     feed_page = FeedPage(browser)
-#     content = feed_page.getPopularContent()
-#     feed_page.makeDoubleLike(content, feed_page)
-#
-#
+def test_make_double_like(case, browser):
+    auth(case, browser)
+
+    feed_page = FeedPage(browser)
+    feed_page.make_double_like(feed_page)
+
+
 # # ERROR
 # @suite.register
 # def test_make_someone_like_comment(case, browser):

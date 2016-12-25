@@ -1,6 +1,7 @@
 from seismograph.ext import selenium
 from selenium.common.exceptions import WebDriverException
 
+
 class CommentPage(selenium.Page):
     comment_body = selenium.PageElement(
         selenium.query(
