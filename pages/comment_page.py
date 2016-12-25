@@ -1,5 +1,5 @@
 from seismograph.ext import selenium
-
+from selenium.common.exceptions import WebDriverException
 
 class CommentPage(selenium.Page):
     comment_body = selenium.PageElement(
@@ -15,3 +15,8 @@ class CommentPage(selenium.Page):
             id='ok-e-d'
         )
     )
+
+    @selenium.polling.wrap(timeout=20, delay=1)
+    def wait_popup(self):
+        if not self.comment_body.is_displayed():
+            raise WebDriverException

@@ -37,4 +37,4 @@ class AuthPage(selenium.Page):
 
     def wait_for_auth(self):
         profile_page = FeedPage(self.browser)
-        profile_page.right_div.wait()
+        profile_page.avatar.wait()
