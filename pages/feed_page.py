@@ -52,12 +52,14 @@ class FeedPage(selenium.Page):
 
     @selenium.polling.wrap(delay=1)
     def wait_repost_change(self):
+        self.active_menu.wait()
         if u'Поделиться' in self.active_menu.text:
             raise WebDriverException
 
     @selenium.polling.wrap(delay=1)
-    def wait_like_change(self, old):
-        text = self.get_elem_text_by_css_and_idx(self.browser, 'button.h-mod.widget_cnt.controls-list_lk', -1)
+    def wait_like_change(self, old, idx, script):
+        self.browser.execute_script(script)
+        text = self.get_elem_text_by_css_and_idx(self.browser, 'button.h-mod.widget_cnt.controls-list_lk', idx)
         if old == text:
             raise WebDriverException
         return text
@@ -105,46 +107,48 @@ class FeedPage(selenium.Page):
 
     @selenium.polling.wrap(delay=1)
     def get_author_title(self):
-        title = self.browser.find_elements_by_xpath('//*[@class="feed"]/div[3]/div[1]/span[1]/span/a')[0]
-        url = title.get_attribute('href')
-        return title, url
+        return self.browser.find_element_by_xpath('//*[@class="feed"]/div[3]/div[1]/span[1]/span/a').get_attribute('href')
+
+    @selenium.polling.wrap(delay=1)
+    def wait_url_changed(self, url):
+        if self.browser.current_url == url:
+            raise WebDriverException
+        return self.browser.current_url
 
     def get_popular_content(self):
         self.wait_popular()
-        return self.post
 
     def get_author(self):
         self.get_popular_content()
         return self.get_author_title()
 
     def make_like_on_own_post(self):
-        like_button = self.browser.find_elements_by_css_selector('button.h-mod.widget_cnt.controls-list_lk')[0]
-        like_button.click()
+        before = self.get_elem_text_by_css_and_idx(self.browser, 'button.h-mod.widget_cnt.controls-list_lk', 0)
+        after = self.wait_like_change(before, 0, '''$('.feed_f').first().find('button')[1].click()''')
+        assert before != after
 
     def get_status_likes(self):
-        like_button = self.browser.find_elements_by_css_selector('button.h-mod.widget_cnt.controls-list_lk')[0]
-        current_counter = int(self.get_elem_text_by_css_and_idx(like_button, 'span.widget_count', 0))
-        return current_counter
+        return self.get_elem_text_by_css_and_idx(self.browser, 'button.h-mod.widget_cnt.controls-list_lk', 0)
 
-    def make_comment(self, content, feed_page):
+    def make_comment(self):
         self.browser.execute_script('''$('div.feed_cnt').first().find('a.h-mod.widget_cnt').first().click()''')
-        comment_body = CommentPage(feed_page.browser)
+        comment_body = CommentPage(self.browser)
         comment_body.wait_popup()
         if not comment_body.comment_input.is_displayed():
             return
         self.set_smth(comment_body.comment_input, u'hmm...')
-        content.browser.find_elements_by_id('ok-e-d_button')[0].click()
+        self.browser.find_elements_by_id('ok-e-d_button')[0].click()
         comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-1]
         comment_div = comment.find_element_by_css_selector('div.d_comment_text')
         assert comment_div.text == 'hmm...'
 
-    def make_self_comment(self, content, feed_page):
-        button = content.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
+    def make_self_comment(self):
+        button = self.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
         button.click()
-        comment_body = CommentPage(feed_page.browser)
+        comment_body = CommentPage(self.browser)
         comment_body.wait_popup()
         self.set_smth(comment_body.comment_input, u'lel')
-        content.browser.find_elements_by_id('ok-e-d_button')[0].click()
+        self.browser.find_elements_by_id('ok-e-d_button')[0].click()
         comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-1]
         comment_div = comment.find_element_by_css_selector('div.d_comment_text')
         assert comment_div.text == 'lel'
@@ -188,23 +192,10 @@ class FeedPage(selenium.Page):
         self.wait_repost_change()
         return self.active_menu.text
 
-    def make_like_two_likes(self):
-        self.get_popular_content()
-        val = self.get_elem_text_by_css_and_idx(self.browser, 'button.h-mod.widget_cnt.controls-list_lk', -1)
-
-        self.browser.execute_script('''$('button.h-mod.widget_cnt.controls-list_lk').last().click()''')
-        new_val = self.wait_like_change(val)
-        self.browser.execute_script('''$('button.h-mod.widget_cnt.controls-list_lk').last().click()''')
-
-        new_val = self.wait_like_change(new_val)
-
-        assert val == new_val
-
     def make_one_like(self):
         self.get_popular_content()
         val = self.get_elem_text_by_css_and_idx(self.browser, 'button.h-mod.widget_cnt.controls-list_lk', -1)
-        self.browser.execute_script('''$('button.h-mod.widget_cnt.controls-list_lk').last().click()''')
-        new_val = self.wait_like_change(val)
+        new_val = self.wait_like_change(val, -1, '''$('button.h-mod.widget_cnt.controls-list_lk').last().click()''')
 
         assert val != new_val
 
@@ -215,3 +206,10 @@ class FeedPage(selenium.Page):
         self.wait_repost_change()
         self.browser.execute_script('''$('div.feed').first().find("div[data-l*='t,now']").first().find('a').click()''')
         return self.active_menu.text
+
+    def get_post(self):
+        self.get_popular_content()
+        url = self.browser.current_url
+        self.browser.execute_script('''$('.feed_b').first().find('a').first().click()''')
+        url = self.wait_url_changed(url)
+        assert "/topic/" in url

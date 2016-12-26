@@ -20,20 +20,16 @@ def auth(case, browser):
 def test_get_author_group(case, browser):
     auth(case, browser)
     feed_page = FeedPage(browser)
-    element, url = feed_page.get_author()
-    feed_page.click_smth(element)
+    url = feed_page.get_author()
+    browser.execute_script('''$('.feed_h').first().find('a').first().click()''')
     assert url in browser.current_url
 
 
 @suite.register
 def test_get_post(case, browser):
     auth(case, browser)
-
     feed_page = FeedPage(browser)
-    content = feed_page.get_popular_content()
-    feed_page.click_smth(content)
-    url = browser.current_url
-    return "/topic/" in url
+    feed_page.get_post()
 
 
 @suite.register
@@ -41,10 +37,7 @@ def test_make_like_on_own_post(case, browser):
     auth(case, browser)
 
     feed_page = FeedPage(browser)
-    before = feed_page.get_status_likes()
     feed_page.make_like_on_own_post()
-    after = feed_page.get_status_likes()
-    return before != after
 
 
 @suite.register
@@ -52,8 +45,8 @@ def test_make_self_comment(case, browser):
     auth(case, browser)
 
     feed_page = FeedPage(browser)
-    content = feed_page.get_popular_content()
-    feed_page.make_self_comment(content, feed_page)
+    feed_page.get_popular_content()
+    feed_page.make_self_comment()
 
 
 @suite.register
@@ -61,8 +54,8 @@ def test_make_comment(case, browser):
     auth(case, browser)
 
     feed_page = FeedPage(browser)
-    content = feed_page.get_popular_content()
-    feed_page.make_comment(content, feed_page)
+    feed_page.get_popular_content()
+    feed_page.make_comment()
 
 
 @suite.register
@@ -99,13 +92,6 @@ def test_make_repost(case, browser):
     val = feed_page.make_repost()
     assert u'Опубликовано!' in val
 
-
-@suite.register
-def test_make_two_likes(case, browser):
-    auth(case, browser)
-
-    feed_page = FeedPage(browser)
-    feed_page.make_like_two_likes()
 
 
 @suite.register
