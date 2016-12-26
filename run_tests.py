@@ -5,9 +5,9 @@ from tests import lenta_tests
 from tests import reshari_tests
 
 suites = [
-    # post_tests.suite,  # WORKS!
+    post_tests.suite,
     lenta_tests.suite,
-    # reshari_tests.suite  # WORKS!
+    reshari_tests.suite
 ]
 
 if __name__ == '__main__':

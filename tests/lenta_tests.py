@@ -4,7 +4,6 @@ from pages.auth_page import AuthPage
 from pages.feed_page import FeedPage
 from pages.profile_page import ProfilePage
 from smth.auth import AuthManager
-
 from pages.group_post_page import GroupPage
 
 suite = selenium.Suite(__name__)
@@ -21,9 +20,8 @@ def auth(case, browser):
 def test_get_author_group(case, browser):
     auth(case, browser)
     feed_page = FeedPage(browser)
-    content = feed_page.get_popular_content()
-    element, url = feed_page.get_author(content)
-    element.click()
+    element, url = feed_page.get_author()
+    feed_page.click_smth(element)
     assert url in browser.current_url
 
 
@@ -33,7 +31,7 @@ def test_get_post(case, browser):
 
     feed_page = FeedPage(browser)
     content = feed_page.get_popular_content()
-    content.click()
+    feed_page.click_smth(content)
     url = browser.current_url
     return "/topic/" in url
 
@@ -81,14 +79,6 @@ def test_make_double_like(case, browser):
 
     feed_page = FeedPage(browser)
     feed_page.make_double_like(feed_page)
-
-
-#@suite.register
-def test_make_someone_like_comment(case, browser):
-    auth(case, browser)
-
-    feed_page = FeedPage(browser)
-    feed_page.make_like_for_someone_comment(feed_page)
 
 
 @suite.register

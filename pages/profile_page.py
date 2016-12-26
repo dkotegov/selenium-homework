@@ -13,10 +13,10 @@ class ProfilePage(selenium.Page):
         )
     )
 
-    @selenium.polling.wrap(timeout=20, delay=1)
+    @selenium.polling.wrap(delay=1)
     def wait_deleted(self):
         try:
-            self.browser.find_elements_by_css_selector('span.delete-stub_info.tico')[1]
+            return self.browser.find_elements_by_css_selector('span.delete-stub_info.tico')[1]
         except:
             raise WebDriverException
 
@@ -26,6 +26,5 @@ class ProfilePage(selenium.Page):
 
     def delete_my_post(self):
         self.browser.execute_script("$('a.al.feed_close').first().click()")
-        self.wait_deleted()
-        element = self.browser.find_elements_by_css_selector('span.delete-stub_info.tico')[1]
+        element = self.wait_deleted()
         assert u'скрыто' in element.text

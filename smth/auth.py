@@ -2,13 +2,16 @@ import os
 
 
 class AuthManager:
-    AUTH_LOGIN = '89260665086'
-    AUTH_PASSWORD = 'Gfhjkmlkzjr1488'
+    def __init__(self):
+        pass
+
+    AUTH_LOGIN = 'LOGIN'
+    AUTH_PASSWORD = 'PASSWORD'
 
     @staticmethod
     def get_login():
-        return AuthManager.AUTH_LOGIN
+        return os.environ.get(AuthManager.AUTH_LOGIN)
 
     @staticmethod
     def get_password():
-        return AuthManager.AUTH_PASSWORD
+        return os.environ.get(AuthManager.AUTH_PASSWORD)
