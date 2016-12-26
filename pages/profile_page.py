@@ -20,11 +20,11 @@ class ProfilePage(selenium.Page):
         except:
             raise WebDriverException
 
-    def check_first_post(self, text):
+    def get_first_post(self):
         self.checked_post.wait()
-        assert text in self.checked_post.text
+        return self.checked_post.text
 
     def delete_my_post(self):
         self.browser.execute_script("$('a.al.feed_close').first().click()")
         element = self.wait_deleted()
-        assert u'скрыто' in element.text
+        return element.text
