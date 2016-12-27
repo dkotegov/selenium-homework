@@ -54,7 +54,7 @@ class TestCreateAlbum(AuthStep, selenium.Case):
 
 
 @suite.register
-class TestOpenPhoto(AuthStep, selenium.Case):
+class TestOpenPhoto(TestGotoPhoto, selenium.Case):
     @seismograph.step(3, 'Test open photo')
     def open_photo(self, browser):
         feed_page = FeedPage(browser)
