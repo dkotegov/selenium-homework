@@ -1,6 +1,7 @@
 # coding=utf-8
 from seismograph.ext import selenium
-from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.support.ui import WebDriverWait
+from helper import conditions as c
 
 
 class PostPage(selenium.Page):
@@ -28,11 +29,6 @@ class PostPage(selenium.Page):
         )
     )
 
-    @selenium.polling.wrap(delay=3)
-    def wait_send_post(self):
-        if self.browser.current_url.endswith(self.__url_path__):
-            raise WebDriverException(msg='Timeout at waiting post was closed')
-
     @selenium.polling.wrap(delay=1)
     def wait_overlay(self):
         self.invisible_overlay.wait()
@@ -43,4 +39,6 @@ class PostPage(selenium.Page):
         self.post_text.click()
         self.post_text.send_keys(text)
         self.post_button.click()
-        self.wait_send_post()
+
+        wait = WebDriverWait(self.browser, 10)
+        wait.until_not(c.in_url(self.__url_path__))

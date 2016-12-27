@@ -1,7 +1,7 @@
 import seismograph
 from seismograph.ext import selenium
 from pages.auth_page import AuthPage
-from smth.auth import AuthManager
+from helper.auth import AuthManager
 
 
 class Auth(selenium.Case):

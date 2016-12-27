@@ -6,7 +6,6 @@ from pages.profile_page import ProfilePage
 from pages.feed_page import FeedPage
 from auth_test import Auth
 
-
 HIDDEN = u'скрыто'
 
 suite = selenium.Suite(__name__)
@@ -26,7 +25,7 @@ class TestPost(Auth):
 
         profile_page = ProfilePage(browser)
         profile_page.open()
-        self.assertion.is_in(text, profile_page.get_first_post())
+        self.assertion.is_in(text, profile_page.get_first_post(text))
 
 
 @suite.register
@@ -43,5 +42,5 @@ class TestDeletePost(Auth):
 
         profile_page = ProfilePage(browser)
         profile_page.open()
-        self.assertion.is_in(text, profile_page.get_first_post())
+        self.assertion.is_in(text, profile_page.get_first_post(text))
         self.assertion.is_in(HIDDEN, profile_page.delete_my_post())

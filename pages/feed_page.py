@@ -1,7 +1,12 @@
 # coding=utf-8
 from seismograph.ext import selenium
 from pages.comment_page import CommentPage
+from seismograph.ext.selenium.exceptions import PollingTimeoutExceeded
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
+from helper import conditions as c
 
 
 class FeedPage(selenium.Page):
@@ -40,13 +45,6 @@ class FeedPage(selenium.Page):
         element.set(text)
 
     @selenium.polling.wrap(delay=1)
-    def wait_repost_change(self):
-        self.active_menu.wait()
-        self.browser.execute_script('''$('div.feed').first().find("div[data-l*='t,now']").first().find('a').click()''')
-        if u'Поделиться' in self.active_menu.text:
-            raise WebDriverException(msg='Timeout at waiting repost feed')
-
-    @selenium.polling.wrap(delay=1)
     def wait_like_change(self, old, idx, script):
         self.browser.execute_script(script)
         text = self.get_elem_text_by_css_and_idx(self.browser, 'button.h-mod.widget_cnt.controls-list_lk', idx)
@@ -55,20 +53,17 @@ class FeedPage(selenium.Page):
         return text
 
     @selenium.polling.wrap(delay=1)
+    def wait_repost_change(self):
+        self.active_menu.wait()
+        self.browser.execute_script('''$('div.feed').first().find("div[data-l*='t,now']").first().find('a').click()''')
+        if u'Поделиться' in self.active_menu.text:
+            raise WebDriverException(msg='Timeout at waiting repost feed')
+
+    @selenium.polling.wrap(delay=1)
     def wait_popular(self):
         self.browser.execute_script('''$('.filter_i')[2].click()''')
         if u'Популярное' not in self.active_tab.text:
             raise WebDriverException(msg='Timeout at waiting Popular tab opened')
-
-    @selenium.polling.wrap(delay=1)
-    def wait_like(self, like_div):
-        if u'Вы' not in like_div.text:
-            raise WebDriverException(msg='Timeout at waiting like was set to comment')
-
-    @selenium.polling.wrap(delay=1)
-    def wait_unlike(self, like_div):
-        if u'Класс' not in like_div.text:
-            raise WebDriverException(msg='Timeout at waiting like was unset to comment')
 
     @selenium.polling.wrap(delay=1)
     def show_post(self):
@@ -77,13 +72,10 @@ class FeedPage(selenium.Page):
         if not self.browser.current_url.endswith('/post'):
             raise WebDriverException(msg='Timeout at waiting post modal')
 
-    @selenium.polling.wrap(delay=1)
+    @selenium.polling.wrap(exceptions=[PollingTimeoutExceeded])
     def open_menu_in_feed(self):
         self.browser.execute_script('''$('div.feed_cnt').first().find('button.h-mod.widget_cnt').first().click()''')
-        try:
-            self.active_menu.wait()
-        except:
-            raise WebDriverException(msg='Timeout at waiting repost menu in feed')
+        self.active_menu.wait()
 
     @selenium.polling.wrap(delay=1)
     def get_elem_text_by_css_and_idx(self, parent, css, idx):
@@ -93,12 +85,6 @@ class FeedPage(selenium.Page):
     def get_author_title(self):
         return self.browser.find_element_by_xpath(
             '//*[@class="feed"]/div[3]/div[1]/span[1]/span/a').get_attribute('href')
-
-    @selenium.polling.wrap(delay=1)
-    def wait_url_changed(self, url):
-        if self.browser.current_url == url:
-            raise WebDriverException(msg='Timeout at waiting url changed')
-        return self.browser.current_url
 
     def get_popular_content(self):
         self.wait_popular()
@@ -148,12 +134,15 @@ class FeedPage(selenium.Page):
         comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-1]
         like_div = comment.find_element_by_css_selector('div.klass_w')
         self.browser.execute_script('''$('.klass_w').last().find('a').click()''')
+        wait = WebDriverWait(self.browser, 10)
         if unlike:
             like_div.click()
-            self.wait_unlike(like_div)
+            res = u'Класс'
+            wait.until(c.text_to_be_present_in_element(like_div, res))
         else:
-            self.wait_like(like_div)
-        return like_div.text
+            res = u'Вы'
+            wait.until(c.text_to_be_present_in_element(like_div, res))
+        return res
 
     def make_repost(self):
         self.wait_repost_change()
@@ -168,4 +157,6 @@ class FeedPage(selenium.Page):
     def get_post(self):
         url = self.browser.current_url
         self.browser.execute_script('''$('.feed_b').first().find('a').first().click()''')
-        return self.wait_url_changed(url)
+        wait = WebDriverWait(self.browser, 10)
+        wait.until_not(c.in_url(url))
+        return self.browser.current_url

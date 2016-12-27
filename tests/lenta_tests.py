@@ -124,5 +124,3 @@ class TestMakeFeedLike(Auth):
         before = feed_page.get_feed_like()
         after = feed_page.make_feed_like(before)
         self.assertion.not_equal(before, after)
-
-
