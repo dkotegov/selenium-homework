@@ -54,44 +54,44 @@ class FeedPage(selenium.Page):
     def wait_repost_change(self):
         self.active_menu.wait()
         if u'Поделиться' in self.active_menu.text:
-            raise WebDriverException
+            raise WebDriverException(msg='Timeout at waiting repost feed')
 
     @selenium.polling.wrap(delay=1)
     def wait_like_change(self, old, idx, script):
         self.browser.execute_script(script)
         text = self.get_elem_text_by_css_and_idx(self.browser, 'button.h-mod.widget_cnt.controls-list_lk', idx)
         if old == text:
-            raise WebDriverException
+            raise WebDriverException(msg='Timeout at waiting like value changed')
         return text
 
     @selenium.polling.wrap(delay=1)
     def wait_popular(self):
         self.browser.execute_script('''$('.filter_i')[2].click()''')
         if u'Популярное' not in self.active_tab.text:
-            raise WebDriverException
+            raise WebDriverException(msg='Timeout at waiting Popular tab opened')
 
     @selenium.polling.wrap(delay=1)
     def wait_message(self, count, comment_body):
         new_count = len(comment_body.find_elements_by_css_selector('div.d_comment_w'))
         if new_count <= count:
-            raise WebDriverException
+            raise WebDriverException(msg='Timeout at waiting new message showed in modal')
 
     @selenium.polling.wrap(delay=1)
     def wait_like(self, like_div):
         if u'Вы' not in like_div.text:
-            raise WebDriverException
+            raise WebDriverException(msg='Timeout at waiting like was set to comment')
 
     @selenium.polling.wrap(delay=1)
     def wait_unlike(self, like_div):
         if u'Класс' not in like_div.text:
-            raise WebDriverException
+            raise WebDriverException(msg='Timeout at waiting like was unset to comment')
 
     @selenium.polling.wrap(delay=1)
     def show_post(self):
         self.post_input.wait()
         self.post_input.click()
         if not self.browser.current_url.endswith('/post'):
-            raise WebDriverException
+            raise WebDriverException(msg='Timeout at waiting post modal')
 
     @selenium.polling.wrap(delay=1)
     def open_menu_in_feed(self):
@@ -99,7 +99,7 @@ class FeedPage(selenium.Page):
         try:
             self.active_menu.wait()
         except:
-            raise WebDriverException
+            raise WebDriverException(msg='Timeout at waiting repost menu in feed')
 
     @selenium.polling.wrap(delay=1)
     def get_elem_text_by_css_and_idx(self, parent, css, idx):
@@ -112,7 +112,7 @@ class FeedPage(selenium.Page):
     @selenium.polling.wrap(delay=1)
     def wait_url_changed(self, url):
         if self.browser.current_url == url:
-            raise WebDriverException
+            raise WebDriverException(msg='Timeout at waiting url changed')
         return self.browser.current_url
 
     def get_popular_content(self):
@@ -134,8 +134,6 @@ class FeedPage(selenium.Page):
         self.browser.execute_script('''$('div.feed_cnt').first().find('a.h-mod.widget_cnt').first().click()''')
         comment_body = CommentPage(self.browser)
         comment_body.wait_popup()
-        if not comment_body.comment_input.is_displayed():
-            return
         self.set_smth(comment_body.comment_input, u'hmm...')
         self.browser.find_elements_by_id('ok-e-d_button')[0].click()
         comment = comment_body.find_elements_by_css_selector('div.d_comment_w')[-1]

@@ -31,7 +31,7 @@ class PostPage(selenium.Page):
     @selenium.polling.wrap(timeout=20, delay=3)
     def wait_send_post(self):
         if self.browser.current_url.endswith(self.__url_path__):
-            raise WebDriverException
+            raise WebDriverException(msg='Timeout at waiting post was closed')
 
     @selenium.polling.wrap(timeout=20, delay=1)
     def wait_overlay(self):

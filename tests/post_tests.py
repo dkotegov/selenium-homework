@@ -2,7 +2,7 @@
 import seismograph
 from seismograph.ext import selenium
 from pages.auth_page import AuthPage
-from pages.group_page import PostPage
+from pages.post_page import PostPage
 from pages.profile_page import ProfilePage
 from pages.feed_page import FeedPage
 from smth.auth import AuthManager
@@ -22,7 +22,7 @@ class Auth(selenium.Case):
 
 
 @suite.register
-class TestPost(Auth, selenium.Case):
+class TestPost(Auth):
 
     @seismograph.step(2, 'Test post')
     def post(self, browser):
@@ -40,7 +40,7 @@ class TestPost(Auth, selenium.Case):
 
 
 @suite.register
-class TestDeletePost(Auth, selenium.Case):
+class TestDeletePost(Auth):
 
     @seismograph.step(2, 'Test post and delete')
     def post_and_delete(self, browser):

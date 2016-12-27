@@ -23,7 +23,7 @@ class GroupPage(selenium.Page):
     @selenium.polling.wrap(timeout=20, delay=1)
     def wait_popup(self):
         if not self.comment_body.is_displayed():
-            raise WebDriverException
+            raise WebDriverException(msg='Timeout at waiting comment modal')
 
     def open_post_comments(self):
         self.browser.execute_script('''$('.feed_f').find('a').first().click()''')

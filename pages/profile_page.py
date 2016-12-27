@@ -18,7 +18,7 @@ class ProfilePage(selenium.Page):
         try:
             return self.browser.find_elements_by_css_selector('span.delete-stub_info.tico')[1]
         except:
-            raise WebDriverException
+            raise WebDriverException(msg='Timeout at waiting deleted post')
 
     def get_first_post(self):
         self.checked_post.wait()

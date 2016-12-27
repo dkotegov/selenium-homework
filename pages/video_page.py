@@ -16,7 +16,7 @@ class VideoPage(selenium.Page):
     @selenium.polling.wrap(timeout=20, delay=1)
     def wait_change(self):
         if u'Поделиться' in self.active_menu.text:
-            raise WebDriverException
+            raise WebDriverException(msg='Timeout at waiting video repost menu opened')
 
     def repost_video(self):
         self.browser.execute_script('''$(':button[tsid=reshareMenu]').last().click()''')
