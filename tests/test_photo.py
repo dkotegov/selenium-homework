@@ -8,6 +8,7 @@ from utils.auth_manager import AuthManager
 import string
 import random
 
+
 def string_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
@@ -28,7 +29,7 @@ class TestGotoPhoto(AuthStep, selenium.Case):
     @seismograph.step(2, 'Test goto photo')
     def goto_photo(self, browser):
         feed_page = FeedPage(browser)
-        assert feed_page.goto_photo()
+        self.assertion.true(feed_page.goto_photo())
 
 
 @suite.register
@@ -50,3 +51,13 @@ class TestCreateAlbum(AuthStep, selenium.Case):
         photo_page = PhotoPage(browser)
         album_name = string_generator()
         self.assertion.text_exist(photo_page.create_album(album_name), album_name)
+
+
+@suite.register
+class TestOpenPhoto(AuthStep, selenium.Case):
+    @seismograph.step(3, 'Test open photo')
+    def open_photo(self, browser):
+        feed_page = FeedPage(browser)
+        feed_page.goto_photo()
+        photo_page = PhotoPage(browser)
+        self.assertion.true(photo_page.open_first_photo())

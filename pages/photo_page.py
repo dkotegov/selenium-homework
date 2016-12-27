@@ -26,6 +26,8 @@ class PhotoPage(selenium.Page):
         )
     )
     album_name = selenium.PageElement(XPathQueryObject("//span[@class='photo-h_cnt_t ellip']"))
+    first_photo = selenium.PageElement(XPathQueryObject("//a[@class='photo-card_cnt'][1]"))
+    close_button = selenium.PageElement(XPathQueryObject("//div[@class='js-photoLayerClose ic photo-layer_close']"))
 
     def open_first_album(self):
         self.first_album.click()
@@ -39,3 +41,9 @@ class PhotoPage(selenium.Page):
         self.new_album_save_button.click()
         self.album_name.wait(timeout=3)
         return self.album_name
+
+    def open_first_photo(self):
+        self.first_photo.click()
+        self.close_button.wait(timeout=3)
+        return self.close_button.exist
+
