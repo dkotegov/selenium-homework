@@ -4,7 +4,7 @@ from utils.xpath_query import XPathQueryObject
 
 
 class PhotoPage(selenium.Page):
-    first_album = selenium.PageElement(XPathQueryObject("//div[@class='ugrid __m']//li[@class='ugrid_i'][1]"))
+    first_album = selenium.PageElement(XPathQueryObject("//li[@class='ugrid_i'][1]"))
     check_opened_album = selenium.PageElement(XPathQueryObject("//div[@class='photo-panel_info']"))
     new_album_button = selenium.PageElement(XPathQueryObject("//a[@class='portlet_h_ac lp']"))
     new_album_popup = selenium.PageElement(

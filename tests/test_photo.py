@@ -38,7 +38,7 @@ class TestOpenAlbum(AuthStep, selenium.Case):
         feed_page = FeedPage(browser)
         feed_page.goto_photo()
         photo_page = PhotoPage(browser)
-        assert photo_page.open_first_album()
+        self.assertion.true(photo_page.open_first_album())
 
 
 @suite.register
@@ -48,5 +48,5 @@ class TestCreateAlbum(AuthStep, selenium.Case):
         feed_page = FeedPage(browser)
         feed_page.goto_photo()
         photo_page = PhotoPage(browser)
-        album_name = string_generator();
+        album_name = string_generator()
         self.assertion.text_exist(photo_page.create_album(album_name), album_name)
