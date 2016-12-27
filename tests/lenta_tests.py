@@ -63,7 +63,7 @@ def test_make_like(case, browser):
     auth(case, browser)
 
     feed_page = FeedPage(browser)
-    feed_page.make_like_on_self_comment(feed_page)
+    feed_page.make_like_on_self_comment()
 
 
 @suite.register

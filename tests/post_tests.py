@@ -1,24 +1,15 @@
 # coding=utf-8
 import seismograph
 from seismograph.ext import selenium
-from pages.auth_page import AuthPage
 from pages.post_page import PostPage
 from pages.profile_page import ProfilePage
 from pages.feed_page import FeedPage
-from smth.auth import AuthManager
+from auth_test import Auth
 
+
+HIDDEN = u'скрыто'
 
 suite = selenium.Suite(__name__)
-
-
-class Auth(selenium.Case):
-
-    @seismograph.step(1, 'Auth')
-    def auth(self, browser):
-        auth_page = AuthPage(browser)
-        auth_page.open()
-        auth_page.auth(AuthManager.get_login(),
-                       AuthManager.get_password())
 
 
 @suite.register
@@ -55,4 +46,4 @@ class TestDeletePost(Auth):
         profile_page = ProfilePage(browser)
         profile_page.open()
         self.assertion.is_in(text, profile_page.get_first_post())
-        self.assertion.is_in(u'скрыто', profile_page.delete_my_post())
+        self.assertion.is_in(HIDDEN, profile_page.delete_my_post())

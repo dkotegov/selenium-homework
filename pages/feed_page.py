@@ -151,10 +151,10 @@ class FeedPage(selenium.Page):
         comment_div = comment.find_element_by_css_selector('div.d_comment_text')
         assert comment_div.text == 'lel'
 
-    def make_like_on_self_comment(self, feed_page):
+    def make_like_on_self_comment(self):
         button = self.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
         button.click()
-        comment_body = CommentPage(feed_page.browser)
+        comment_body = CommentPage(self.browser)
         comment_body.wait_popup()
         self.set_smth(comment_body.comment_input, u'lel')
         count = len(comment_body.find_elements_by_css_selector('div.d_comment_w'))

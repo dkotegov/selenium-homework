@@ -18,9 +18,11 @@ class ElsePostPage(selenium.Page):
         if u'Поделиться' in self.active_menu.text:
             raise WebDriverException(msg='Timeout at waiting repost someone post')
 
-    def make_repost(self):
+    def open_menu(self):
         self.browser.execute_script('''$(':button[tsid=reshareMenu]').last().click()''')
         self.active_menu.wait()
+
+    def make_repost(self):
         self.browser.execute_script('''$("div[data-l*='t,now']").last().find('a').click()''')
         self.wait_change()
         return self.active_menu.text
