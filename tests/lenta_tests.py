@@ -1,124 +1,128 @@
 # coding=utf-8
+import seismograph
 from seismograph.ext import selenium
-from pages.auth_page import AuthPage
+from auth_test import Auth
 from pages.feed_page import FeedPage
-from pages.profile_page import ProfilePage
-from smth.auth import AuthManager
-from pages.group_post_page import GroupPage
+from pages.group_post_page import GroupPostPage
+
+
+TOPIC = '/topic/'
+COMMENT = 'comment'
+PUBLIC_COMMENT = 'hmm...'
+YOU = u'Вы'
+KLASS = u'Класс'
 
 suite = selenium.Suite(__name__)
 
 
-def auth(case, browser):
-    auth_page = AuthPage(browser)
-    auth_page.open()
-    auth_page.auth(AuthManager.get_login(),
-                   AuthManager.get_password())
+@suite.register
+class TestGetAuthorGroup(Auth):
+    @seismograph.step(2, 'Test get author group')
+    def get_author_group(self, browser):
+        feed_page = FeedPage(browser)
+        url = feed_page.get_author()
+        feed_page.click_post_title()
+        self.assertion.is_in(url, browser.current_url)
 
 
 @suite.register
-def test_get_author_group(case, browser):
-    auth(case, browser)
-    feed_page = FeedPage(browser)
-    url = feed_page.get_author()
-    browser.execute_script('''$('.feed_h').first().find('a').first().click()''')
-    assert url in browser.current_url
+class TestGetPost(Auth):
+    @seismograph.step(2, 'Test get post')
+    def get_post(self, browser):
+        feed_page = FeedPage(browser)
+        feed_page.get_popular_content()
+        url = feed_page.get_post()
+        self.assertion.is_in(TOPIC, url)
 
 
 @suite.register
-def test_get_post(case, browser):
-    auth(case, browser)
-    feed_page = FeedPage(browser)
-    feed_page.get_post()
+class TestLikeOnOwnPost(Auth):
+    @seismograph.step(2, 'Test like on own post')
+    def like_on_own_post(self, browser):
+        feed_page = FeedPage(browser)
+        before = feed_page.get_own_post_like()
+        after = feed_page.make_like_on_own_post(before)
+        self.assertion.not_equal(before, after)
 
 
 @suite.register
-def test_make_like_on_own_post(case, browser):
-    auth(case, browser)
-
-    feed_page = FeedPage(browser)
-    feed_page.make_like_on_own_post()
-
-
-@suite.register
-def test_make_self_comment(case, browser):
-    auth(case, browser)
-
-    feed_page = FeedPage(browser)
-    feed_page.get_popular_content()
-    feed_page.make_self_comment()
+class TestMakeSelfComment(Auth):
+    @seismograph.step(2, 'Test make self comment')
+    def make_self_comment(self, browser):
+        feed_page = FeedPage(browser)
+        feed_page.click_status_comment()
+        val = feed_page.make_self_comment(COMMENT)
+        self.assertion.is_in(COMMENT, val)
 
 
 @suite.register
-def test_make_comment(case, browser):
-    auth(case, browser)
-
-    feed_page = FeedPage(browser)
-    feed_page.get_popular_content()
-    feed_page.make_comment()
-
-
-@suite.register
-def test_make_like(case, browser):
-    auth(case, browser)
-
-    feed_page = FeedPage(browser)
-    feed_page.make_like_on_self_comment()
+class TestMakeComment(Auth):
+    @seismograph.step(2, 'Test make comment')
+    def make_comment(self, browser):
+        feed_page = FeedPage(browser)
+        feed_page.get_popular_content()
+        feed_page.click_post_comment()
+        val = feed_page.make_comment(PUBLIC_COMMENT)
+        self.assertion.is_in(PUBLIC_COMMENT, val)
 
 
 @suite.register
-def test_make_double_like(case, browser):
-    auth(case, browser)
+class TestMakeLikeOnSelfComment(Auth):
+    @seismograph.step(2, 'Test make self comment')
+    def make_self_comment(self, browser):
+        feed_page = FeedPage(browser)
+        feed_page.click_status_comment()
+        val = feed_page.make_self_comment(COMMENT)
+        self.assertion.is_in(COMMENT, val)
 
-    feed_page = FeedPage(browser)
-    feed_page.make_double_like(feed_page)
-
-
-@suite.register
-def test_make_group_comment(case, browser):
-    auth(case, browser)
-
-    group_page = GroupPage(browser)
-    group_page.open()
-    group_page.open_post_comments()
-    group_page.make_group_comment()
+    @seismograph.step(3, 'Test make like on self comment')
+    def make_like_on_self_comment(self, browser):
+        feed_page = FeedPage(browser)
+        text = feed_page.make_like_on_self_comment()
+        self.assertion.equal(YOU, text)
 
 
 @suite.register
-def test_make_repost(case, browser):
-    auth(case, browser)
+class TestMakeDoubleLike(Auth):
+    @seismograph.step(2, 'Test make self comment')
+    def make_self_comment(self, browser):
+        feed_page = FeedPage(browser)
+        feed_page.click_status_comment()
+        val = feed_page.make_self_comment(COMMENT)
+        self.assertion.is_in(COMMENT, val)
 
-    feed_page = FeedPage(browser)
-    val = feed_page.make_repost()
-    assert u'Опубликовано!' in val
+    @seismograph.step(3, 'Test first like on self comment')
+    def make_first_like_on_self_comment(self, browser):
+        feed_page = FeedPage(browser)
+        text = feed_page.make_like_on_self_comment()
+        self.assertion.is_in(YOU, text)
 
-
-
-@suite.register
-def test_make_one_like(case, browser):
-    auth(case, browser)
-
-    feed_page = FeedPage(browser)
-    feed_page.make_one_like()
-
-
-@suite.register
-def test_make_repost_by_double_click(case, browser):
-    auth(case, browser)
-
-    feed_page = FeedPage(browser)
-    val = feed_page.make_double_click_repost()
-    assert u'Опубликовано!' in val
+    @seismograph.step(4, 'Test second like on self comment')
+    def make_second_like_on_self_comment(self, browser):
+        feed_page = FeedPage(browser)
+        text = feed_page.make_like_on_self_comment(True)
+        self.assertion.is_in(KLASS, text)
 
 
 @suite.register
-def test_make_repost_and_delete(case, browser):
-    auth(case, browser)
+class TestMakeGroupComment(Auth):
+    @seismograph.step(2, 'Test make group comment')
+    def make_group_comment(self, browser):
+        group_page = GroupPostPage(browser)
+        group_page.open()
+        group_page.open_post_comments()
+        text = group_page.make_group_comment(PUBLIC_COMMENT)
+        self.assertion.is_in(PUBLIC_COMMENT, text)
 
-    feed_page = FeedPage(browser)
-    val = feed_page.make_repost()
-    assert u'Опубликовано!' in val
 
-    profile_page = ProfilePage(browser)
-    profile_page.open()
-    profile_page.delete_my_post()
+@suite.register
+class TestMakeFeedLike(Auth):
+    @seismograph.step(2, 'Test make feed like')
+    def make_feed_like(self, browser):
+        feed_page = FeedPage(browser)
+        feed_page.get_popular_content()
+        before = feed_page.get_feed_like()
+        after = feed_page.make_feed_like(before)
+        self.assertion.not_equal(before, after)
+
+

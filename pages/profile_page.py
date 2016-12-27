@@ -14,9 +14,10 @@ class ProfilePage(selenium.Page):
     )
 
     @selenium.polling.wrap(delay=1)
-    def wait_deleted(self):
+    def wait_deleted_text(self):
+        self.browser.execute_script("$('a.al.feed_close').first().click()")
         try:
-            return self.browser.find_elements_by_css_selector('span.delete-stub_info.tico')[1]
+            return self.browser.find_elements_by_css_selector('span.delete-stub_info.tico')[1].text
         except:
             raise WebDriverException(msg='Timeout at waiting deleted post')
 
@@ -25,6 +26,4 @@ class ProfilePage(selenium.Page):
         return self.checked_post.text
 
     def delete_my_post(self):
-        self.browser.execute_script("$('a.al.feed_close').first().click()")
-        element = self.wait_deleted()
-        return element.text
+        return self.wait_deleted_text()

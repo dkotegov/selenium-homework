@@ -14,7 +14,6 @@ suite = selenium.Suite(__name__)
 
 @suite.register
 class TestPost(Auth):
-
     @seismograph.step(2, 'Test post')
     def post(self, browser):
         text = 'Test number 1'
@@ -32,7 +31,6 @@ class TestPost(Auth):
 
 @suite.register
 class TestDeletePost(Auth):
-
     @seismograph.step(2, 'Test post and delete')
     def post_and_delete(self, browser):
         text = 'Test number 2'

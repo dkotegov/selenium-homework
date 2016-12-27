@@ -13,8 +13,9 @@ class ElsePostPage(selenium.Page):
         )
     )
 
-    @selenium.polling.wrap(timeout=20, delay=1)
-    def wait_change(self):
+    @selenium.polling.wrap(delay=1)
+    def wait_repost(self):
+        self.browser.execute_script('''$("div[data-l*='t,now']").last().find('a').click()''')
         if u'Поделиться' in self.active_menu.text:
             raise WebDriverException(msg='Timeout at waiting repost someone post')
 
@@ -23,6 +24,5 @@ class ElsePostPage(selenium.Page):
         self.active_menu.wait()
 
     def make_repost(self):
-        self.browser.execute_script('''$("div[data-l*='t,now']").last().find('a').click()''')
-        self.wait_change()
+        self.wait_repost()
         return self.active_menu.text
