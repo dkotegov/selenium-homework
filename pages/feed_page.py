@@ -53,7 +53,6 @@ class FeedPage(selenium.Page):
 
     @selenium.polling.wrap(delay=1, exceptions=(PollingTimeoutExceeded, WebDriverException))
     def wait_repost_change(self):
-        self.active_menu.wait()
         self.browser.execute_script('''$('div.feed').first().find("div[data-l*='t,now']").first().find('a').click()''')
         if u'Поделиться' in self.active_menu.text:
             raise WebDriverException(msg='Timeout at waiting repost feed')
