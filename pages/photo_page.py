@@ -35,6 +35,24 @@ class PhotoPage(selenium.Page):
         )
     )
     next_arrow = selenium.PageElement(XPathQueryObject("//span[@class='arw_ic']"))
+    rotate_link = selenium.PageElement(
+        selenium.query(
+            selenium.query.DIV,
+            id='rotation-link-layer'
+        )
+    )
+
+    image_0deg = selenium.PageElement(XPathQueryObject("//img[@class='photo-layer_img rotate__0deg']"))
+    image_90deg = selenium.PageElement(XPathQueryObject("//img[@class='photo-layer_img rotate__90deg']"))
+    image_180deg = selenium.PageElement(XPathQueryObject("//img[@class='photo-layer_img rotate__180deg']"))
+    image_270deg = selenium.PageElement(XPathQueryObject("//img[@class='photo-layer_img rotate__270deg']"))
+
+    link = selenium.PageElement(
+        selenium.query(
+            selenium.query.INPUT,
+            _id='showLinkInput',
+        )
+    )
 
     def open_first_album(self):
         self.first_album.click()
@@ -58,11 +76,29 @@ class PhotoPage(selenium.Page):
         self.close_button.click()
         return self.close_button.is_displayed()
 
-    def next_photo(self):
-        self.photo.wait(timeout=3)
-        prev_size = self.photo.size
-        self.next_arrow.wait(timeout=3)
-        self.next_arrow.click()
-        self.photo.wait(timeout=3)
-        return prev_size != self.photo.size
+    # def next_photo(self):
+    #     self.photo.wait(timeout=3)
+    #     prev_size = self.photo.size
+    #     self.next_arrow.wait(timeout=3)
+    #     self.next_arrow.click()
+    #     self.photo.wait(timeout=3)
+    #     return prev_size != self.photo.size
 
+    def rotate_photo(self):
+        self.photo.wait(timeout=3)
+        if self.image_0deg.exist:
+            self.rotate_link.click()
+            self.image_90deg.wait(timeout=3)
+            return self.image_90deg.exist
+        elif self.image_90deg.exist:
+            self.rotate_link.click()
+            self.image_180deg.wait(timeout=3)
+            return self.image_180deg.exist
+        elif self.image_180deg.exist:
+            self.rotate_link.click()
+            self.image_270deg.wait(timeout=3)
+            return self.image_270deg.exist
+        elif self.image_270deg.exist:
+            self.rotate_link.click()
+            self.image_0deg.wait(timeout=3)
+            return self.image_0deg.exist
