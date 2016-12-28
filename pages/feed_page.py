@@ -1,12 +1,11 @@
 # coding=utf-8
 from seismograph.ext import selenium
-from pages.comment_page import CommentPage
 from seismograph.ext.selenium.exceptions import PollingTimeoutExceeded
 from selenium.common.exceptions import WebDriverException
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as ec
+
 from helper import conditions as c
+from pages.comment_page import CommentPage
 
 
 class FeedPage(selenium.Page):
@@ -52,7 +51,7 @@ class FeedPage(selenium.Page):
             raise WebDriverException(msg='Timeout at waiting like value changed')
         return text
 
-    @selenium.polling.wrap(delay=1)
+    @selenium.polling.wrap(delay=1, exceptions=(PollingTimeoutExceeded, WebDriverException))
     def wait_repost_change(self):
         self.active_menu.wait()
         self.browser.execute_script('''$('div.feed').first().find("div[data-l*='t,now']").first().find('a').click()''')
@@ -72,7 +71,7 @@ class FeedPage(selenium.Page):
         if not self.browser.current_url.endswith('/post'):
             raise WebDriverException(msg='Timeout at waiting post modal')
 
-    @selenium.polling.wrap(exceptions=[PollingTimeoutExceeded])
+    @selenium.polling.wrap(exceptions=(PollingTimeoutExceeded, WebDriverException))
     def open_menu_in_feed(self):
         self.browser.execute_script('''$('div.feed_cnt').first().find('button.h-mod.widget_cnt').first().click()''')
         self.active_menu.wait()
@@ -85,6 +84,14 @@ class FeedPage(selenium.Page):
     def get_author_title(self):
         return self.browser.find_element_by_xpath(
             '//*[@class="feed"]/div[3]/div[1]/span[1]/span/a').get_attribute('href')
+
+    @selenium.polling.wrap(delay=1)
+    def wait_post_opened(self, url):
+        self.browser.execute_script('''$('.feed_b').first().find('a').first().click()''')
+        new_url = self.browser.current_url
+        if url == new_url:
+            raise WebDriverException(msg='Timeout at waiting post input modal')
+        return new_url
 
     def get_popular_content(self):
         self.wait_popular()
@@ -103,9 +110,8 @@ class FeedPage(selenium.Page):
         return self.wait_like_change(before, 0, '''$('.feed_f').first().find('button')[1].click()''')
 
     def click_post_comment(self):
-        self.browser.execute_script('''$('div.feed_cnt').first().find('a.h-mod.widget_cnt').first().click()''')
         comment_body = CommentPage(self.browser)
-        comment_body.wait_popup()
+        comment_body.wait_popup('''$('div.feed_cnt').first().find('a.h-mod.widget_cnt').first().click()''')
 
     def make_comment(self, text):
         comment_body = CommentPage(self.browser)
@@ -116,10 +122,8 @@ class FeedPage(selenium.Page):
         return comment_div.text
 
     def click_status_comment(self):
-        button = self.browser.find_elements_by_css_selector('div.feed_f')[0].find_element_by_css_selector('a')
-        button.click()
         comment_body = CommentPage(self.browser)
-        comment_body.wait_popup()
+        comment_body.wait_popup('''$('.feed_f').first().find('a').first().click()''')
 
     def make_self_comment(self, text):
         comment_body = CommentPage(self.browser)
@@ -155,8 +159,4 @@ class FeedPage(selenium.Page):
         return self.wait_like_change(before, -1, '''$('button.h-mod.widget_cnt.controls-list_lk').last().click()''')
 
     def get_post(self):
-        url = self.browser.current_url
-        self.browser.execute_script('''$('.feed_b').first().find('a').first().click()''')
-        wait = WebDriverWait(self.browser, 10)
-        wait.until_not(c.in_url(url))
-        return self.browser.current_url
+        return self.wait_post_opened(self.browser.current_url)

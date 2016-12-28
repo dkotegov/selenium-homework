@@ -1,6 +1,7 @@
 # coding=utf-8
 from seismograph.ext import selenium
 from selenium.common.exceptions import WebDriverException
+from seismograph.ext.selenium.exceptions import PollingTimeoutExceeded
 
 
 class PhotoPage(selenium.Page):
@@ -19,6 +20,7 @@ class PhotoPage(selenium.Page):
         if u'Поделиться' in self.active_menu.text:
             raise WebDriverException(msg='Timeout at waiting repost photo')
 
+    @selenium.polling.wrap(delay=1, exceptions=(PollingTimeoutExceeded, WebDriverException))
     def open_menu(self):
         self.browser.execute_script('''$(':button[tsid=reshareMenu]').last().click()''')
         self.active_menu.wait()

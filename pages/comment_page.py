@@ -18,6 +18,7 @@ class CommentPage(selenium.Page):
     )
 
     @selenium.polling.wrap(delay=1)
-    def wait_popup(self):
-        if not self.comment_body.is_displayed():
+    def wait_popup(self, script):
+        self.browser.execute_script(script)
+        if not self.comment_body.is_displayed() and not self.comment_input.is_displayed():
             raise WebDriverException(msg='Timeout at waiting comment modal')

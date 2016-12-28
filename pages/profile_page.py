@@ -1,6 +1,6 @@
 # coding=utf-8
 from seismograph.ext import selenium
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import WebDriverException, StaleElementReferenceException
 from seismograph.ext.selenium.exceptions import PollingTimeoutExceeded
 
 
@@ -14,16 +14,17 @@ class ProfilePage(selenium.Page):
         )
     )
 
-    @selenium.polling.wrap(delay=1, exceptions=(IndexError, WebDriverException))
+    @selenium.polling.wrap(delay=1, exceptions=(IndexError, StaleElementReferenceException))
     def wait_deleted_text(self):
         self.browser.execute_script("$('a.al.feed_close').first().click()")
-        return self.browser.find_elements_by_css_selector('span.delete-stub_info.tico')[1].text
+        val = self.browser.find_elements_by_css_selector('span.delete-stub_info.tico')[1].text
+        return val
 
-    @selenium.polling.wrap(timeout=4, delay=0.5)
+    @selenium.polling.wrap(timeout=5, delay=0.5)
     def get_first_post_polling(self, text_expected):
         self.checked_post.wait()
         if text_expected not in self.checked_post.text:
-            self.browser.refresh()
+            self.open()
             raise WebDriverException('Cant get right text')
         return self.checked_post.text
 
