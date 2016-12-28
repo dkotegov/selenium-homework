@@ -79,13 +79,13 @@ class PhotoPage(selenium.Page):
         self.close_button.click()
         return self.close_button.is_displayed()
 
-    # def next_photo(self):
-    #     self.photo.wait(timeout=3)
-    #     prev_size = self.photo.size
-    #     self.next_arrow.wait(timeout=3)
-    #     self.next_arrow.click()
-    #     self.photo.wait(timeout=3)
-    #     return prev_size != self.photo.size
+    def next_photo(self):
+        self.photo.wait(timeout=3)
+        prev_size = self.photo.size
+        self.next_arrow.wait(timeout=3)
+        self.next_arrow.click()
+        self.photo.wait(delay=3)
+        return prev_size != self.photo.size
 
     def rotate_photo(self):
         self.photo.wait(timeout=3)

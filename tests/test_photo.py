@@ -4,6 +4,7 @@ from seismograph.ext import selenium
 from pages.auth_page import AuthPage
 from pages.feed_page import FeedPage
 from pages.photo_page import PhotoPage
+from pages.album_page import AlbumPage
 from utils.auth_manager import AuthManager
 import string
 import random
@@ -94,6 +95,16 @@ class TestDeleteRestorePhoto(AuthStep):
         photo_page = PhotoPage(browser)
         photo_page.open_first_photo()
         self.assertion.true(photo_page.delete_restore_photo())
+
+
+@suite.register
+class TestDeleteAlbum(AuthStep):
+    @seismograph.step(3, 'Test delete album')
+    def delete_album(self, browser):
+        feed_page = FeedPage(browser)
+        feed_page.goto_photo()
+        album_page = AlbumPage(browser)
+        self.assertion.true(album_page.delete_album())
 
 
 # @suite.register
