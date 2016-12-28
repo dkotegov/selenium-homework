@@ -54,10 +54,21 @@ class TestCreateAlbum(AuthStep, selenium.Case):
 
 
 @suite.register
-class TestOpenPhoto(TestGotoPhoto, selenium.Case):
-    @seismograph.step(3, 'Test open photo')
+class TestOpenPhoto(AuthStep, selenium.Case):
+    @seismograph.step(2, 'Test open photo')
     def open_photo(self, browser):
         feed_page = FeedPage(browser)
         feed_page.goto_photo()
         photo_page = PhotoPage(browser)
         self.assertion.true(photo_page.open_first_photo())
+
+
+@suite.register
+class TestClosePhoto(AuthStep, selenium.Case):
+    @seismograph.step(2, 'Test close photo')
+    def close_photo(self, browser):
+        feed_page = FeedPage(browser)
+        feed_page.goto_photo()
+        photo_page = PhotoPage(browser)
+        photo_page.open_first_photo()
+        self.assertion.false(photo_page.close_photo())

@@ -47,3 +47,6 @@ class PhotoPage(selenium.Page):
         self.close_button.wait(timeout=3)
         return self.close_button.exist
 
+    def close_photo(self):
+        self.close_button.click()
+        return self.close_button.is_displayed()
