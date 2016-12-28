@@ -28,6 +28,13 @@ class PhotoPage(selenium.Page):
     album_name = selenium.PageElement(XPathQueryObject("//span[@class='photo-h_cnt_t ellip']"))
     first_photo = selenium.PageElement(XPathQueryObject("//a[@class='photo-card_cnt'][1]"))
     close_button = selenium.PageElement(XPathQueryObject("//div[@class='js-photoLayerClose ic photo-layer_close']"))
+    photo = selenium.PageElement(
+        selenium.query(
+            selenium.query.IMG,
+            id='__plpcte_target',
+        )
+    )
+    next_arrow = selenium.PageElement(XPathQueryObject("//span[@class='arw_ic']"))
 
     def open_first_album(self):
         self.first_album.click()
@@ -50,3 +57,12 @@ class PhotoPage(selenium.Page):
     def close_photo(self):
         self.close_button.click()
         return self.close_button.is_displayed()
+
+    def next_photo(self):
+        self.photo.wait(timeout=3)
+        prev_size = self.photo.size
+        self.next_arrow.wait(timeout=3)
+        self.next_arrow.click()
+        self.photo.wait(timeout=3)
+        return prev_size != self.photo.size
+
