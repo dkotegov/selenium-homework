@@ -107,12 +107,12 @@ class TestDeleteAlbum(AuthStep):
         self.assertion.true(album_page.delete_album())
 
 
-# @suite.register
-# class TestNextPhoto(AuthStep, selenium.Case):
-#     @seismograph.step(2, 'Text next photo')
-#     def next_photo(self, browser):
-#         feed_page = FeedPage(browser)
-#         feed_page.goto_photo()
-#         photo_page = PhotoPage(browser)
-#         photo_page.open_first_photo()
-#         self.assertion.true(photo_page.next_photo())
+@suite.register
+class TestNextPhoto(AuthStep, selenium.Case):
+    @seismograph.step(2, 'Text next photo')
+    def next_photo(self, browser):
+        feed_page = FeedPage(browser)
+        feed_page.goto_photo()
+        photo_page = PhotoPage(browser)
+        photo_page.open_first_photo()
+        self.assertion.true(photo_page.next_photo())
