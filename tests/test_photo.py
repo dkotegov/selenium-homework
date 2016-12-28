@@ -25,7 +25,7 @@ class AuthStep(selenium.Case):
 
 
 @suite.register
-class TestGotoPhoto(AuthStep, selenium.Case):
+class TestGotoPhoto(AuthStep):
     @seismograph.step(2, 'Test goto photo')
     def goto_photo(self, browser):
         feed_page = FeedPage(browser)
@@ -33,7 +33,7 @@ class TestGotoPhoto(AuthStep, selenium.Case):
 
 
 @suite.register
-class TestOpenAlbum(AuthStep, selenium.Case):
+class TestOpenAlbum(AuthStep):
     @seismograph.step(2, 'Test open album')
     def goto_photo(self, browser):
         feed_page = FeedPage(browser)
@@ -43,7 +43,7 @@ class TestOpenAlbum(AuthStep, selenium.Case):
 
 
 @suite.register
-class TestCreateAlbum(AuthStep, selenium.Case):
+class TestCreateAlbum(AuthStep):
     @seismograph.step(2, 'Test create album')
     def create_album(self, browser):
         feed_page = FeedPage(browser)
@@ -54,7 +54,7 @@ class TestCreateAlbum(AuthStep, selenium.Case):
 
 
 @suite.register
-class TestOpenPhoto(AuthStep, selenium.Case):
+class TestOpenPhoto(AuthStep):
     @seismograph.step(2, 'Test open photo')
     def open_photo(self, browser):
         feed_page = FeedPage(browser)
@@ -64,7 +64,7 @@ class TestOpenPhoto(AuthStep, selenium.Case):
 
 
 @suite.register
-class TestClosePhoto(AuthStep, selenium.Case):
+class TestClosePhoto(AuthStep):
     @seismograph.step(2, 'Test close photo')
     def close_photo(self, browser):
         feed_page = FeedPage(browser)
@@ -72,6 +72,28 @@ class TestClosePhoto(AuthStep, selenium.Case):
         photo_page = PhotoPage(browser)
         photo_page.open_first_photo()
         self.assertion.false(photo_page.close_photo())
+
+
+@suite.register
+class TestRotatePhoto(AuthStep):
+    @seismograph.step(2, 'Test rotate photo')
+    def rotate_photo(self, browser):
+        feed_page = FeedPage(browser)
+        feed_page.goto_photo()
+        photo_page = PhotoPage(browser)
+        photo_page.open_first_photo()
+        self.assertion.true(photo_page.rotate_photo())
+
+
+@suite.register
+class TestDeleteRestorePhoto(AuthStep):
+    @seismograph.step(2, 'Test delete and restore photo')
+    def delete_restore_photo(self, browser):
+        feed_page = FeedPage(browser)
+        feed_page.goto_photo()
+        photo_page = PhotoPage(browser)
+        photo_page.open_first_photo()
+        self.assertion.true(photo_page.delete_restore_photo())
 
 
 # @suite.register
@@ -83,14 +105,3 @@ class TestClosePhoto(AuthStep, selenium.Case):
 #         photo_page = PhotoPage(browser)
 #         photo_page.open_first_photo()
 #         self.assertion.true(photo_page.next_photo())
-
-
-@suite.register
-class TestRotatePhoto(AuthStep, selenium.Case):
-    @seismograph.step(2, 'Test rotate photo')
-    def rotate_photo(self, browser):
-        feed_page = FeedPage(browser)
-        feed_page.goto_photo()
-        photo_page = PhotoPage(browser)
-        photo_page.open_first_photo()
-        self.assertion.true(photo_page.rotate_photo())

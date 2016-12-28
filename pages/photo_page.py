@@ -54,6 +54,9 @@ class PhotoPage(selenium.Page):
         )
     )
 
+    delete_link = selenium.PageElement(XPathQueryObject("//a[@class='ic-w lp']"))
+    restore_link = selenium.PageElement(XPathQueryObject("//a[@class='lp ml-2x']"))
+
     def open_first_album(self):
         self.first_album.click()
         self.check_opened_album.wait(timeout=3)
@@ -102,3 +105,15 @@ class PhotoPage(selenium.Page):
             self.rotate_link.click()
             self.image_0deg.wait(timeout=3)
             return self.image_0deg.exist
+
+    def delete_restore_photo(self):
+        self.photo.wait(timeout=3)
+        self.delete_link.wait(timeout=3)
+        self.delete_link.click()
+        self.restore_link.wait(timeout=3)
+        if self.photo.is_displayed():
+            self.restore_link.click()
+            return False
+        self.restore_link.click()
+        self.photo.wait(delay=2)
+        return self.photo.exist
