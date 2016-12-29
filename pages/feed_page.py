@@ -1,10 +1,6 @@
 # coding=utf-8
 from seismograph.ext import selenium
 
-from utils.xpath_query import XPathQueryObject
-
-import time
-
 
 class FeedPage(selenium.Page):
     __url_path__ = '/feed'
@@ -16,7 +12,12 @@ class FeedPage(selenium.Page):
         )
     )
 
-    photo_link = selenium.PageElement(XPathQueryObject("//a[@class='mctc_navMenuSec'][2]"))
+    photo_link = selenium.PageElement(
+        selenium.query(
+            selenium.query.A,
+            _class='mctc_navMenuSec'
+        )
+    )
 
     photo_check = selenium.PageElement(
         selenium.query(
@@ -26,7 +27,8 @@ class FeedPage(selenium.Page):
     )
 
     def goto_photo(self):
-        self.photo_link.click()
+        self.photo_link.wait(timeout=3)
+        self.photo_link.get(1).click()
         self.photo_check.wait(timeout=3)
         return self.photo_check.exist
 

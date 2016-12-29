@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from seismograph.ext import selenium
-
 from pages.feed_page import FeedPage
 
 
@@ -25,7 +24,6 @@ class AuthPage(selenium.Page):
     submit_button = selenium.PageElement(
         selenium.query(
             selenium.query.INPUT,
-            #value=u'Войти',
             _class='button-pro form-actions_yes'
         )
     )
