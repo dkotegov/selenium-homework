@@ -5,7 +5,7 @@ from pages.auth_page import AuthPage
 from pages.feed_page import FeedPage
 from pages.photo_page import PhotoPage
 from pages.album_page import AlbumPage
-from utils.auth_manager import AuthManager
+from utils.credentials import LOGIN, PASSWORD
 import string
 import random
 
@@ -21,8 +21,7 @@ class AuthStep(selenium.Case):
     def auth(self, browser):
         auth_page = AuthPage(browser)
         auth_page.open()
-        auth_page.auth(AuthManager.get_login(),
-                       AuthManager.get_password())
+        auth_page.auth(LOGIN, PASSWORD)
 
 
 @suite.register
