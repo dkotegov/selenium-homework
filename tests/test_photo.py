@@ -99,11 +99,3 @@ class TestDeleteAlbum(BaseTestGotoPhoto):
         album_page = AlbumPage(browser)
         album_page.delete_album()
         self.assertion.true(album_page.add_album.exist)
-
-
-@suite.register
-class TestNextPhoto(BaseTestOpenPhoto):
-    @seismograph.step(4, 'Text next photo')
-    def next_photo(self, browser):
-        self.photo_page.next_photo()
-        self.assertion.equal(self.photo_page.prev_size, self.photo_page.photo.size)
