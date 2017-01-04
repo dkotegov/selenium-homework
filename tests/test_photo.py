@@ -24,94 +24,86 @@ class AuthStep(selenium.Case):
         auth_page.auth(LOGIN, PASSWORD)
 
 
-@suite.register
-class TestGotoPhoto(AuthStep):
+class BaseTestGotoPhoto(AuthStep):
     @seismograph.step(2, 'Test goto photo')
     def goto_photo(self, browser):
         feed_page = FeedPage(browser)
-        self.assertion.true(feed_page.goto_photo())
+        feed_page.goto_photo()
+        self.assertion.true(feed_page.photo_check.exist)
 
 
 @suite.register
-class TestOpenAlbum(AuthStep):
-    @seismograph.step(2, 'Test open album')
-    def goto_photo(self, browser):
-        feed_page = FeedPage(browser)
-        feed_page.goto_photo()
+class TestGotoPhoto(BaseTestGotoPhoto):
+    pass
+
+
+@suite.register
+class TestOpenAlbum(BaseTestGotoPhoto):
+    @seismograph.step(3, 'Test open album')
+    def open_album(self, browser):
         photo_page = PhotoPage(browser)
-        self.assertion.true(photo_page.open_first_album())
+        photo_page.open_first_album()
+        self.assertion.true(photo_page.check_opened_album.exist)
 
 
 @suite.register
-class TestCreateAlbum(AuthStep):
-    @seismograph.step(2, 'Test create album')
+class TestCreateAlbum(BaseTestGotoPhoto):
+    @seismograph.step(3, 'Test create album')
     def create_album(self, browser):
-        feed_page = FeedPage(browser)
-        feed_page.goto_photo()
         photo_page = PhotoPage(browser)
         album_name = string_generator()
-        self.assertion.text_exist(photo_page.create_album(album_name), album_name)
+        photo_page.create_album(album_name)
+        self.assertion.text_exist(photo_page.album_name, album_name)
 
 
-@suite.register
-class TestOpenPhoto(AuthStep):
-    @seismograph.step(2, 'Test open photo')
+class BaseTestOpenPhoto(BaseTestGotoPhoto):
+    @seismograph.step(3, 'Test open photo')
     def open_photo(self, browser):
-        feed_page = FeedPage(browser)
-        feed_page.goto_photo()
-        photo_page = PhotoPage(browser)
-        self.assertion.true(photo_page.open_first_photo())
+        self.photo_page = PhotoPage(browser)
+        self.photo_page.open_first_photo()
+        self.assertion.true(self.photo_page.close_button.exist)
 
 
 @suite.register
-class TestClosePhoto(AuthStep):
-    @seismograph.step(2, 'Test close photo')
+class TestOpenPhoto(BaseTestOpenPhoto):
+    pass
+
+
+@suite.register
+class TestClosePhoto(BaseTestOpenPhoto):
+    @seismograph.step(4, 'Test close photo')
     def close_photo(self, browser):
-        feed_page = FeedPage(browser)
-        feed_page.goto_photo()
-        photo_page = PhotoPage(browser)
-        photo_page.open_first_photo()
-        self.assertion.false(photo_page.close_photo())
+        self.photo_page.close_photo()
+        self.assertion.false(self.photo_page.close_button.is_displayed())
 
 
 @suite.register
-class TestRotatePhoto(AuthStep):
-    @seismograph.step(2, 'Test rotate photo')
+class TestRotatePhoto(BaseTestOpenPhoto):
+    @seismograph.step(4, 'Test rotate photo')
     def rotate_photo(self, browser):
-        feed_page = FeedPage(browser)
-        feed_page.goto_photo()
-        photo_page = PhotoPage(browser)
-        photo_page.open_first_photo()
-        self.assertion.true(photo_page.rotate_photo())
+        self.assertion.true(self.photo_page.rotate_photo())
 
 
 @suite.register
-class TestDeleteRestorePhoto(AuthStep):
-    @seismograph.step(2, 'Test delete and restore photo')
+class TestDeleteRestorePhoto(BaseTestOpenPhoto):
+    @seismograph.step(4, 'Test delete and restore photo')
     def delete_restore_photo(self, browser):
-        feed_page = FeedPage(browser)
-        feed_page.goto_photo()
-        photo_page = PhotoPage(browser)
-        photo_page.open_first_photo()
-        self.assertion.true(photo_page.delete_restore_photo())
+        self.photo_page.delete_restore_photo()
+        self.assertion.true(self.photo_page.photo.exist)
 
 
 @suite.register
-class TestDeleteAlbum(AuthStep):
+class TestDeleteAlbum(BaseTestGotoPhoto):
     @seismograph.step(3, 'Test delete album')
     def delete_album(self, browser):
-        feed_page = FeedPage(browser)
-        feed_page.goto_photo()
         album_page = AlbumPage(browser)
-        self.assertion.true(album_page.delete_album())
+        album_page.delete_album()
+        self.assertion.true(album_page.add_album.exist)
 
 
 @suite.register
-class TestNextPhoto(AuthStep, selenium.Case):
-    @seismograph.step(2, 'Text next photo')
+class TestNextPhoto(BaseTestOpenPhoto):
+    @seismograph.step(4, 'Text next photo')
     def next_photo(self, browser):
-        feed_page = FeedPage(browser)
-        feed_page.goto_photo()
-        photo_page = PhotoPage(browser)
-        photo_page.open_first_photo()
-        self.assertion.true(photo_page.next_photo())
+        self.photo_page.next_photo()
+        self.assertion.equal(self.photo_page.prev_size, self.photo_page.photo.size)

@@ -138,7 +138,6 @@ class PhotoPage(selenium.Page):
     def open_first_album(self):
         self.first_album.click()
         self.check_opened_album.wait(timeout=3)
-        return self.check_opened_album.exist
 
     def create_album(self, name):
         self.new_album_button.click()
@@ -146,24 +145,21 @@ class PhotoPage(selenium.Page):
         self.new_album_name_area.set(name)
         self.new_album_save_button.click()
         self.album_name.wait(timeout=3)
-        return self.album_name
 
     def open_first_photo(self):
         self.first_photo.click()
         self.close_button.wait(timeout=3)
-        return self.close_button.exist
 
     def close_photo(self):
+        self.close_button.wait(timeout=3)
         self.close_button.click()
-        return self.close_button.is_displayed()
 
     def next_photo(self):
         self.photo.wait(timeout=3)
-        prev_size = self.photo.size
+        self.prev_size = self.photo.size
         self.next_arrow.wait(timeout=3)
         self.next_arrow.click()
         self.photo.wait(delay=3)
-        return prev_size != self.photo.size
 
     def rotate_photo(self):
         self.photo.wait(timeout=3)
@@ -194,4 +190,3 @@ class PhotoPage(selenium.Page):
             return False
         self.restore_link.click()
         self.photo.wait(delay=2)
-        return self.photo.exist

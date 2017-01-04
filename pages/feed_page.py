@@ -30,5 +30,4 @@ class FeedPage(selenium.Page):
         self.photo_link.wait(timeout=3)
         self.photo_link.get(1).click()
         self.photo_check.wait(timeout=3)
-        return self.photo_check.exist
 

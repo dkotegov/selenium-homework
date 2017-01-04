@@ -47,7 +47,6 @@ class AlbumPage(selenium.Page):
         self.confirm_delete.wait(timeout=3)
         self.confirm_delete.click()
         self.add_album.wait(timeout=3)
-        return self.add_album.exist
 
 
 
